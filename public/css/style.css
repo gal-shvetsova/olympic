@@ -1,0 +1,29 @@
+.selected
+{
+    background: yellow;
+}
+
+.block {
+    display: inline-block;
+    vertical-align: top;
+}
+
+h4 {
+    text-align: left;
+}
+
+.taskEdit {
+    display :inline-block;
+    border: 4px double black;
+    padding: 10px;
+}
+
+.userEdit {
+    display :inline-block;
+    border: 4px double black;
+    padding: 10px;
+}
+
+.hidden {
+    display: none;
+}

@@ -19,6 +19,7 @@ class CreateOlympiadsTable extends Migration
             $table->integer('hardness');
             $table->time('deadline');
             $table->integer('participants');
+            $table->integer('student_id');
         });
     }
 

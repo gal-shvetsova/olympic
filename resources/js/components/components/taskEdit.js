@@ -13,9 +13,9 @@ export class TaskEdit extends Component {
             if (field == "hardness" && (event.target.value > 10 || event.target.value < 0))
                 return;
             if (field == "minutes") {
-                change["time"] = document.getElementById("hours").value + ":" + event.target.value
+                change["time"] = document.getElementById("hours").value + ":" + event.target.value;
             }
-            if (field == "hours") {
+            else if (field == "hours") {
                 change["time"] = event.target.value + ":" + document.getElementById("minutes").value;
             }
             else
@@ -28,7 +28,7 @@ export class TaskEdit extends Component {
         const {task, olympiadID, getTask} = this.props;
         let method = this.props.task.id ? "PUT" : "POST";
         if (!task) method = "POST";
-        let site =  location.hostname + "/api/task/" + olympiadID;
+        let site =  "/api/task/" + olympiadID;
         fetch(site, {
             method,
             body: JSON.stringify(task)
@@ -69,8 +69,8 @@ export class TaskEdit extends Component {
                         <p>Hardness</p>
                         <input type="number" value={task.hardness || ""} onChange={this.handleChange("hardness")}/>
                         <p>Time</p>
-                        <input type="range" id="hours" min = "0" max = "6" value={task.time.split(":")[0]|| ""} onChange={this.handleChange("hours")}/>
-                        <input type="range" id="minutes" min = "0" max = "59" value={task.time.split(":")[1]|| ""} onChange={this.handleChange("minutes")}/>
+                        <input type="range" id="hours" min = "0" max = "6" value= { task.time != undefined ? task.time.split(":")[0] : 0} onChange={this.handleChange("hours")}/>
+                        <input type="range" id="minutes" min = "0" max = "59" value={ task.time != undefined?  task.time.split(":")[1] : 0} onChange={this.handleChange("minutes")}/>
                         <p/>
                         <button className="ok" onClick={this.handleSubmit.bind(this)}>ok</button>
                         <button className="cancel" onClick={this.hide.bind(this)}>cancel</button>

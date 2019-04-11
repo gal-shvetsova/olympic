@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="style/style.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="{{ URL::asset('css/style.css')  }}">
+    <title>React App</title>
 </head>
 <body>
-<div class="container"></div>
-<div class="taskContainer"></div>
+<div id="root"></div>
 </body>
-<script src="/index.js"></script>
-</body>
+<script src="../index.js"></script>
 </html>

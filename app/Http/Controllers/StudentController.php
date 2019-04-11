@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Student;
 use Illuminate\Http\Request;
-use App\Olympiad;
 
-class OlympiadController extends Controller
+class StudentController extends Controller
 {
 
-    private $table = 'olympiads';
+    private $table = 'users';
     /**
      * Display a listing of the resource.
      *
@@ -16,7 +16,7 @@ class OlympiadController extends Controller
      */
     public function index()
     {
-        $response = Olympiad::getAllOlympiads();
+        $response = Student::getAllStudents();
         $answer = '{' . '"' .$this->table. '"' . ':' . $response . '}';
         return response($answer, 200);
     }
@@ -30,7 +30,7 @@ class OlympiadController extends Controller
     public function store(Request $request)
     {
         $content =$request->json()->all();
-        Olympiad::addOlympiad($content);
+        Student::addStudent($content);
         return response(200);
     }
 
@@ -44,7 +44,7 @@ class OlympiadController extends Controller
     public function update(Request $request)
     {
         $json =$request->json()->all();
-        Olympiad::editOlympiad($json);
+        Student::editStudent($json);
         return response(200);
     }
 
@@ -57,11 +57,11 @@ class OlympiadController extends Controller
     public function destroy(Request $request)
     {
         $json =$request->json()->all();
-        Olympiad::deleteOlympiad($json['id']);
+        Student::deleteStudent($json['id']);
         return response(200);
     }
 
-    public function olympiad(){
-        return view('olympiad');
+    public function user(){
+        return view('user');
     }
 }

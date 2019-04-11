@@ -7,31 +7,41 @@ use Illuminate\Support\Facades\DB;
 
 class Student extends Model
 {
+    public function olympiads()
+    {
+        return $this->belongsToMany('App\Olympiad', 'olym_user_links');
+    }
+
     public static function getAllStudents()
     {
         return DB::table('students', 'olympiads')
             ->select("students.id", "students.last_name", "students.user_role"
                 , DB::raw("(GROUP_CONCAT(olympiads.name SEPARATOR ',')) as 'olympiads'"))
-            ->leftjoin('olym_user_links', 'students.id', '=', 'olym_user_links.id_user')
-            ->leftjoin('olympiads', 'olym_user_links.id_olympiad', '=', 'olympiads.id')
+            ->leftjoin('olym_user_links', 'students.id', '=', 'olym_user_links.student_id')
+            ->leftjoin('olympiads', 'olym_user_links.olympiad_id', '=', 'olympiads.id')
             ->groupBy('students.id')
             ->get();
     }
 
     public static function addStudent($newStudent)
     {
-        DB::table('students')->insert($newStudent);
+        Student::insert($newStudent);
     }
 
-    public static function editStudent($student){
-        DB::table('students')->where('id', '=', $student->id)
-            ->update(['last_name' => $student->last_name,
-                        'user_role' => $student->user_role]);
+    public static function editStudent($student)
+    {
+        $put_student = Student::find($student['id']);
+        $put_student['name'] = $student['last_name'];
+        $put_student['hardness'] = $student['user_role'];
+        $put_student['deadline'] = $student['olympiad_id'];
+        $put_student->save();
     }
 
-    public static function deleteStudent($student){
-        DB::table('olym_user_links')->where('id_user', '=', $student)->delete();
-        DB::table('students')->delete($student);
+    public static function deleteStudent($student)
+    {
+        $student_del = Olympiad::find($student);
+        $student_del->olympiads()->detach();
+        $student_del->delete();
     }
 
 }

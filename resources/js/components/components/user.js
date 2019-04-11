@@ -3,7 +3,8 @@ import * as actionCreators from '../actions/';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ReactDOM from 'react-dom';
-
+import UserEdit from './userEdit';
+import OlympiadEdit from "./olympiad";
 export class UserList extends Component {
 
   constructor(props) {
@@ -120,7 +121,10 @@ export class UserList extends Component {
   			{this.createUserList()}
         <button className="add" onClick={() => this.userEdit(this.props, "add")}>add</button>
         <button className="edit" onClick={() => this.userEdit(this.props, "edit")}>edit</button>
-        <button className="delete" onClick={() => this.userEdit(this.props, "delete")}>delete</button> 
+        <button className="delete" onClick={() => this.userEdit(this.props, "delete")}>delete</button>
+        <div>
+        <UserEdit/>
+        </div>
       </div>
     );
   }

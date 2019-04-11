@@ -1,30 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import {Provider} from 'react-redux';
+import {createStore} from 'redux';
+import {Route, Link, BrowserRouter as Router} from 'react-router-dom'
 
 import UserList from './components/user';
-import UserEdit from './components/userEdit';
-import TaskEdit from './components/taskEdit';
+import OlympiadList from './components/olympiad'
 import TaskList from './components/task';
-import MainTable from './components/mainTable';
 import reducers from './reducers';
+import App from './components/app';
+
 
 ReactDOM.render(
-  <Provider store={createStore(reducers)}>
-	  <div>
-		<div className="User">
-			<UserList/>
-		    <UserEdit/>
-		</div>
-		<div className="Task">
-			<TaskList />
-		    <TaskEdit/>
-		</div>
-		<div>
-			<MainTable />
-		</div>
-	  </div>
-
-  </Provider>
-  , document.querySelector('.container'));
+    <Provider store={createStore(reducers)}>
+        <Router>
+            <Link to="/olympiad">Olympiad </Link>
+            <Link to="/user">User</Link>
+            <div>
+                <Route path="/olympiad" component={OlympiadList}/>
+                <Route path="/user" component={UserList}/>
+                <Route path="/task/:id" component={TaskList}/>
+            </div>
+        </Router>
+    </Provider>
+    , document.getElementById('root'));

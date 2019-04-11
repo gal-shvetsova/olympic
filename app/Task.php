@@ -3,32 +3,38 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class Task extends Model
 {
+    public $timestamps = false;
+
+    public function olympiad()
+    {
+        return $this->belongsTo(Olympiad::class);
+    }
+
     public static function getAllTasks($olym_id)
     {
-        return DB::table('tasks', 'olympiads')
-            ->where('tasks.olym_id','=', $olym_id)
-            ->get();
+        return Task::where('olympiad_id','=', $olym_id)->get();
     }
 
     public static function addTask($newTask)
     {
-        DB::table('tasks')->insert($newTask);
+        Task::insert($newTask);
     }
 
     public static function editTask($task){
-        DB::table('tasks')->where('id', '=', $task->id)
-            ->update(['name' => $task->name,
-                'description' => $task->description,
-                'hardness' => $task->hardness,
-                'time' => $task->time]);
+        $put_task = Task::find($task['id']);
+        $put_task['name'] = $task['name'];
+        $put_task['description'] = $task['description'];
+        $put_task['time'] = $task['time'];
+        $put_task['olympiad_id'] = $task['olympiad_id'];
+        $put_task->save();
     }
 
     public static function deleteTask($task)
     {
-        DB::table('tasks')->delete($task);
+        $task_del = Task::find($task);
+        $task_del->delete();
     }
 }

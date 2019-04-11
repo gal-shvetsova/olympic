@@ -17,6 +17,8 @@ class CreateStudentsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('role');
+            $table->integer('olympiad_id')->unsigned()->index()->nullable();
+         //   $table->foreign('olympiad_id')->references('id')->on('olympiads');
         });
     }
 

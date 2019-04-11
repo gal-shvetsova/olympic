@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import * as actionCreators from '../actions/';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import TaskEdit from './taskEdit';
 
 export class TaskList extends Component {
 
@@ -111,12 +112,12 @@ export class TaskList extends Component {
             props.getTaskEdit(task, props.olympiadID, true);
         }
         if (button == "add") {
-            props.getTaskEdit({olym_id: props.olympiadID}, props.olympiadID, true);
+            props.getTaskEdit({olympiad_id: props.olympiadID}, props.olympiadID, true);
         }
         if (button == "delete") {
             const task = props.tasks.find(v => v.id === props.selectedTask) || {};
             this.handleDelete(task);
-            props.getTaskEdit({olym_id: props.olympiadID}, props.olympiadID, false);
+            props.getTaskEdit({olympiad_id: props.olympiadID}, props.olympiadID, false);
         }
     }
 
@@ -151,6 +152,7 @@ export class TaskList extends Component {
                         </button>
                     </div>
                 </div>
+                <TaskEdit/>
             </div>);
     }
 

@@ -28446,7 +28446,7 @@ function (_Component) {
 
       if (button == "add") {
         props.getTaskEdit({
-          olym_id: props.olympiadID
+          olympiad_id: props.olympiadID
         }, props.olympiadID, true);
       }
 
@@ -28457,7 +28457,7 @@ function (_Component) {
 
         this.handleDelete(_task);
         props.getTaskEdit({
-          olym_id: props.olympiadID
+          olympiad_id: props.olympiadID
         }, props.olympiadID, false);
       }
     }
@@ -28592,9 +28592,7 @@ function (_Component) {
 
         if (field == "minutes") {
           change["time"] = document.getElementById("hours").value + ":" + event.target.value;
-        }
-
-        if (field == "hours") {
+        } else if (field == "hours") {
           change["time"] = event.target.value + ":" + document.getElementById("minutes").value;
         } else change[field] = event.target.value;
 
@@ -28610,7 +28608,7 @@ function (_Component) {
           getTask = _this$props2.getTask;
       var method = this.props.task.id ? "PUT" : "POST";
       if (!task) method = "POST";
-      var site = location.hostname + "/api/task/" + olympiadID;
+      var site = "/api/task/" + olympiadID;
       fetch(site, {
         method: method,
         body: JSON.stringify(task)
@@ -28663,14 +28661,14 @@ function (_Component) {
         id: "hours",
         min: "0",
         max: "6",
-        value: task.time.split(":")[0] || "",
+        value: task.time != undefined ? task.time.split(":")[0] : 0,
         onChange: this.handleChange("hours")
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "range",
         id: "minutes",
         min: "0",
         max: "59",
-        value: task.time.split(":")[1] || "",
+        value: task.time != undefined ? task.time.split(":")[1] : 0,
         onChange: this.handleChange("minutes")
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "ok",

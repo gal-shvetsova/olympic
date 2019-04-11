@@ -1,4 +1,6 @@
 import { combineReducers } from 'redux';
+import { routerReducer } from 'react-router-redux';
+
 
 
 const userStore = (state={users : [], selectedUser : -1}, action) => {
@@ -63,7 +65,7 @@ const mainTableStore = (state={conformity : []}, action) => {
     }
 }
 const rootReducer = combineReducers({
-    userStore, taskStore, userEditStore, taskEditStore, mainTableStore, olympiadEditStore, olympiadStore
+    userStore, taskStore, userEditStore, taskEditStore, mainTableStore, olympiadEditStore, olympiadStore, routerReducer
 });
 
 export default rootReducer;

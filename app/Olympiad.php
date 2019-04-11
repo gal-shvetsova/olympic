@@ -3,36 +3,50 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class Olympiad extends Model
 {
-    protected $fillable = ['name', 'hardness', 'deadline', 'participants'];
+    protected $fillable = ['name', 'hardness', 'deadline'];
+    public $timestamps = false;
+
+
+    public function students()
+    {
+        return $this->belongsToMany('App\Student', 'olym_user_links');
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany('App\Task');
+    }
+
     public static function getAllOlympiads()
     {
-        return DB::table('olympiads', 'students')
-            ->select("olympiads.id", "olympiads.name" , "olympiads.hardness", "olympiads.deadline"
-                , DB::raw("COUNT(olym_user_links.id_user) as 'participants'"))
-            ->leftjoin('olym_user_links', 'olympiads.id', '=', 'olym_user_links.id_olympiad')
-            ->groupBy('olympiads.id')
-            ->get();
+        $olympiads = Olympiad::withCount('students')->get();
+        return $olympiads;
     }
 
     public static function addOlympiad($newOlympiad)
     {
-        DB::table('olympiads')->insert($newOlympiad);
+        Olympiad::insert($newOlympiad);
     }
 
-    public static function editOlympiad($olympiad){
-        DB::table('olympiads')->where('id', '=', $olympiad->id)
-            ->update(['name' => $olympiad->name,
-                'hardness' => $olympiad->hardness,
-                'deadline' => $olympiad->deadline]);
+    public static function editOlympiad($olympiad)
+    {
+        $put_olympiad = Olympiad::find($olympiad['id']);
+        $put_olympiad['name'] = $olympiad['name'];
+        $put_olympiad['hardness'] = $olympiad['hardness'];
+        $put_olympiad['deadline'] = $olympiad['deadline'];
+        $put_olympiad->save();
+
     }
 
-    public static function deleteOlympiad($olympiad){
-        DB::table('olym_user_links')->where('id_olympiad', '=', $olympiad)->delete();
-        DB::table('olympiads')->delete($olympiad);
+    public static function deleteOlympiad($olympiad)
+    {
+        $olympiad_del = Olympiad::find($olympiad);
+        $olympiad_del->students()->detach();
+        $olympiad_del->tasks()->delete($olympiad);
+        $olympiad_del->delete();
     }
 
 }

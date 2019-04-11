@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import * as actionCreators from '../actions/';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Provider } from 'react-redux';
+import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
+import {BrowserRouter as Router} from "react-router-dom";
+import OlympiadEdit from "./olympiadEdit";
 
 export class OlympiadList extends Component {
 
@@ -20,7 +24,7 @@ export class OlympiadList extends Component {
                             alert(data.error);
                         })
                 }
-            })
+            });
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
     }
@@ -52,7 +56,7 @@ export class OlympiadList extends Component {
                                 <td className = "name"> {olympiad.name} </td>
                                 <td className ="hardness"> {olympiad.hardness} </td>
                                 <td className = "deadline"> {olympiad.deadline} </td>
-                                <td className = "participants"> {olympiad.participants} </td>
+                                <td className = "participants"> {olympiad.students_count} </td>
                             </tr>))
                     }
                     </tbody>
@@ -129,18 +133,21 @@ export class OlympiadList extends Component {
                 <button className="edit" onClick={() => this.olympiadEdit(this.props, "edit")}>edit</button>
                 <button className="delete" onClick={() => this.olympiadEdit(this.props, "delete")}>delete</button>
                 <button className = {this.props.selectedOlympiad != -1 ? "show" : "hidden"} onClick={() => this.handleToTask(this.props.selectedOlympiad)} >to tasks</button>
+                <OlympiadEdit/>
             </div>
+
         );
     }
 }
 
 
-const mapStateToProps = function(state){
+const mapStateToProps = (state, ownProps) => {
     return {
         olympiads: state.olympiadStore.olympiads,
-        selectedOlympiad : state.olympiadStore.selectedOlympiad
+        selectedOlympiad : state.olympiadStore.selectedOlympiad,
+        ownProps
     }
-}
+};
 
 const mapDispatchToProps = function (dispatch) {
     return bindActionCreators({
@@ -148,6 +155,6 @@ const mapDispatchToProps = function (dispatch) {
         getOlympiad : actionCreators.getOlympiad,
         selectOlympiad : actionCreators.selectOlympiad,
     }, dispatch)
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(OlympiadList)

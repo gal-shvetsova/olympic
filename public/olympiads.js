@@ -28380,7 +28380,7 @@ function (_Component) {
           className: "deadline"
         }, " ", olympiad.deadline, " "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           className: "participants"
-        }, " ", olympiad.participants, " "));
+        }, " ", olympiad.students_count, " "));
       }))) : "Empty olympiad's list";
     }
   }, {

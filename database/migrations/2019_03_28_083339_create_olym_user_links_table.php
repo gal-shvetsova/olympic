@@ -15,8 +15,8 @@ class CreateOlymUserLinksTable extends Migration
     {
         Schema::create('olym_user_links', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('id_olympiad');
-            $table->integer('id_user');
+            $table->integer('id_olympiad')->references('id')->on('olympiads')->onDelete('cascade');
+            $table->integer('id_user')->references('id')->on('students')->onDelete('cascade');;
         });
     }
 

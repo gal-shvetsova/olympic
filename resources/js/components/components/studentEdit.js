@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import * as actionCreators from '../actions/';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import * as requestActionCreators from "../actions/requestActions";
 
-export  class UserEdit extends Component {
+export  class SEdit extends Component {
 
   handleChange(field) {
     const {user, getUserEdit } = this.props;
@@ -16,28 +17,11 @@ export  class UserEdit extends Component {
   }
 
   handleSubmit() {
-    const {user, getUser} = this.props;
-    const method = user.id ?  "PUT" : "POST";
-    fetch('api/user/', {
-      method,
-      body : JSON.stringify(user)})
-      .then(function(response) {
-        if (response.ok) {
-          fetch('api/user/')
-          .then(function(response){ 
-            if (response.ok){ 
-              response.json()
-              .then(v => getUser(v));
-            } else {
-              response.json()
-              .then(data => alert(data.error));
-            }
-          })
-        } else {
-          response.json()
-          .then(data => alert(data.error));
-        }
-      });
+    const {table, postTable, getTable} = this.props;
+    if (table.id)
+      postTable({name: "user", data : JSON.stringify(table), method : "PUT"}).then(getTable({name: "user"}));
+    else
+      postTable({name: "user", data : JSON.stringify(table), method : "POST", put_id : table.id}).then(getTable({name: "user"}));
     this.hide();
   }
 
@@ -79,8 +63,8 @@ const mapDispatchToProps = function (dispatch) {
   return bindActionCreators({
     getUserEdit : actionCreators.getUserEdit,
     getTaskEdit : actionCreators.getTaskEdit,
-    getUser : actionCreators.getUser,
-    getConformity : actionCreators.getConformity
+    postTable: requestActionCreators.postTable,
+    deleteTable : requestActionCreators.deleteTable
   }, dispatch)
 }
 

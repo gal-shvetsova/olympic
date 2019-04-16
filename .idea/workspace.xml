@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f2af424c-0c0c-4c44-9846-b3e093d0ce84" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/static.json" afterDir="false" />
-    </list>
+    <list default="true" id="f2af424c-0c0c-4c44-9846-b3e093d0ce84" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,8 +117,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/static.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="1" column="26" selection-start-line="1" selection-start-column="26" selection-end-line="1" selection-end-column="26" />
+            <state relative-caret-position="30">
+              <caret line="2" column="1" lean-forward="true" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
             </state>
           </provider>
         </entry>
@@ -447,12 +445,12 @@
       <workItem from="1553752920713" duration="65690000" />
       <workItem from="1554724453098" duration="34645000" />
       <workItem from="1554973038033" duration="32168000" />
-      <workItem from="1555385469547" duration="551000" />
+      <workItem from="1555385469547" duration="889000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="159089000" />
+    <option name="totallyTimeSpent" value="159427000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -465,9 +463,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.87112564" visible="true" weight="0.27725512" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.87112564" visible="true" weight="0.27725512" />
       <window_info id="Structure" order="1" sideWeight="0.12887439" side_tool="true" weight="0.28002214" />
       <window_info id="Favorites" order="2" sideWeight="0.5010799" side_tool="true" weight="0.2883232" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -480,7 +477,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32937366" />
-      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.8146098" visible="true" weight="0.2775378" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.8146098" visible="true" weight="0.2775378" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.18539014" side_tool="true" weight="0.28077754" />
       <window_info anchor="bottom" id="Database Console" order="12" weight="0.32937366" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -836,8 +833,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/static.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="26" selection-start-line="1" selection-start-column="26" selection-end-line="1" selection-end-column="26" />
+        <state relative-caret-position="30">
+          <caret line="2" column="1" lean-forward="true" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
         </state>
       </provider>
     </entry>

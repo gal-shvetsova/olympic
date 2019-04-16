@@ -16,26 +16,11 @@
 
 //Route::get('/olympiad', 'OlympiadController@olympiad');
 
-Route::any('/olympiad', function () {
-    return view('index');
-});
+Route::any('/olympiad', 'OlympiadController@olympiad');
 
-Route::any('/user', function () {
-    return view('index');
-});
+Route::any('/student', 'StudentController@student');
 
-Route::any('/task/{id}', function () {
-    return view('index');
-});
-//Route::get('/task/{id_olym}', 'TaskController@task');
-
-//Route::get('/task/', function() {
- //   return redirect('http://olympic.test/olympiad');
-//});
-
-//Route::get('/user', 'StudentController@user');
-
-//Route::get('/login', 'SiteController@login');
+Route::any('/task/{id}', 'TaskController@task');
 
 Auth::routes();
 

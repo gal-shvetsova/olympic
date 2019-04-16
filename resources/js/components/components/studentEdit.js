@@ -4,40 +4,39 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as requestActionCreators from "../actions/requestActions";
 
-export  class SEdit extends Component {
+export  class StudentEdit extends Component {
 
   handleChange(field) {
-    const {user, getUserEdit } = this.props;
-    //    this.props.getTaskEdit({}, -1, false);
+    const {table, getStudentEdit } = this.props;
     return (event) => {
       const change = {};
       change[field] = event.target.value;
-      getUserEdit(Object.assign({},user,change), true);
+      getStudentEdit(Object.assign({},table,change), true);
     };
   }
 
   handleSubmit() {
     const {table, postTable, getTable} = this.props;
-    if (table.id)
-      postTable({name: "user", data : JSON.stringify(table), method : "PUT"}).then(getTable({name: "user"}));
+    if (!table.id)
+      postTable({name: "student", data : JSON.stringify(table), method : "POST"}).then(getTable({name: "student"}));
     else
-      postTable({name: "user", data : JSON.stringify(table), method : "POST", put_id : table.id}).then(getTable({name: "user"}));
+      postTable({name: "student", data : JSON.stringify(table), method : "PUT", id : JSON.stringify(table.id)}).then(getTable({name: "student"}));
     this.hide();
   }
 
   hide() {
-      this.props.getUserEdit({},false);
+      this.props.getStudentEdit({},false);
   }
 
   render() {
-    const user = this.props.user;
+    const table = this.props.table;
       return (
       this.props.show ?
-      <div className = "userEdit">
+      <div className = "studentEdit">
         <p>Last name</p>
-        <input  type="text"  value={user.last_name || ""}  onChange={this.handleChange("last_name")}/>
+        <input  type="text"  value={table.last_name || ""}  onChange={this.handleChange("last_name")}/>
         <p>Role</p>
-        <select value={user.user_role || ""}  onChange={this.handleChange("user_role")}>
+        <select value={table.user_role || ""}  onChange={this.handleChange("user_role")}>
           <option value="admin">admin</option>
           <option value="student">student</option>
         </select>
@@ -54,14 +53,14 @@ export  class SEdit extends Component {
 
 const mapStateToProps = function(state){
   return {
-    user: state.userEditStore.user,
-    show : state.userEditStore.show,
+    table: state.studentEditStore.table,
+    show : state.studentEditStore.show,
   }
 }
 
 const mapDispatchToProps = function (dispatch) {
   return bindActionCreators({
-    getUserEdit : actionCreators.getUserEdit,
+    getStudentEdit : actionCreators.getStudentEdit,
     getTaskEdit : actionCreators.getTaskEdit,
     postTable: requestActionCreators.postTable,
     deleteTable : requestActionCreators.deleteTable
@@ -69,4 +68,4 @@ const mapDispatchToProps = function (dispatch) {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserEdit)
+export default connect(mapStateToProps, mapDispatchToProps)(StudentEdit)

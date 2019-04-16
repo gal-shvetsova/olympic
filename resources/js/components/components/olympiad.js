@@ -1,30 +1,17 @@
-import React, { Component } from 'react';
-import * as actionCreators from '../actions/';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { Provider } from 'react-redux';
-import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
-import {BrowserRouter as Router} from "react-router-dom";
+import React, {Component} from 'react';
+import * as actionCreators from '../actions/index.js';
+import * as requestActionCreators from '../actions/requestActions';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+
 import OlympiadEdit from "./olympiadEdit";
 
 export class OlympiadList extends Component {
 
     constructor(props) {
         super(props);
-        const getOlympiad = this.props.getOlympiad;
-        fetch('api/olympiad/')
-            .then(function(response){
-                if (response.ok) {
-                    response.json().then(v => getOlympiad(v));
-                }
-                else {
-                    response.json()
-                        .then(function(data){
-                            alert(data.error);
-                        })
-                }
-            });
+        const getTable = this.props.getTable;
+        getTable({name: "olympiad"});
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
     }
@@ -38,10 +25,10 @@ export class OlympiadList extends Component {
     }
 
     createOlympiadList() {
-        const {olympiads, selectedOlympiad} = this.props;
-        return olympiads ?
+        const {table, selectedOlympiad} = this.props;
+        return table ?
             (
-                <table border = "1">
+                <table border="1">
                     <tbody>
                     <tr>
                         <th>Name</th>
@@ -50,13 +37,13 @@ export class OlympiadList extends Component {
                         <th>Participants</th>
                     </tr>
                     {
-                        olympiads.map((olympiad) => (
-                            <tr key = {olympiad.id} className = {olympiad.id === selectedOlympiad ? "selected" : ""}
-                                onClick = {this.olympiadSelected(olympiad.id)}>
-                                <td className = "name"> {olympiad.name} </td>
-                                <td className ="hardness"> {olympiad.hardness} </td>
-                                <td className = "deadline"> {olympiad.deadline} </td>
-                                <td className = "participants"> {olympiad.students_count} </td>
+                        table.map((olympiad) => (
+                            <tr key={olympiad.id} className={olympiad.id === selectedOlympiad ? "selected" : ""}
+                                onClick={this.olympiadSelected(olympiad.id)}>
+                                <td className="name"> {olympiad.name} </td>
+                                <td className="hardness"> {olympiad.hardness} </td>
+                                <td className="deadline"> {olympiad.deadline} </td>
+                                <td className="participants"> {olympiad.students_count} </td>
                             </tr>))
                     }
                     </tbody>
@@ -65,40 +52,27 @@ export class OlympiadList extends Component {
     }
 
     handleDelete(olympiad) {
-        const {getOlympiad} = this.props;
-        fetch('api/olympiad/', {
-            method : "DELETE",
-            body : JSON.stringify(olympiad)
-        })
-            .then(function(response) {
-                if (response.ok) {
-                    fetch('api/olympiad/')
-                        .then(response => response.json())
-                        .then(v => getOlympiad(v));
-                } else {
-                    response.json()
-                        .then(data => alert(data.error));
-                }
-            });
+        const {deleteTable, getTable} = this.props;
+        deleteTable({name : "olympiad", data : olympiad});//.then(getTable({name : "olympiad"}));
     }
 
-    olympiadEdit(props,button){
+
+    olympiadEdit(props, button) {
         props.getOlympiadEdit({}, false);
-        if (button  != "edit" || props.selectedOlympiad != -1){
-            const olympiad = props.olympiads.find(v=>v.id === props.selectedOlympiad) || {};
+        if (button != "edit" || props.selectedOlympiad != -1) {
+            const olympiad = props.table.find(v => v.id === props.selectedOlympiad) || {};
             props.getOlympiadEdit(olympiad, true);
         }
         if (button == "add") {
             props.getOlympiadEdit({}, true);
         }
         if (button == "delete") {
-            const olympiad = props.olympiads.find(v=>v.id === props.selectedOlympiad) || {};
-            this.handleDelete(olympiad);
+            this.handleDelete(props.selectedOlympiad);
             props.getOlympiadEdit({}, false);
         }
     }
 
-    olympiadSelected(OLYMPIAD_ID){
+    olympiadSelected(OLYMPIAD_ID) {
         return () => {
             this.props.getOlympiadEdit({}, false);
             this.props.selectOlympiad(OLYMPIAD_ID);
@@ -121,7 +95,7 @@ export class OlympiadList extends Component {
     }
 
     handleToTask(id) {
-        window.location.href ="http://olympic.test/task/"+ id;
+        window.location.href = "http://olympic.test/task/" + id;
     }
 
     render() {
@@ -132,8 +106,10 @@ export class OlympiadList extends Component {
                 <button className="add" onClick={() => this.olympiadEdit(this.props, "add")}>add</button>
                 <button className="edit" onClick={() => this.olympiadEdit(this.props, "edit")}>edit</button>
                 <button className="delete" onClick={() => this.olympiadEdit(this.props, "delete")}>delete</button>
-                <button className = {this.props.selectedOlympiad != -1 ? "show" : "hidden"} onClick={() => this.handleToTask(this.props.selectedOlympiad)} >to tasks</button>
-                <OlympiadEdit/>
+                <button className={this.props.selectedOlympiad != -1 ? "show" : "hidden"}
+                        onClick={() => this.handleToTask(this.props.selectedOlympiad)}>to tasks
+                </button>
+                <OlympiadEdit getTable = {this.props.getTable}/>
             </div>
 
         );
@@ -143,17 +119,19 @@ export class OlympiadList extends Component {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        olympiads: state.olympiadStore.olympiads,
-        selectedOlympiad : state.olympiadStore.selectedOlympiad,
+        table: state.olympiadStore.table,
+        selectedOlympiad: state.olympiadStore.selectedOlympiad,
         ownProps
     }
 };
 
 const mapDispatchToProps = function (dispatch) {
     return bindActionCreators({
-        getOlympiadEdit : actionCreators.getOlympiadEdit,
-        getOlympiad : actionCreators.getOlympiad,
-        selectOlympiad : actionCreators.selectOlympiad,
+        getStateOlympiad: actionCreators.getStateOlympiad,
+        getOlympiadEdit: actionCreators.getOlympiadEdit,
+        getTable: requestActionCreators.getTable,
+        selectOlympiad: actionCreators.selectOlympiad,
+        deleteTable : requestActionCreators.deleteTable
     }, dispatch)
 };
 

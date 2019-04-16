@@ -13,26 +13,12 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/user', 'MiddlewareController@get')->middleware('auth:api');
 
-//olympiad
 
-Route::put('/olympiad','OlympiadController@update');
-Route::delete('/olympiad','OlympiadController@destroy');
 Route::resource('/olympiad', 'OlympiadController');
 
-//student
+Route::resource('/student', 'StudentController');
 
-Route::put('/user','StudentController@update');
-Route::delete('/user','StudentController@destroy');
-Route::resource('/user', 'StudentController');
-
-//tasks
-
-Route::post('/task/{id}','TaskController@store');
-Route::put('/task','TaskController@update');
-Route::delete('/task','TaskController@destroy');
 Route::resource('/task', 'TaskController');
 

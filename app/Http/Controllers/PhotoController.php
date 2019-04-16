@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Student;
 use Illuminate\Http\Request;
 
-class StudentController extends Controller
+class PhotoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,9 +13,17 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $response = Student::getAllStudents();
-        $answer = '{' . '"' ."table". '"' . ':' . $response . '}';
-        return response($answer, 200);
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
     }
 
     /**
@@ -27,9 +34,29 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        $content =$request->json()->all();
-        Student::addStudent($content);
-        return response(200);
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
     }
 
     /**
@@ -39,11 +66,9 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-        $json =$request->json()->all();
-        Student::editStudent($json);
-        return response(200);
+        //
     }
 
     /**
@@ -54,11 +79,6 @@ class StudentController extends Controller
      */
     public function destroy($id)
     {
-        Student::deleteStudent($id);
-        return response(200);
-    }
-
-    public function student(){
-        return view('index');
+        //
     }
 }

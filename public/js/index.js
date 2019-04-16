@@ -28739,7 +28739,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 /***/ "./resources/js/components/components/user.js":
 /*!****************************************************!*\
-  !*** ./resources/js/components/components/user.js ***!
+  !*** ./resources/js/components/components/student.js ***!
   \****************************************************/
 /*! exports provided: UserList, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -29007,14 +29007,14 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 /***/ "./resources/js/components/components/userEdit.js":
 /*!********************************************************!*\
-  !*** ./resources/js/components/components/userEdit.js ***!
+  !*** ./resources/js/components/components/studentEdit.js ***!
   \********************************************************/
-/*! exports provided: UserEdit, default */
+/*! exports provided: StudentEdit, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UserEdit", function() { return UserEdit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StudentEdit", function() { return UserEdit; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/ */ "./resources/js/components/actions/index.js");
@@ -29186,8 +29186,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
 /* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
-/* harmony import */ var _components_user__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/user */ "./resources/js/components/components/user.js");
-/* harmony import */ var _components_userEdit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/userEdit */ "./resources/js/components/components/userEdit.js");
+/* harmony import */ var _components_user__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/user */ "./resources/js/components/components/student.js");
+/* harmony import */ var _components_userEdit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/userEdit */ "./resources/js/components/components/studentEdit.js");
 /* harmony import */ var _components_taskEdit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/taskEdit */ "./resources/js/components/components/taskEdit.js");
 /* harmony import */ var _components_task__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/task */ "./resources/js/components/components/task.js");
 /* harmony import */ var _components_mainTable__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/mainTable */ "./resources/js/components/components/mainTable.js");

@@ -2,16 +2,14 @@ import React, {Component} from 'react';
 import * as actionCreators from '../actions/';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import ReactDOM from 'react-dom';
-import UserEdit from './userEdit';
-import OlympiadEdit from "./olympiad";
+import StudentEdit from './studentEdit';
 import * as requestActionCreators from '../actions/requestActions';
 
-export class UserList extends Component {
+export class StudentList extends Component {
 
     constructor(props) {
         super(props);
-        this.props.getTable({name: "user"});
+        this.props.getTable({name: "student"});
 
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
@@ -25,8 +23,8 @@ export class UserList extends Component {
         document.removeEventListener('mousedown', this.handleClickOutside);
     }
 
-    createUserList() {
-        const {table, selectedUser} = this.props;
+    createStudentList() {
+        const {table, selectedStudent} = this.props;
         return table ?
             (
                 <table border="1">
@@ -37,43 +35,43 @@ export class UserList extends Component {
                         <th>Olympiads</th>
                     </tr>
                     {
-                        table.map((user) => (
-                            <tr key={user.id} className={user.id === selectedUser ? "selected" : ""}
-                                onClick={this.userSelected(user.id)}>
-                                <td className="name"> {user.last_name} </td>
-                                <td className="role"> {user.user_role} </td>
-                                <td className="olympiads"> {user.olympiads} </td>
+                        table.map((student) => (
+                            <tr key={student.id} className={student.id === selectedStudent? "selected" : ""}
+                                onClick={this.studentSelected(student.id)}>
+                                <td className="name"> {student.last_name} </td>
+                                <td className="role"> {student.user_role} </td>
+                                <td className="olympiads"> {student.olympiads} </td>
                             </tr>))
                     }
                     </tbody>
                 </table>
-            ) : "Empty user's list";
+            ) : "Empty student's list";
     }
 
-    handleDelete(user) {  //find in olympiads table and delete
+    handleDelete(student) {
         const {deleteTable, getTable} = this.props;
-        deleteTable({name : "user", data : user});//.then(getTable({name : "olympiad"}));
+        deleteTable({name : "student", data : student}).then(getTable({name : "olympiad"}));
     }
 
-    userEdit(props, button) {
-        props.getUserEdit({}, false);
-        if (button != "edit" || props.selectedUser != -1) {
-            const user = props.table.find(v => v.id === props.selectedUser) || {};
-            props.getUserEdit(user, true);
+    studentEdit(props, button) {
+        props.getStudentEdit({}, false);
+        if (button != "edit" || props.selectedStudent != -1) {
+            const student = props.table.find(v => v.id === props.selectedStudent) || {};
+            props.getStudentEdit(student, true);
         }
         if (button == "add") {
-            props.getUserEdit({}, true);
+            props.getStudentEdit({}, true);
         }
         if (button == "delete") {
-            this.handleDelete(props.selectedUser);
-            props.getUserEdit({}, false);
+            this.handleDelete(props.selectedStudent);
+            props.getStudentEdit({}, false);
         }
     }
 
-    userSelected(USER_ID) {
+    studentSelected(STUDENT_ID) {
         return () => {
-            this.props.getUserEdit({}, false);
-            this.props.selectUser(USER_ID);
+            this.props.getStudentEdit({}, false);
+            this.props.selectStudent(STUDENT_ID);
         }
     }
 
@@ -82,26 +80,26 @@ export class UserList extends Component {
     }
 
     handleClickOutside(event) {
-        const userEdit = document.getElementsByClassName("userEdit")[0];
+        const studentEdit = document.getElementsByClassName("studentEdit")[0];
 
-        if (!event.path.includes(userEdit)) {
+        if (!event.path.includes(studentEdit)) {
             if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-                this.props.selectUser(-1);
-                this.props.getUserEdit({}, false);
+                this.props.selectStudent(-1);
+                this.props.getStudentEdit({}, false);
             }
         }
     }
 
     render() {
         return (
-            <div className="User" ref={this.setWrapperRef}>
-                <h4>Users</h4>
-                {this.createUserList()}
-                <button className="add" onClick={() => this.userEdit(this.props, "add")}>add</button>
-                <button className="edit" onClick={() => this.userEdit(this.props, "edit")}>edit</button>
-                <button className="delete" onClick={() => this.userEdit(this.props, "delete")}>delete</button>
+            <div className="Student" ref={this.setWrapperRef}>
+                <h4>Students</h4>
+                {this.createStudentList()}
+                <button className="add" onClick={() => this.studentEdit(this.props, "add")}>add</button>
+                <button className="edit" onClick={() => this.studentEdit(this.props, "edit")}>edit</button>
+                <button className="delete" onClick={() => this.studentEdit(this.props, "delete")}>delete</button>
                 <div>
-                    <UserEdit  getTable = {this.props.getTable}/>
+                    <StudentEdit  getTable = {this.props.getTable}/>
                 </div>
             </div>
         );
@@ -111,17 +109,17 @@ export class UserList extends Component {
 
 const mapStateToProps = function (state) {
     return {
-        table: state.userStore.table,
-        selectedUser: state.userStore.selectedUser
+        table: state.studentStore.table,
+        selectedStudent: state.studentStore.selectedStudent
     }
 }
 
 const mapDispatchToProps = function (dispatch) {
     return bindActionCreators({
-        getUserEdit: actionCreators.getUserEdit,
+        getStudentEdit: actionCreators.getStudentEdit,
         getTable: requestActionCreators.getTable,
-        selectUser: actionCreators.selectUser,
+        selectStudent: actionCreators.selectStudent,
     }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserList)
+export default connect(mapStateToProps, mapDispatchToProps)(StudentList)

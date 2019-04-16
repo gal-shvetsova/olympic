@@ -181,6 +181,1674 @@ function _objectWithoutPropertiesLoose(source, excluded) {
 
 /***/ }),
 
+/***/ "./node_modules/axios/index.js":
+/*!*************************************!*\
+  !*** ./node_modules/axios/index.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! ./lib/axios */ "./node_modules/axios/lib/axios.js");
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/adapters/xhr.js":
+/*!************************************************!*\
+  !*** ./node_modules/axios/lib/adapters/xhr.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(/*! ./../utils */ "./node_modules/axios/lib/utils.js");
+var settle = __webpack_require__(/*! ./../core/settle */ "./node_modules/axios/lib/core/settle.js");
+var buildURL = __webpack_require__(/*! ./../helpers/buildURL */ "./node_modules/axios/lib/helpers/buildURL.js");
+var parseHeaders = __webpack_require__(/*! ./../helpers/parseHeaders */ "./node_modules/axios/lib/helpers/parseHeaders.js");
+var isURLSameOrigin = __webpack_require__(/*! ./../helpers/isURLSameOrigin */ "./node_modules/axios/lib/helpers/isURLSameOrigin.js");
+var createError = __webpack_require__(/*! ../core/createError */ "./node_modules/axios/lib/core/createError.js");
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(/*! ./../helpers/btoa */ "./node_modules/axios/lib/helpers/btoa.js");
+
+module.exports = function xhrAdapter(config) {
+  return new Promise(function dispatchXhrRequest(resolve, reject) {
+    var requestData = config.data;
+    var requestHeaders = config.headers;
+
+    if (utils.isFormData(requestData)) {
+      delete requestHeaders['Content-Type']; // Let the browser set it
+    }
+
+    var request = new XMLHttpRequest();
+    var loadEvent = 'onreadystatechange';
+    var xDomain = false;
+
+    // For IE 8/9 CORS support
+    // Only supports POST and GET calls and doesn't returns the response headers.
+    // DON'T do this for testing b/c XMLHttpRequest is mocked, not XDomainRequest.
+    if ( true &&
+        typeof window !== 'undefined' &&
+        window.XDomainRequest && !('withCredentials' in request) &&
+        !isURLSameOrigin(config.url)) {
+      request = new window.XDomainRequest();
+      loadEvent = 'onload';
+      xDomain = true;
+      request.onprogress = function handleProgress() {};
+      request.ontimeout = function handleTimeout() {};
+    }
+
+    // HTTP basic authentication
+    if (config.auth) {
+      var username = config.auth.username || '';
+      var password = config.auth.password || '';
+      requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
+    }
+
+    request.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer), true);
+
+    // Set the request timeout in MS
+    request.timeout = config.timeout;
+
+    // Listen for ready state
+    request[loadEvent] = function handleLoad() {
+      if (!request || (request.readyState !== 4 && !xDomain)) {
+        return;
+      }
+
+      // The request errored out and we didn't get a response, this will be
+      // handled by onerror instead
+      // With one exception: request that using file: protocol, most browsers
+      // will return status as 0 even though it's a successful request
+      if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
+        return;
+      }
+
+      // Prepare the response
+      var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
+      var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
+      var response = {
+        data: responseData,
+        // IE sends 1223 instead of 204 (https://github.com/axios/axios/issues/201)
+        status: request.status === 1223 ? 204 : request.status,
+        statusText: request.status === 1223 ? 'No Content' : request.statusText,
+        headers: responseHeaders,
+        config: config,
+        request: request
+      };
+
+      settle(resolve, reject, response);
+
+      // Clean up request
+      request = null;
+    };
+
+    // Handle low level network errors
+    request.onerror = function handleError() {
+      // Real errors are hidden from us by the browser
+      // onerror should only fire if it's a network error
+      reject(createError('Network Error', config, null, request));
+
+      // Clean up request
+      request = null;
+    };
+
+    // Handle timeout
+    request.ontimeout = function handleTimeout() {
+      reject(createError('timeout of ' + config.timeout + 'ms exceeded', config, 'ECONNABORTED',
+        request));
+
+      // Clean up request
+      request = null;
+    };
+
+    // Add xsrf header
+    // This is only done if running in a standard browser environment.
+    // Specifically not if we're in a web worker, or react-native.
+    if (utils.isStandardBrowserEnv()) {
+      var cookies = __webpack_require__(/*! ./../helpers/cookies */ "./node_modules/axios/lib/helpers/cookies.js");
+
+      // Add xsrf header
+      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
+          cookies.read(config.xsrfCookieName) :
+          undefined;
+
+      if (xsrfValue) {
+        requestHeaders[config.xsrfHeaderName] = xsrfValue;
+      }
+    }
+
+    // Add headers to the request
+    if ('setRequestHeader' in request) {
+      utils.forEach(requestHeaders, function setRequestHeader(val, key) {
+        if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
+          // Remove Content-Type if data is undefined
+          delete requestHeaders[key];
+        } else {
+          // Otherwise add header to the request
+          request.setRequestHeader(key, val);
+        }
+      });
+    }
+
+    // Add withCredentials to request if needed
+    if (config.withCredentials) {
+      request.withCredentials = true;
+    }
+
+    // Add responseType to request if needed
+    if (config.responseType) {
+      try {
+        request.responseType = config.responseType;
+      } catch (e) {
+        // Expected DOMException thrown by browsers not compatible XMLHttpRequest Level 2.
+        // But, this can be suppressed for 'json' type as it can be parsed by default 'transformResponse' function.
+        if (config.responseType !== 'json') {
+          throw e;
+        }
+      }
+    }
+
+    // Handle progress if needed
+    if (typeof config.onDownloadProgress === 'function') {
+      request.addEventListener('progress', config.onDownloadProgress);
+    }
+
+    // Not all browsers support upload events
+    if (typeof config.onUploadProgress === 'function' && request.upload) {
+      request.upload.addEventListener('progress', config.onUploadProgress);
+    }
+
+    if (config.cancelToken) {
+      // Handle cancellation
+      config.cancelToken.promise.then(function onCanceled(cancel) {
+        if (!request) {
+          return;
+        }
+
+        request.abort();
+        reject(cancel);
+        // Clean up request
+        request = null;
+      });
+    }
+
+    if (requestData === undefined) {
+      requestData = null;
+    }
+
+    // Send the request
+    request.send(requestData);
+  });
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/axios.js":
+/*!*****************************************!*\
+  !*** ./node_modules/axios/lib/axios.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(/*! ./utils */ "./node_modules/axios/lib/utils.js");
+var bind = __webpack_require__(/*! ./helpers/bind */ "./node_modules/axios/lib/helpers/bind.js");
+var Axios = __webpack_require__(/*! ./core/Axios */ "./node_modules/axios/lib/core/Axios.js");
+var defaults = __webpack_require__(/*! ./defaults */ "./node_modules/axios/lib/defaults.js");
+
+/**
+ * Create an instance of Axios
+ *
+ * @param {Object} defaultConfig The default config for the instance
+ * @return {Axios} A new instance of Axios
+ */
+function createInstance(defaultConfig) {
+  var context = new Axios(defaultConfig);
+  var instance = bind(Axios.prototype.request, context);
+
+  // Copy axios.prototype to instance
+  utils.extend(instance, Axios.prototype, context);
+
+  // Copy context to instance
+  utils.extend(instance, context);
+
+  return instance;
+}
+
+// Create the default instance to be exported
+var axios = createInstance(defaults);
+
+// Expose Axios class to allow class inheritance
+axios.Axios = Axios;
+
+// Factory for creating new instances
+axios.create = function create(instanceConfig) {
+  return createInstance(utils.merge(defaults, instanceConfig));
+};
+
+// Expose Cancel & CancelToken
+axios.Cancel = __webpack_require__(/*! ./cancel/Cancel */ "./node_modules/axios/lib/cancel/Cancel.js");
+axios.CancelToken = __webpack_require__(/*! ./cancel/CancelToken */ "./node_modules/axios/lib/cancel/CancelToken.js");
+axios.isCancel = __webpack_require__(/*! ./cancel/isCancel */ "./node_modules/axios/lib/cancel/isCancel.js");
+
+// Expose all/spread
+axios.all = function all(promises) {
+  return Promise.all(promises);
+};
+axios.spread = __webpack_require__(/*! ./helpers/spread */ "./node_modules/axios/lib/helpers/spread.js");
+
+module.exports = axios;
+
+// Allow use of default import syntax in TypeScript
+module.exports.default = axios;
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/cancel/Cancel.js":
+/*!*************************************************!*\
+  !*** ./node_modules/axios/lib/cancel/Cancel.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * A `Cancel` is an object that is thrown when an operation is canceled.
+ *
+ * @class
+ * @param {string=} message The message.
+ */
+function Cancel(message) {
+  this.message = message;
+}
+
+Cancel.prototype.toString = function toString() {
+  return 'Cancel' + (this.message ? ': ' + this.message : '');
+};
+
+Cancel.prototype.__CANCEL__ = true;
+
+module.exports = Cancel;
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/cancel/CancelToken.js":
+/*!******************************************************!*\
+  !*** ./node_modules/axios/lib/cancel/CancelToken.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Cancel = __webpack_require__(/*! ./Cancel */ "./node_modules/axios/lib/cancel/Cancel.js");
+
+/**
+ * A `CancelToken` is an object that can be used to request cancellation of an operation.
+ *
+ * @class
+ * @param {Function} executor The executor function.
+ */
+function CancelToken(executor) {
+  if (typeof executor !== 'function') {
+    throw new TypeError('executor must be a function.');
+  }
+
+  var resolvePromise;
+  this.promise = new Promise(function promiseExecutor(resolve) {
+    resolvePromise = resolve;
+  });
+
+  var token = this;
+  executor(function cancel(message) {
+    if (token.reason) {
+      // Cancellation has already been requested
+      return;
+    }
+
+    token.reason = new Cancel(message);
+    resolvePromise(token.reason);
+  });
+}
+
+/**
+ * Throws a `Cancel` if cancellation has been requested.
+ */
+CancelToken.prototype.throwIfRequested = function throwIfRequested() {
+  if (this.reason) {
+    throw this.reason;
+  }
+};
+
+/**
+ * Returns an object that contains a new `CancelToken` and a function that, when called,
+ * cancels the `CancelToken`.
+ */
+CancelToken.source = function source() {
+  var cancel;
+  var token = new CancelToken(function executor(c) {
+    cancel = c;
+  });
+  return {
+    token: token,
+    cancel: cancel
+  };
+};
+
+module.exports = CancelToken;
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/cancel/isCancel.js":
+/*!***************************************************!*\
+  !*** ./node_modules/axios/lib/cancel/isCancel.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function isCancel(value) {
+  return !!(value && value.__CANCEL__);
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/core/Axios.js":
+/*!**********************************************!*\
+  !*** ./node_modules/axios/lib/core/Axios.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var defaults = __webpack_require__(/*! ./../defaults */ "./node_modules/axios/lib/defaults.js");
+var utils = __webpack_require__(/*! ./../utils */ "./node_modules/axios/lib/utils.js");
+var InterceptorManager = __webpack_require__(/*! ./InterceptorManager */ "./node_modules/axios/lib/core/InterceptorManager.js");
+var dispatchRequest = __webpack_require__(/*! ./dispatchRequest */ "./node_modules/axios/lib/core/dispatchRequest.js");
+
+/**
+ * Create a new instance of Axios
+ *
+ * @param {Object} instanceConfig The default config for the instance
+ */
+function Axios(instanceConfig) {
+  this.defaults = instanceConfig;
+  this.interceptors = {
+    request: new InterceptorManager(),
+    response: new InterceptorManager()
+  };
+}
+
+/**
+ * Dispatch a request
+ *
+ * @param {Object} config The config specific for this request (merged with this.defaults)
+ */
+Axios.prototype.request = function request(config) {
+  /*eslint no-param-reassign:0*/
+  // Allow for axios('example/url'[, config]) a la fetch API
+  if (typeof config === 'string') {
+    config = utils.merge({
+      url: arguments[0]
+    }, arguments[1]);
+  }
+
+  config = utils.merge(defaults, {method: 'get'}, this.defaults, config);
+  config.method = config.method.toLowerCase();
+
+  // Hook up interceptors middleware
+  var chain = [dispatchRequest, undefined];
+  var promise = Promise.resolve(config);
+
+  this.interceptors.request.forEach(function unshiftRequestInterceptors(interceptor) {
+    chain.unshift(interceptor.fulfilled, interceptor.rejected);
+  });
+
+  this.interceptors.response.forEach(function pushResponseInterceptors(interceptor) {
+    chain.push(interceptor.fulfilled, interceptor.rejected);
+  });
+
+  while (chain.length) {
+    promise = promise.then(chain.shift(), chain.shift());
+  }
+
+  return promise;
+};
+
+// Provide aliases for supported request methods
+utils.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData(method) {
+  /*eslint func-names:0*/
+  Axios.prototype[method] = function(url, config) {
+    return this.request(utils.merge(config || {}, {
+      method: method,
+      url: url
+    }));
+  };
+});
+
+utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+  /*eslint func-names:0*/
+  Axios.prototype[method] = function(url, data, config) {
+    return this.request(utils.merge(config || {}, {
+      method: method,
+      url: url,
+      data: data
+    }));
+  };
+});
+
+module.exports = Axios;
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/core/InterceptorManager.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/axios/lib/core/InterceptorManager.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(/*! ./../utils */ "./node_modules/axios/lib/utils.js");
+
+function InterceptorManager() {
+  this.handlers = [];
+}
+
+/**
+ * Add a new interceptor to the stack
+ *
+ * @param {Function} fulfilled The function to handle `then` for a `Promise`
+ * @param {Function} rejected The function to handle `reject` for a `Promise`
+ *
+ * @return {Number} An ID used to remove interceptor later
+ */
+InterceptorManager.prototype.use = function use(fulfilled, rejected) {
+  this.handlers.push({
+    fulfilled: fulfilled,
+    rejected: rejected
+  });
+  return this.handlers.length - 1;
+};
+
+/**
+ * Remove an interceptor from the stack
+ *
+ * @param {Number} id The ID that was returned by `use`
+ */
+InterceptorManager.prototype.eject = function eject(id) {
+  if (this.handlers[id]) {
+    this.handlers[id] = null;
+  }
+};
+
+/**
+ * Iterate over all the registered interceptors
+ *
+ * This method is particularly useful for skipping over any
+ * interceptors that may have become `null` calling `eject`.
+ *
+ * @param {Function} fn The function to call for each interceptor
+ */
+InterceptorManager.prototype.forEach = function forEach(fn) {
+  utils.forEach(this.handlers, function forEachHandler(h) {
+    if (h !== null) {
+      fn(h);
+    }
+  });
+};
+
+module.exports = InterceptorManager;
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/core/createError.js":
+/*!****************************************************!*\
+  !*** ./node_modules/axios/lib/core/createError.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var enhanceError = __webpack_require__(/*! ./enhanceError */ "./node_modules/axios/lib/core/enhanceError.js");
+
+/**
+ * Create an Error with the specified message, config, error code, request and response.
+ *
+ * @param {string} message The error message.
+ * @param {Object} config The config.
+ * @param {string} [code] The error code (for example, 'ECONNABORTED').
+ * @param {Object} [request] The request.
+ * @param {Object} [response] The response.
+ * @returns {Error} The created error.
+ */
+module.exports = function createError(message, config, code, request, response) {
+  var error = new Error(message);
+  return enhanceError(error, config, code, request, response);
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/core/dispatchRequest.js":
+/*!********************************************************!*\
+  !*** ./node_modules/axios/lib/core/dispatchRequest.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(/*! ./../utils */ "./node_modules/axios/lib/utils.js");
+var transformData = __webpack_require__(/*! ./transformData */ "./node_modules/axios/lib/core/transformData.js");
+var isCancel = __webpack_require__(/*! ../cancel/isCancel */ "./node_modules/axios/lib/cancel/isCancel.js");
+var defaults = __webpack_require__(/*! ../defaults */ "./node_modules/axios/lib/defaults.js");
+var isAbsoluteURL = __webpack_require__(/*! ./../helpers/isAbsoluteURL */ "./node_modules/axios/lib/helpers/isAbsoluteURL.js");
+var combineURLs = __webpack_require__(/*! ./../helpers/combineURLs */ "./node_modules/axios/lib/helpers/combineURLs.js");
+
+/**
+ * Throws a `Cancel` if cancellation has been requested.
+ */
+function throwIfCancellationRequested(config) {
+  if (config.cancelToken) {
+    config.cancelToken.throwIfRequested();
+  }
+}
+
+/**
+ * Dispatch a request to the server using the configured adapter.
+ *
+ * @param {object} config The config that is to be used for the request
+ * @returns {Promise} The Promise to be fulfilled
+ */
+module.exports = function dispatchRequest(config) {
+  throwIfCancellationRequested(config);
+
+  // Support baseURL config
+  if (config.baseURL && !isAbsoluteURL(config.url)) {
+    config.url = combineURLs(config.baseURL, config.url);
+  }
+
+  // Ensure headers exist
+  config.headers = config.headers || {};
+
+  // Transform request data
+  config.data = transformData(
+    config.data,
+    config.headers,
+    config.transformRequest
+  );
+
+  // Flatten headers
+  config.headers = utils.merge(
+    config.headers.common || {},
+    config.headers[config.method] || {},
+    config.headers || {}
+  );
+
+  utils.forEach(
+    ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
+    function cleanHeaderConfig(method) {
+      delete config.headers[method];
+    }
+  );
+
+  var adapter = config.adapter || defaults.adapter;
+
+  return adapter(config).then(function onAdapterResolution(response) {
+    throwIfCancellationRequested(config);
+
+    // Transform response data
+    response.data = transformData(
+      response.data,
+      response.headers,
+      config.transformResponse
+    );
+
+    return response;
+  }, function onAdapterRejection(reason) {
+    if (!isCancel(reason)) {
+      throwIfCancellationRequested(config);
+
+      // Transform response data
+      if (reason && reason.response) {
+        reason.response.data = transformData(
+          reason.response.data,
+          reason.response.headers,
+          config.transformResponse
+        );
+      }
+    }
+
+    return Promise.reject(reason);
+  });
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/core/enhanceError.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/axios/lib/core/enhanceError.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Update an Error with the specified config, error code, and response.
+ *
+ * @param {Error} error The error to update.
+ * @param {Object} config The config.
+ * @param {string} [code] The error code (for example, 'ECONNABORTED').
+ * @param {Object} [request] The request.
+ * @param {Object} [response] The response.
+ * @returns {Error} The error.
+ */
+module.exports = function enhanceError(error, config, code, request, response) {
+  error.config = config;
+  if (code) {
+    error.code = code;
+  }
+  error.request = request;
+  error.response = response;
+  return error;
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/core/settle.js":
+/*!***********************************************!*\
+  !*** ./node_modules/axios/lib/core/settle.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var createError = __webpack_require__(/*! ./createError */ "./node_modules/axios/lib/core/createError.js");
+
+/**
+ * Resolve or reject a Promise based on response status.
+ *
+ * @param {Function} resolve A function that resolves the promise.
+ * @param {Function} reject A function that rejects the promise.
+ * @param {object} response The response.
+ */
+module.exports = function settle(resolve, reject, response) {
+  var validateStatus = response.config.validateStatus;
+  // Note: status is not exposed by XDomainRequest
+  if (!response.status || !validateStatus || validateStatus(response.status)) {
+    resolve(response);
+  } else {
+    reject(createError(
+      'Request failed with status code ' + response.status,
+      response.config,
+      null,
+      response.request,
+      response
+    ));
+  }
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/core/transformData.js":
+/*!******************************************************!*\
+  !*** ./node_modules/axios/lib/core/transformData.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(/*! ./../utils */ "./node_modules/axios/lib/utils.js");
+
+/**
+ * Transform the data for a request or a response
+ *
+ * @param {Object|String} data The data to be transformed
+ * @param {Array} headers The headers for the request or response
+ * @param {Array|Function} fns A single function or Array of functions
+ * @returns {*} The resulting transformed data
+ */
+module.exports = function transformData(data, headers, fns) {
+  /*eslint no-param-reassign:0*/
+  utils.forEach(fns, function transform(fn) {
+    data = fn(data, headers);
+  });
+
+  return data;
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/defaults.js":
+/*!********************************************!*\
+  !*** ./node_modules/axios/lib/defaults.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+var utils = __webpack_require__(/*! ./utils */ "./node_modules/axios/lib/utils.js");
+var normalizeHeaderName = __webpack_require__(/*! ./helpers/normalizeHeaderName */ "./node_modules/axios/lib/helpers/normalizeHeaderName.js");
+
+var DEFAULT_CONTENT_TYPE = {
+  'Content-Type': 'application/x-www-form-urlencoded'
+};
+
+function setContentTypeIfUnset(headers, value) {
+  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
+    headers['Content-Type'] = value;
+  }
+}
+
+function getDefaultAdapter() {
+  var adapter;
+  if (typeof XMLHttpRequest !== 'undefined') {
+    // For browsers use XHR adapter
+    adapter = __webpack_require__(/*! ./adapters/xhr */ "./node_modules/axios/lib/adapters/xhr.js");
+  } else if (typeof process !== 'undefined') {
+    // For node use HTTP adapter
+    adapter = __webpack_require__(/*! ./adapters/http */ "./node_modules/axios/lib/adapters/xhr.js");
+  }
+  return adapter;
+}
+
+var defaults = {
+  adapter: getDefaultAdapter(),
+
+  transformRequest: [function transformRequest(data, headers) {
+    normalizeHeaderName(headers, 'Content-Type');
+    if (utils.isFormData(data) ||
+      utils.isArrayBuffer(data) ||
+      utils.isBuffer(data) ||
+      utils.isStream(data) ||
+      utils.isFile(data) ||
+      utils.isBlob(data)
+    ) {
+      return data;
+    }
+    if (utils.isArrayBufferView(data)) {
+      return data.buffer;
+    }
+    if (utils.isURLSearchParams(data)) {
+      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
+      return data.toString();
+    }
+    if (utils.isObject(data)) {
+      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
+      return JSON.stringify(data);
+    }
+    return data;
+  }],
+
+  transformResponse: [function transformResponse(data) {
+    /*eslint no-param-reassign:0*/
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data);
+      } catch (e) { /* Ignore */ }
+    }
+    return data;
+  }],
+
+  /**
+   * A timeout in milliseconds to abort a request. If set to 0 (default) a
+   * timeout is not created.
+   */
+  timeout: 0,
+
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
+
+  maxContentLength: -1,
+
+  validateStatus: function validateStatus(status) {
+    return status >= 200 && status < 300;
+  }
+};
+
+defaults.headers = {
+  common: {
+    'Accept': 'application/json, text/plain, */*'
+  }
+};
+
+utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
+  defaults.headers[method] = {};
+});
+
+utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
+});
+
+module.exports = defaults;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../process/browser.js */ "./node_modules/process/browser.js")))
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/helpers/bind.js":
+/*!************************************************!*\
+  !*** ./node_modules/axios/lib/helpers/bind.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function bind(fn, thisArg) {
+  return function wrap() {
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; i++) {
+      args[i] = arguments[i];
+    }
+    return fn.apply(thisArg, args);
+  };
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/helpers/btoa.js":
+/*!************************************************!*\
+  !*** ./node_modules/axios/lib/helpers/btoa.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// btoa polyfill for IE<10 courtesy https://github.com/davidchambers/Base64.js
+
+var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+function E() {
+  this.message = 'String contains an invalid character';
+}
+E.prototype = new Error;
+E.prototype.code = 5;
+E.prototype.name = 'InvalidCharacterError';
+
+function btoa(input) {
+  var str = String(input);
+  var output = '';
+  for (
+    // initialize result and counter
+    var block, charCode, idx = 0, map = chars;
+    // if the next str index does not exist:
+    //   change the mapping table to "="
+    //   check if d has no fractional digits
+    str.charAt(idx | 0) || (map = '=', idx % 1);
+    // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+    output += map.charAt(63 & block >> 8 - idx % 1 * 8)
+  ) {
+    charCode = str.charCodeAt(idx += 3 / 4);
+    if (charCode > 0xFF) {
+      throw new E();
+    }
+    block = block << 8 | charCode;
+  }
+  return output;
+}
+
+module.exports = btoa;
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/helpers/buildURL.js":
+/*!****************************************************!*\
+  !*** ./node_modules/axios/lib/helpers/buildURL.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(/*! ./../utils */ "./node_modules/axios/lib/utils.js");
+
+function encode(val) {
+  return encodeURIComponent(val).
+    replace(/%40/gi, '@').
+    replace(/%3A/gi, ':').
+    replace(/%24/g, '$').
+    replace(/%2C/gi, ',').
+    replace(/%20/g, '+').
+    replace(/%5B/gi, '[').
+    replace(/%5D/gi, ']');
+}
+
+/**
+ * Build a URL by appending params to the end
+ *
+ * @param {string} url The base of the url (e.g., http://www.google.com)
+ * @param {object} [params] The params to be appended
+ * @returns {string} The formatted url
+ */
+module.exports = function buildURL(url, params, paramsSerializer) {
+  /*eslint no-param-reassign:0*/
+  if (!params) {
+    return url;
+  }
+
+  var serializedParams;
+  if (paramsSerializer) {
+    serializedParams = paramsSerializer(params);
+  } else if (utils.isURLSearchParams(params)) {
+    serializedParams = params.toString();
+  } else {
+    var parts = [];
+
+    utils.forEach(params, function serialize(val, key) {
+      if (val === null || typeof val === 'undefined') {
+        return;
+      }
+
+      if (utils.isArray(val)) {
+        key = key + '[]';
+      } else {
+        val = [val];
+      }
+
+      utils.forEach(val, function parseValue(v) {
+        if (utils.isDate(v)) {
+          v = v.toISOString();
+        } else if (utils.isObject(v)) {
+          v = JSON.stringify(v);
+        }
+        parts.push(encode(key) + '=' + encode(v));
+      });
+    });
+
+    serializedParams = parts.join('&');
+  }
+
+  if (serializedParams) {
+    url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
+  }
+
+  return url;
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/helpers/combineURLs.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/axios/lib/helpers/combineURLs.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Creates a new URL by combining the specified URLs
+ *
+ * @param {string} baseURL The base URL
+ * @param {string} relativeURL The relative URL
+ * @returns {string} The combined URL
+ */
+module.exports = function combineURLs(baseURL, relativeURL) {
+  return relativeURL
+    ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
+    : baseURL;
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/helpers/cookies.js":
+/*!***************************************************!*\
+  !*** ./node_modules/axios/lib/helpers/cookies.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(/*! ./../utils */ "./node_modules/axios/lib/utils.js");
+
+module.exports = (
+  utils.isStandardBrowserEnv() ?
+
+  // Standard browser envs support document.cookie
+  (function standardBrowserEnv() {
+    return {
+      write: function write(name, value, expires, path, domain, secure) {
+        var cookie = [];
+        cookie.push(name + '=' + encodeURIComponent(value));
+
+        if (utils.isNumber(expires)) {
+          cookie.push('expires=' + new Date(expires).toGMTString());
+        }
+
+        if (utils.isString(path)) {
+          cookie.push('path=' + path);
+        }
+
+        if (utils.isString(domain)) {
+          cookie.push('domain=' + domain);
+        }
+
+        if (secure === true) {
+          cookie.push('secure');
+        }
+
+        document.cookie = cookie.join('; ');
+      },
+
+      read: function read(name) {
+        var match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+        return (match ? decodeURIComponent(match[3]) : null);
+      },
+
+      remove: function remove(name) {
+        this.write(name, '', Date.now() - 86400000);
+      }
+    };
+  })() :
+
+  // Non standard browser env (web workers, react-native) lack needed support.
+  (function nonStandardBrowserEnv() {
+    return {
+      write: function write() {},
+      read: function read() { return null; },
+      remove: function remove() {}
+    };
+  })()
+);
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/helpers/isAbsoluteURL.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/axios/lib/helpers/isAbsoluteURL.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Determines whether the specified URL is absolute
+ *
+ * @param {string} url The URL to test
+ * @returns {boolean} True if the specified URL is absolute, otherwise false
+ */
+module.exports = function isAbsoluteURL(url) {
+  // A URL is considered absolute if it begins with "<scheme>://" or "//" (protocol-relative URL).
+  // RFC 3986 defines scheme name as a sequence of characters beginning with a letter and followed
+  // by any combination of letters, digits, plus, period, or hyphen.
+  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/helpers/isURLSameOrigin.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/axios/lib/helpers/isURLSameOrigin.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(/*! ./../utils */ "./node_modules/axios/lib/utils.js");
+
+module.exports = (
+  utils.isStandardBrowserEnv() ?
+
+  // Standard browser envs have full support of the APIs needed to test
+  // whether the request URL is of the same origin as current location.
+  (function standardBrowserEnv() {
+    var msie = /(msie|trident)/i.test(navigator.userAgent);
+    var urlParsingNode = document.createElement('a');
+    var originURL;
+
+    /**
+    * Parse a URL to discover it's components
+    *
+    * @param {String} url The URL to be parsed
+    * @returns {Object}
+    */
+    function resolveURL(url) {
+      var href = url;
+
+      if (msie) {
+        // IE needs attribute set twice to normalize properties
+        urlParsingNode.setAttribute('href', href);
+        href = urlParsingNode.href;
+      }
+
+      urlParsingNode.setAttribute('href', href);
+
+      // urlParsingNode provides the UrlUtils interface - http://url.spec.whatwg.org/#urlutils
+      return {
+        href: urlParsingNode.href,
+        protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, '') : '',
+        host: urlParsingNode.host,
+        search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, '') : '',
+        hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, '') : '',
+        hostname: urlParsingNode.hostname,
+        port: urlParsingNode.port,
+        pathname: (urlParsingNode.pathname.charAt(0) === '/') ?
+                  urlParsingNode.pathname :
+                  '/' + urlParsingNode.pathname
+      };
+    }
+
+    originURL = resolveURL(window.location.href);
+
+    /**
+    * Determine if a URL shares the same origin as the current location
+    *
+    * @param {String} requestURL The URL to test
+    * @returns {boolean} True if URL shares the same origin, otherwise false
+    */
+    return function isURLSameOrigin(requestURL) {
+      var parsed = (utils.isString(requestURL)) ? resolveURL(requestURL) : requestURL;
+      return (parsed.protocol === originURL.protocol &&
+            parsed.host === originURL.host);
+    };
+  })() :
+
+  // Non standard browser envs (web workers, react-native) lack needed support.
+  (function nonStandardBrowserEnv() {
+    return function isURLSameOrigin() {
+      return true;
+    };
+  })()
+);
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/helpers/normalizeHeaderName.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/axios/lib/helpers/normalizeHeaderName.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(/*! ../utils */ "./node_modules/axios/lib/utils.js");
+
+module.exports = function normalizeHeaderName(headers, normalizedName) {
+  utils.forEach(headers, function processHeader(value, name) {
+    if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
+      headers[normalizedName] = value;
+      delete headers[name];
+    }
+  });
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/helpers/parseHeaders.js":
+/*!********************************************************!*\
+  !*** ./node_modules/axios/lib/helpers/parseHeaders.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(/*! ./../utils */ "./node_modules/axios/lib/utils.js");
+
+// Headers whose duplicates are ignored by node
+// c.f. https://nodejs.org/api/http.html#http_message_headers
+var ignoreDuplicateOf = [
+  'age', 'authorization', 'content-length', 'content-type', 'etag',
+  'expires', 'from', 'host', 'if-modified-since', 'if-unmodified-since',
+  'last-modified', 'location', 'max-forwards', 'proxy-authorization',
+  'referer', 'retry-after', 'user-agent'
+];
+
+/**
+ * Parse headers into an object
+ *
+ * ```
+ * Date: Wed, 27 Aug 2014 08:58:49 GMT
+ * Content-Type: application/json
+ * Connection: keep-alive
+ * Transfer-Encoding: chunked
+ * ```
+ *
+ * @param {String} headers Headers needing to be parsed
+ * @returns {Object} Headers parsed into an object
+ */
+module.exports = function parseHeaders(headers) {
+  var parsed = {};
+  var key;
+  var val;
+  var i;
+
+  if (!headers) { return parsed; }
+
+  utils.forEach(headers.split('\n'), function parser(line) {
+    i = line.indexOf(':');
+    key = utils.trim(line.substr(0, i)).toLowerCase();
+    val = utils.trim(line.substr(i + 1));
+
+    if (key) {
+      if (parsed[key] && ignoreDuplicateOf.indexOf(key) >= 0) {
+        return;
+      }
+      if (key === 'set-cookie') {
+        parsed[key] = (parsed[key] ? parsed[key] : []).concat([val]);
+      } else {
+        parsed[key] = parsed[key] ? parsed[key] + ', ' + val : val;
+      }
+    }
+  });
+
+  return parsed;
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/helpers/spread.js":
+/*!**************************************************!*\
+  !*** ./node_modules/axios/lib/helpers/spread.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Syntactic sugar for invoking a function and expanding an array for arguments.
+ *
+ * Common use case would be to use `Function.prototype.apply`.
+ *
+ *  ```js
+ *  function f(x, y, z) {}
+ *  var args = [1, 2, 3];
+ *  f.apply(null, args);
+ *  ```
+ *
+ * With `spread` this example can be re-written.
+ *
+ *  ```js
+ *  spread(function(x, y, z) {})([1, 2, 3]);
+ *  ```
+ *
+ * @param {Function} callback
+ * @returns {Function}
+ */
+module.exports = function spread(callback) {
+  return function wrap(arr) {
+    return callback.apply(null, arr);
+  };
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/axios/lib/utils.js":
+/*!*****************************************!*\
+  !*** ./node_modules/axios/lib/utils.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var bind = __webpack_require__(/*! ./helpers/bind */ "./node_modules/axios/lib/helpers/bind.js");
+var isBuffer = __webpack_require__(/*! is-buffer */ "./node_modules/is-buffer/index.js");
+
+/*global toString:true*/
+
+// utils is a library of generic helper functions non-specific to axios
+
+var toString = Object.prototype.toString;
+
+/**
+ * Determine if a value is an Array
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is an Array, otherwise false
+ */
+function isArray(val) {
+  return toString.call(val) === '[object Array]';
+}
+
+/**
+ * Determine if a value is an ArrayBuffer
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is an ArrayBuffer, otherwise false
+ */
+function isArrayBuffer(val) {
+  return toString.call(val) === '[object ArrayBuffer]';
+}
+
+/**
+ * Determine if a value is a FormData
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is an FormData, otherwise false
+ */
+function isFormData(val) {
+  return (typeof FormData !== 'undefined') && (val instanceof FormData);
+}
+
+/**
+ * Determine if a value is a view on an ArrayBuffer
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a view on an ArrayBuffer, otherwise false
+ */
+function isArrayBufferView(val) {
+  var result;
+  if ((typeof ArrayBuffer !== 'undefined') && (ArrayBuffer.isView)) {
+    result = ArrayBuffer.isView(val);
+  } else {
+    result = (val) && (val.buffer) && (val.buffer instanceof ArrayBuffer);
+  }
+  return result;
+}
+
+/**
+ * Determine if a value is a String
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a String, otherwise false
+ */
+function isString(val) {
+  return typeof val === 'string';
+}
+
+/**
+ * Determine if a value is a Number
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Number, otherwise false
+ */
+function isNumber(val) {
+  return typeof val === 'number';
+}
+
+/**
+ * Determine if a value is undefined
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if the value is undefined, otherwise false
+ */
+function isUndefined(val) {
+  return typeof val === 'undefined';
+}
+
+/**
+ * Determine if a value is an Object
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is an Object, otherwise false
+ */
+function isObject(val) {
+  return val !== null && typeof val === 'object';
+}
+
+/**
+ * Determine if a value is a Date
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Date, otherwise false
+ */
+function isDate(val) {
+  return toString.call(val) === '[object Date]';
+}
+
+/**
+ * Determine if a value is a File
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a File, otherwise false
+ */
+function isFile(val) {
+  return toString.call(val) === '[object File]';
+}
+
+/**
+ * Determine if a value is a Blob
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Blob, otherwise false
+ */
+function isBlob(val) {
+  return toString.call(val) === '[object Blob]';
+}
+
+/**
+ * Determine if a value is a Function
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Function, otherwise false
+ */
+function isFunction(val) {
+  return toString.call(val) === '[object Function]';
+}
+
+/**
+ * Determine if a value is a Stream
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Stream, otherwise false
+ */
+function isStream(val) {
+  return isObject(val) && isFunction(val.pipe);
+}
+
+/**
+ * Determine if a value is a URLSearchParams object
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a URLSearchParams object, otherwise false
+ */
+function isURLSearchParams(val) {
+  return typeof URLSearchParams !== 'undefined' && val instanceof URLSearchParams;
+}
+
+/**
+ * Trim excess whitespace off the beginning and end of a string
+ *
+ * @param {String} str The String to trim
+ * @returns {String} The String freed of excess whitespace
+ */
+function trim(str) {
+  return str.replace(/^\s*/, '').replace(/\s*$/, '');
+}
+
+/**
+ * Determine if we're running in a standard browser environment
+ *
+ * This allows axios to run in a web worker, and react-native.
+ * Both environments support XMLHttpRequest, but not fully standard globals.
+ *
+ * web workers:
+ *  typeof window -> undefined
+ *  typeof document -> undefined
+ *
+ * react-native:
+ *  navigator.product -> 'ReactNative'
+ */
+function isStandardBrowserEnv() {
+  if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
+    return false;
+  }
+  return (
+    typeof window !== 'undefined' &&
+    typeof document !== 'undefined'
+  );
+}
+
+/**
+ * Iterate over an Array or an Object invoking a function for each item.
+ *
+ * If `obj` is an Array callback will be called passing
+ * the value, index, and complete array for each item.
+ *
+ * If 'obj' is an Object callback will be called passing
+ * the value, key, and complete object for each property.
+ *
+ * @param {Object|Array} obj The object to iterate
+ * @param {Function} fn The callback to invoke for each item
+ */
+function forEach(obj, fn) {
+  // Don't bother if no value provided
+  if (obj === null || typeof obj === 'undefined') {
+    return;
+  }
+
+  // Force an array if not already something iterable
+  if (typeof obj !== 'object') {
+    /*eslint no-param-reassign:0*/
+    obj = [obj];
+  }
+
+  if (isArray(obj)) {
+    // Iterate over array values
+    for (var i = 0, l = obj.length; i < l; i++) {
+      fn.call(null, obj[i], i, obj);
+    }
+  } else {
+    // Iterate over object keys
+    for (var key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        fn.call(null, obj[key], key, obj);
+      }
+    }
+  }
+}
+
+/**
+ * Accepts varargs expecting each argument to be an object, then
+ * immutably merges the properties of each object and returns result.
+ *
+ * When multiple objects contain the same key the later object in
+ * the arguments list will take precedence.
+ *
+ * Example:
+ *
+ * ```js
+ * var result = merge({foo: 123}, {foo: 456});
+ * console.log(result.foo); // outputs 456
+ * ```
+ *
+ * @param {Object} obj1 Object to merge
+ * @returns {Object} Result of all merge properties
+ */
+function merge(/* obj1, obj2, obj3, ... */) {
+  var result = {};
+  function assignValue(val, key) {
+    if (typeof result[key] === 'object' && typeof val === 'object') {
+      result[key] = merge(result[key], val);
+    } else {
+      result[key] = val;
+    }
+  }
+
+  for (var i = 0, l = arguments.length; i < l; i++) {
+    forEach(arguments[i], assignValue);
+  }
+  return result;
+}
+
+/**
+ * Extends object a by mutably adding to it the properties of object b.
+ *
+ * @param {Object} a The object to be extended
+ * @param {Object} b The object to copy properties from
+ * @param {Object} thisArg The object to bind function to
+ * @return {Object} The resulting value of object a
+ */
+function extend(a, b, thisArg) {
+  forEach(b, function assignValue(val, key) {
+    if (thisArg && typeof val === 'function') {
+      a[key] = bind(val, thisArg);
+    } else {
+      a[key] = val;
+    }
+  });
+  return a;
+}
+
+module.exports = {
+  isArray: isArray,
+  isArrayBuffer: isArrayBuffer,
+  isBuffer: isBuffer,
+  isFormData: isFormData,
+  isArrayBufferView: isArrayBufferView,
+  isString: isString,
+  isNumber: isNumber,
+  isObject: isObject,
+  isUndefined: isUndefined,
+  isDate: isDate,
+  isFile: isFile,
+  isBlob: isBlob,
+  isFunction: isFunction,
+  isStream: isStream,
+  isURLSearchParams: isURLSearchParams,
+  isStandardBrowserEnv: isStandardBrowserEnv,
+  forEach: forEach,
+  merge: merge,
+  extend: extend,
+  trim: trim
+};
+
+
+/***/ }),
+
 /***/ "./node_modules/create-react-context/lib/implementation.js":
 /*!*****************************************************************!*\
   !*** ./node_modules/create-react-context/lib/implementation.js ***!
@@ -1661,6 +3329,38 @@ module.exports = invariant;
 
 /***/ }),
 
+/***/ "./node_modules/is-buffer/index.js":
+/*!*****************************************!*\
+  !*** ./node_modules/is-buffer/index.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*!
+ * Determine if an object is a Buffer
+ *
+ * @author   Feross Aboukhadijeh <https://feross.org>
+ * @license  MIT
+ */
+
+// The _isBuffer check is for Safari 5-7 support, because it's missing
+// Object.prototype.constructor. Remove this eventually
+module.exports = function (obj) {
+  return obj != null && (isBuffer(obj) || isSlowBuffer(obj) || !!obj._isBuffer)
+}
+
+function isBuffer (obj) {
+  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
+}
+
+// For Node v0.10 support. Remove this eventually.
+function isSlowBuffer (obj) {
+  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
+}
+
+
+/***/ }),
+
 /***/ "./node_modules/lodash-es/_Symbol.js":
 /*!*******************************************!*\
   !*** ./node_modules/lodash-es/_Symbol.js ***!
@@ -2127,6 +3827,201 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 	return to;
 };
+
+
+/***/ }),
+
+/***/ "./node_modules/process/browser.js":
+/*!*****************************************!*\
+  !*** ./node_modules/process/browser.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
 
 
 /***/ }),
@@ -29434,6 +31329,70 @@ if (false) {} else {
 
 /***/ }),
 
+/***/ "./node_modules/redux-devtools-extension/index.js":
+/*!********************************************************!*\
+  !*** ./node_modules/redux-devtools-extension/index.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var compose = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js").compose;
+
+exports.__esModule = true;
+exports.composeWithDevTools = (
+  typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ :
+    function() {
+      if (arguments.length === 0) return undefined;
+      if (typeof arguments[0] === 'object') return compose;
+      return compose.apply(null, arguments);
+    }
+);
+
+exports.devToolsEnhancer = (
+  typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__ ?
+    window.__REDUX_DEVTOOLS_EXTENSION__ :
+    function() { return function(noop) { return noop; } }
+);
+
+
+/***/ }),
+
+/***/ "./node_modules/redux-thunk/es/index.js":
+/*!**********************************************!*\
+  !*** ./node_modules/redux-thunk/es/index.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function createThunkMiddleware(extraArgument) {
+  return function (_ref) {
+    var dispatch = _ref.dispatch,
+        getState = _ref.getState;
+    return function (next) {
+      return function (action) {
+        if (typeof action === 'function') {
+          return action(dispatch, getState, extraArgument);
+        }
+
+        return next(action);
+      };
+    };
+  };
+}
+
+var thunk = createThunkMiddleware();
+thunk.withExtraArgument = createThunkMiddleware;
+
+/* harmony default export */ __webpack_exports__["default"] = (thunk);
+
+/***/ }),
+
 /***/ "./node_modules/redux/es/applyMiddleware.js":
 /*!**************************************************!*\
   !*** ./node_modules/redux/es/applyMiddleware.js ***!
@@ -31598,60 +33557,79 @@ module.exports = function(originalModule) {
 /*!**************************************************!*\
   !*** ./resources/js/components/actions/index.js ***!
   \**************************************************/
-/*! exports provided: getOlympiad, selectOlympiad, getOlympiadEdit, getUser, selectUser, getUserEdit, selectTask, getTaskEdit, getTask, getConformity */
+/*! exports provided: selectOlympiad, getStateOlympiad, getOlympiadEdit, olympiadSuccess, olympiadFailure, selectStudent, getStudentEdit, studentSuccess, studentFailure, selectTask, getTaskEdit, taskSuccess, taskFailure */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getOlympiad", function() { return getOlympiad; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "selectOlympiad", function() { return selectOlympiad; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getStateOlympiad", function() { return getStateOlympiad; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getOlympiadEdit", function() { return getOlympiadEdit; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getUser", function() { return getUser; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "selectUser", function() { return selectUser; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getUserEdit", function() { return getUserEdit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "olympiadSuccess", function() { return olympiadSuccess; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "olympiadFailure", function() { return olympiadFailure; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "selectStudent", function() { return selectStudent; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getStudentEdit", function() { return getStudentEdit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "studentSuccess", function() { return studentSuccess; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "studentFailure", function() { return studentFailure; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "selectTask", function() { return selectTask; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTaskEdit", function() { return getTaskEdit; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTask", function() { return getTask; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getConformity", function() { return getConformity; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskSuccess", function() { return taskSuccess; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskFailure", function() { return taskFailure; });
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function getOlympiad(olympiads) {
-  return _objectSpread({
-    type: 'GET_OLYMPIAD'
-  }, olympiads);
-}
 function selectOlympiad(id) {
   return {
     type: 'SELECT_OLYMPIAD',
     id: id
   };
 }
-function getOlympiadEdit(olympiad, show) {
+function getStateOlympiad(id) {
   return {
-    type: 'GET_OLYMPIAD_EDIT',
-    olympiad: olympiad,
-    show: show
-  };
-}
-function getUser(users) {
-  return _objectSpread({
-    type: 'GET_USER'
-  }, users);
-}
-function selectUser(id) {
-  return {
-    type: 'SELECT_USER',
+    type: 'GET_STATE_OLYMPIAD',
     id: id
   };
 }
-function getUserEdit(user, show) {
+function getOlympiadEdit(table, show) {
   return {
-    type: 'GET_USER_EDIT',
-    user: user,
+    type: 'GET_OLYMPIAD_EDIT',
+    table: table,
     show: show
   };
+}
+function olympiadSuccess(table) {
+  return _objectSpread({
+    type: 'OLYMPIAD_SUCCESS'
+  }, table);
+}
+function olympiadFailure(table) {
+  return _objectSpread({
+    type: 'OLYMPIAD_FAILURE'
+  }, table);
+}
+function selectStudent(id) {
+  return {
+    type: 'SELECT_STUDENT',
+    id: id
+  };
+}
+function getStudentEdit(table, show) {
+  return {
+    type: 'GET_STUDENT_EDIT',
+    table: table,
+    show: show
+  };
+}
+function studentSuccess(table) {
+  return _objectSpread({
+    type: 'STUDENT_SUCCESS'
+  }, table);
+}
+function studentFailure(table) {
+  return _objectSpread({
+    type: 'STUDENT_FAILURE'
+  }, table);
 }
 function selectTask(id) {
   return {
@@ -31659,83 +33637,97 @@ function selectTask(id) {
     id: id
   };
 }
-function getTaskEdit(task, olympiadID, show) {
+function getTaskEdit(table, olympiadID, show) {
   return {
     type: 'GET_TASK_EDIT',
-    task: task,
+    table: table,
     olympiadID: olympiadID,
     show: show
   };
 }
-function getTask(tasks, olympiadID) {
+function taskSuccess(table) {
   return _objectSpread({
-    type: 'GET_TASK'
-  }, tasks, {
+    type: 'TASK_SUCCESS'
+  }, table, {
     olympiadID: olympiadID
   });
 }
-function getConformity(conformity) {
-  return {
-    type: 'GET_CONFORMITY',
-    conformity: conformity
-  };
+function taskFailure(table) {
+  return _objectSpread({
+    type: 'TASK_FAILURE'
+  }, table);
 }
 
 /***/ }),
 
-/***/ "./resources/js/components/components/app.js":
-/*!***************************************************!*\
-  !*** ./resources/js/components/components/app.js ***!
-  \***************************************************/
-/*! exports provided: default */
+/***/ "./resources/js/components/actions/requestActions.js":
+/*!***********************************************************!*\
+  !*** ./resources/js/components/actions/requestActions.js ***!
+  \***********************************************************/
+/*! exports provided: getTable, postTable, deleteTable */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTable", function() { return getTable; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "postTable", function() { return postTable; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteTable", function() { return deleteTable; });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-
-var App =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(App, _React$Component);
-
-  function App() {
-    _classCallCheck(this, App);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(App).apply(this, arguments));
-  }
-
-  _createClass(App, [{
-    key: "render",
-    value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null);
-    }
-  }]);
-
-  return App;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
-
-/* harmony default export */ __webpack_exports__["default"] = (App);
+function getTable() {
+  var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+    id: null
+  };
+  return function (dispatch) {
+    return new Promise(function (resolve, reject) {
+      var doRequest = axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('http://olympic.test/api/' + args.name + '/' + (args.id ? args.id + '/' : ""));
+      doRequest.then(function (res) {
+        dispatch({
+          type: args.name.toUpperCase() + '_SUCCESS',
+          table: res.data.table
+        });
+        resolve(res);
+      }, function (err) {
+        dispatch({
+          type: args.name.toUpperCase() + 'FAILURE',
+          data: {
+            error: err
+          }
+        });
+        reject(err);
+      });
+    });
+  };
+}
+function postTable() {
+  var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+    id: null
+  };
+  return function () {
+    return new Promise(function (resolve, reject) {
+      var doRequest = null;
+      if (args.method == "POST") doRequest = axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('http://olympic.test/api/' + args.name + '/', args.data);else doRequest = axios__WEBPACK_IMPORTED_MODULE_0___default.a.put('http://olympic.test/api/' + args.name + '/' + args.id, args.data);
+      doRequest.then(function () {// getTable({name: "olympiad"});
+      }, function (err) {
+        reject(err);
+      });
+    });
+  };
+}
+function deleteTable() {
+  var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  return function () {
+    return new Promise(function (resolve, reject) {
+      var doRequest = axios__WEBPACK_IMPORTED_MODULE_0___default.a.delete('http://olympic.test/api/' + args.name + '/' + args.id);
+      doRequest.then(function () {//   console.log("here").then(
+        //    getTable({name: "olympiad"});
+      }, function (err) {
+        reject(err);
+      });
+    });
+  };
+}
 
 /***/ }),
 
@@ -31751,15 +33743,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OlympiadList", function() { return OlympiadList; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _actions___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/ */ "./resources/js/components/actions/index.js");
-/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
-/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var _olympiadEdit__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./olympiadEdit */ "./resources/js/components/components/olympiadEdit.js");
+/* harmony import */ var _actions_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/index.js */ "./resources/js/components/actions/index.js");
+/* harmony import */ var _actions_requestActions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../actions/requestActions */ "./resources/js/components/actions/requestActions.js");
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
+/* harmony import */ var _olympiadEdit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./olympiadEdit */ "./resources/js/components/components/olympiadEdit.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -31777,9 +33765,6 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-
 
 
 
@@ -31798,17 +33783,9 @@ function (_Component) {
     _classCallCheck(this, OlympiadList);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(OlympiadList).call(this, props));
-    var getOlympiad = _this.props.getOlympiad;
-    fetch('api/olympiad/').then(function (response) {
-      if (response.ok) {
-        response.json().then(function (v) {
-          return getOlympiad(v);
-        });
-      } else {
-        response.json().then(function (data) {
-          alert(data.error);
-        });
-      }
+    var getTable = _this.props.getTable;
+    getTable({
+      name: "olympiad"
     });
     _this.setWrapperRef = _this.setWrapperRef.bind(_assertThisInitialized(_this));
     _this.handleClickOutside = _this.handleClickOutside.bind(_assertThisInitialized(_this));
@@ -31831,11 +33808,11 @@ function (_Component) {
       var _this2 = this;
 
       var _this$props = this.props,
-          olympiads = _this$props.olympiads,
+          table = _this$props.table,
           selectedOlympiad = _this$props.selectedOlympiad;
-      return olympiads ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
+      return table ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
         border: "1"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Hardness"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Deadline"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Participants")), olympiads.map(function (olympiad) {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Hardness"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Deadline"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Participants")), table.map(function (olympiad) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
           key: olympiad.id,
           className: olympiad.id === selectedOlympiad ? "selected" : "",
@@ -31854,23 +33831,13 @@ function (_Component) {
   }, {
     key: "handleDelete",
     value: function handleDelete(olympiad) {
-      var getOlympiad = this.props.getOlympiad;
-      fetch('api/olympiad/', {
-        method: "DELETE",
-        body: JSON.stringify(olympiad)
-      }).then(function (response) {
-        if (response.ok) {
-          fetch('api/olympiad/').then(function (response) {
-            return response.json();
-          }).then(function (v) {
-            return getOlympiad(v);
-          });
-        } else {
-          response.json().then(function (data) {
-            return alert(data.error);
-          });
-        }
-      });
+      var _this$props2 = this.props,
+          deleteTable = _this$props2.deleteTable,
+          getTable = _this$props2.getTable;
+      deleteTable({
+        name: "olympiad",
+        data: olympiad
+      }); //.then(getTable({name : "olympiad"}));
     }
   }, {
     key: "olympiadEdit",
@@ -31878,7 +33845,7 @@ function (_Component) {
       props.getOlympiadEdit({}, false);
 
       if (button != "edit" || props.selectedOlympiad != -1) {
-        var olympiad = props.olympiads.find(function (v) {
+        var olympiad = props.table.find(function (v) {
           return v.id === props.selectedOlympiad;
         }) || {};
         props.getOlympiadEdit(olympiad, true);
@@ -31889,11 +33856,7 @@ function (_Component) {
       }
 
       if (button == "delete") {
-        var _olympiad = props.olympiads.find(function (v) {
-          return v.id === props.selectedOlympiad;
-        }) || {};
-
-        this.handleDelete(_olympiad);
+        this.handleDelete(props.selectedOlympiad);
         props.getOlympiadEdit({}, false);
       }
     }
@@ -31958,7 +33921,9 @@ function (_Component) {
         onClick: function onClick() {
           return _this4.handleToTask(_this4.props.selectedOlympiad);
         }
-      }, "to tasks"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_olympiadEdit__WEBPACK_IMPORTED_MODULE_7__["default"], null));
+      }, "to tasks"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_olympiadEdit__WEBPACK_IMPORTED_MODULE_5__["default"], {
+        getTable: this.props.getTable
+      }));
     }
   }]);
 
@@ -31967,21 +33932,23 @@ function (_Component) {
 
 var mapStateToProps = function mapStateToProps(state, ownProps) {
   return {
-    olympiads: state.olympiadStore.olympiads,
+    table: state.olympiadStore.table,
     selectedOlympiad: state.olympiadStore.selectedOlympiad,
     ownProps: ownProps
   };
 };
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
-  return Object(redux__WEBPACK_IMPORTED_MODULE_3__["bindActionCreators"])({
-    getOlympiadEdit: _actions___WEBPACK_IMPORTED_MODULE_1__["getOlympiadEdit"],
-    getOlympiad: _actions___WEBPACK_IMPORTED_MODULE_1__["getOlympiad"],
-    selectOlympiad: _actions___WEBPACK_IMPORTED_MODULE_1__["selectOlympiad"]
+  return Object(redux__WEBPACK_IMPORTED_MODULE_4__["bindActionCreators"])({
+    getStateOlympiad: _actions_index_js__WEBPACK_IMPORTED_MODULE_1__["getStateOlympiad"],
+    getOlympiadEdit: _actions_index_js__WEBPACK_IMPORTED_MODULE_1__["getOlympiadEdit"],
+    getTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_2__["getTable"],
+    selectOlympiad: _actions_index_js__WEBPACK_IMPORTED_MODULE_1__["selectOlympiad"],
+    deleteTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_2__["deleteTable"]
   }, dispatch);
 };
 
-/* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["connect"])(mapStateToProps, mapDispatchToProps)(OlympiadList));
+/* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_3__["connect"])(mapStateToProps, mapDispatchToProps)(OlympiadList));
 
 /***/ }),
 
@@ -32000,6 +33967,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _actions___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/ */ "./resources/js/components/actions/index.js");
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
 /* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
+/* harmony import */ var _actions_requestActions__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../actions/requestActions */ "./resources/js/components/actions/requestActions.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -32017,6 +33985,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -32037,7 +34006,7 @@ function (_Component) {
     key: "handleChange",
     value: function handleChange(field) {
       var _this$props = this.props,
-          olympiad = _this$props.olympiad,
+          table = _this$props.table,
           getOlympiadEdit = _this$props.getOlympiadEdit;
       return function (event) {
         var today = new Date();
@@ -32046,38 +34015,31 @@ function (_Component) {
         if (field == "deadline" && (date < today || date > today.setMonth(today.getMonth() + 1))) return;
         var change = {};
         change[field] = event.target.value;
-        getOlympiadEdit(Object.assign({}, olympiad, change), true);
+        getOlympiadEdit(Object.assign({}, table, change), true);
       };
     }
   }, {
     key: "handleSubmit",
     value: function handleSubmit() {
       var _this$props2 = this.props,
-          olympiad = _this$props2.olympiad,
-          getOlympiad = _this$props2.getOlympiad;
-      var method = olympiad.id ? "PUT" : "POST";
-      fetch('api/olympiad/', {
-        method: method,
-        body: JSON.stringify(olympiad)
-      }).then(function (response) {
-        if (response.ok) {
-          fetch('api/olympiad/').then(function (response) {
-            if (response.ok) {
-              response.json().then(function (v) {
-                return getOlympiad(v);
-              });
-            } else {
-              response.json().then(function (data) {
-                return alert(data.error);
-              });
-            }
-          });
-        } else {
-          response.json().then(function (data) {
-            return alert(data.error);
-          });
-        }
-      });
+          table = _this$props2.table,
+          postTable = _this$props2.postTable,
+          getTable = _this$props2.getTable;
+      var method = table.id ? "PUT" : "POST";
+      if (!table.id) postTable({
+        name: "olympiad",
+        data: JSON.stringify(table),
+        method: "POST"
+      }).then(getTable({
+        name: "olympiad"
+      }));else postTable({
+        name: "olympiad",
+        data: JSON.stringify(table),
+        method: "PUT",
+        id: table.id
+      }).then(getTable({
+        name: "olympiad"
+      }));
       this.hide();
     }
   }, {
@@ -32088,22 +34050,22 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var olympiad = this.props.olympiad;
+      var table = this.props.table;
       return this.props.show ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "olympiadEdit"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "text",
-        value: olympiad.name || "",
+        value: table.name || "",
         onChange: this.handleChange("name")
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Hardness"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "number",
         min: "1",
         max: "10",
-        value: olympiad.hardness || "",
+        value: table.hardness || "",
         onChange: this.handleChange("hardness")
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Deadline"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "date",
-        value: olympiad.deadline || "",
+        value: table.deadline || "",
         onChange: this.handleChange("deadline")
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "text",
@@ -32121,7 +34083,7 @@ function (_Component) {
 
 var mapStateToProps = function mapStateToProps(state) {
   return {
-    olympiad: state.olympiadEditStore.olympiad,
+    table: state.olympiadEditStore.table,
     show: state.olympiadEditStore.show
   };
 };
@@ -32129,7 +34091,8 @@ var mapStateToProps = function mapStateToProps(state) {
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return Object(redux__WEBPACK_IMPORTED_MODULE_3__["bindActionCreators"])({
     getOlympiadEdit: _actions___WEBPACK_IMPORTED_MODULE_1__["getOlympiadEdit"],
-    getOlympiad: _actions___WEBPACK_IMPORTED_MODULE_1__["getOlympiad"]
+    postTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_4__["postTable"],
+    deleteTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_4__["deleteTable"]
   }, dispatch);
 };
 
@@ -32137,22 +34100,26 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 /***/ }),
 
-/***/ "./resources/js/components/components/task.js":
-/*!****************************************************!*\
-  !*** ./resources/js/components/components/task.js ***!
-  \****************************************************/
-/*! exports provided: TaskList, default */
+/***/ "./resources/js/components/components/student.js":
+/*!*******************************************************!*\
+  !*** ./resources/js/components/components/student.js ***!
+  \*******************************************************/
+/*! exports provided: StudentList, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TaskList", function() { return TaskList; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StudentList", function() { return StudentList; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/ */ "./resources/js/components/actions/index.js");
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
 /* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
-/* harmony import */ var _taskEdit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./taskEdit */ "./resources/js/components/components/taskEdit.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _studentEdit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./studentEdit */ "./resources/js/components/components/studentEdit.js");
+/* harmony import */ var _olympiad__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./olympiad */ "./resources/js/components/components/olympiad.js");
+/* harmony import */ var _actions_requestActions__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../actions/requestActions */ "./resources/js/components/actions/requestActions.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -32176,6 +34143,358 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
+
+
+var StudentList =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(StudentList, _Component);
+
+  function StudentList(props) {
+    var _this;
+
+    _classCallCheck(this, StudentList);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(StudentList).call(this, props));
+
+    _this.props.getTable({
+      name: "student"
+    });
+
+    _this.setWrapperRef = _this.setWrapperRef.bind(_assertThisInitialized(_this));
+    _this.handleClickOutside = _this.handleClickOutside.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(StudentList, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      document.addEventListener('mousedown', this.handleClickOutside);
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      document.removeEventListener('mousedown', this.handleClickOutside);
+    }
+  }, {
+    key: "createStudentList",
+    value: function createStudentList() {
+      var _this2 = this;
+
+      var _this$props = this.props,
+          table = _this$props.table,
+          selectedStudent = _this$props.selectedStudent;
+      return table ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
+        border: "1"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Role"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Olympiads")), table.map(function (student) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
+          key: student.id,
+          className: student.id === selectedStudent ? "selected" : "",
+          onClick: _this2.studentSelected(student.id)
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+          className: "name"
+        }, " ", student.last_name, " "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+          className: "role"
+        }, " ", student.user_role, " "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+          className: "olympiads"
+        }, " ", student.olympiads, " "));
+      }))) : "Empty student's list";
+    }
+  }, {
+    key: "handleDelete",
+    value: function handleDelete(student) {
+      //find in olympiads table and delete
+      var _this$props2 = this.props,
+          deleteTable = _this$props2.deleteTable,
+          getTable = _this$props2.getTable;
+      deleteTable({
+        name: "student",
+        data: student
+      }); //.then(getTable({name : "olympiad"}));
+    }
+  }, {
+    key: "studentEdit",
+    value: function studentEdit(props, button) {
+      props.getStudentEdit({}, false);
+
+      if (button != "edit" || props.selectedStudent != -1) {
+        var student = props.table.find(function (v) {
+          return v.id === props.selectedStudent;
+        }) || {};
+        props.getStudentEdit(student, true);
+      }
+
+      if (button == "add") {
+        props.getStudentEdit({}, true);
+      }
+
+      if (button == "delete") {
+        this.handleDelete(props.selectedStudent);
+        props.getStudentEdit({}, false);
+      }
+    }
+  }, {
+    key: "studentSelected",
+    value: function studentSelected(STUDENT_ID) {
+      var _this3 = this;
+
+      return function () {
+        _this3.props.getStudentEdit({}, false);
+
+        _this3.props.selectStudent(STUDENT_ID);
+      };
+    }
+  }, {
+    key: "setWrapperRef",
+    value: function setWrapperRef(node) {
+      this.wrapperRef = node;
+    }
+  }, {
+    key: "handleClickOutside",
+    value: function handleClickOutside(event) {
+      var studentEdit = document.getElementsByClassName("studentEdit")[0];
+
+      if (!event.path.includes(studentEdit)) {
+        if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+          this.props.selectStudent(-1);
+          this.props.getStudentEdit({}, false);
+        }
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this4 = this;
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "Student",
+        ref: this.setWrapperRef
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Students"), this.createStudentList(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "add",
+        onClick: function onClick() {
+          return _this4.studentEdit(_this4.props, "add");
+        }
+      }, "add"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "edit",
+        onClick: function onClick() {
+          return _this4.studentEdit(_this4.props, "edit");
+        }
+      }, "edit"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "delete",
+        onClick: function onClick() {
+          return _this4.studentEdit(_this4.props, "delete");
+        }
+      }, "delete"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_studentEdit__WEBPACK_IMPORTED_MODULE_5__["default"], {
+        getTable: this.props.getTable
+      })));
+    }
+  }]);
+
+  return StudentList;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    table: state.studentStore.table,
+    selectedStudent: state.studentStore.selectedStudent
+  };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+  return Object(redux__WEBPACK_IMPORTED_MODULE_3__["bindActionCreators"])({
+    getStudentEdit: _actions___WEBPACK_IMPORTED_MODULE_1__["getStudentEdit"],
+    getTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_7__["getTable"],
+    selectStudent: _actions___WEBPACK_IMPORTED_MODULE_1__["selectStudent"]
+  }, dispatch);
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["connect"])(mapStateToProps, mapDispatchToProps)(StudentList));
+
+/***/ }),
+
+/***/ "./resources/js/components/components/studentEdit.js":
+/*!***********************************************************!*\
+  !*** ./resources/js/components/components/studentEdit.js ***!
+  \***********************************************************/
+/*! exports provided: StudentEdit, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StudentEdit", function() { return StudentEdit; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/ */ "./resources/js/components/actions/index.js");
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
+/* harmony import */ var _actions_requestActions__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../actions/requestActions */ "./resources/js/components/actions/requestActions.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+
+
+var StudentEdit =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(StudentEdit, _Component);
+
+  function StudentEdit() {
+    _classCallCheck(this, StudentEdit);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(StudentEdit).apply(this, arguments));
+  }
+
+  _createClass(StudentEdit, [{
+    key: "handleChange",
+    value: function handleChange(field) {
+      var _this$props = this.props,
+          table = _this$props.table,
+          getStudentEdit = _this$props.getStudentEdit;
+      return function (event) {
+        var change = {};
+        change[field] = event.target.value;
+        getStudentEdit(Object.assign({}, table, change), true);
+      };
+    }
+  }, {
+    key: "handleSubmit",
+    value: function handleSubmit() {
+      var _this$props2 = this.props,
+          table = _this$props2.table,
+          postTable = _this$props2.postTable,
+          getTable = _this$props2.getTable;
+      if (!table.id) postTable({
+        name: "student",
+        data: JSON.stringify(table),
+        method: "POST"
+      }).then(getTable({
+        name: "student"
+      }));else postTable({
+        name: "student",
+        data: JSON.stringify(table),
+        method: "PUT",
+        id: JSON.stringify(table.id)
+      }).then(getTable({
+        name: "student"
+      }));
+      this.hide();
+    }
+  }, {
+    key: "hide",
+    value: function hide() {
+      this.props.getStudentEdit({}, false);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var table = this.props.table;
+      return this.props.show ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "studentEdit"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Last name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "text",
+        value: table.last_name || "",
+        onChange: this.handleChange("last_name")
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Role"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
+        value: table.user_role || "",
+        onChange: this.handleChange("user_role")
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+        value: "admin"
+      }, "admin"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+        value: "student"
+      }, "student")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "text",
+        className: "ok",
+        onClick: this.handleSubmit.bind(this)
+      }, "ok"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "cancel",
+        onClick: this.hide.bind(this)
+      }, "cancel")) : "";
+    }
+  }]);
+
+  return StudentEdit;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    table: state.studentEditStore.table,
+    show: state.studentEditStore.show
+  };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+  return Object(redux__WEBPACK_IMPORTED_MODULE_3__["bindActionCreators"])({
+    getStudentEdit: _actions___WEBPACK_IMPORTED_MODULE_1__["getStudentEdit"],
+    getTaskEdit: _actions___WEBPACK_IMPORTED_MODULE_1__["getTaskEdit"],
+    postTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_4__["postTable"],
+    deleteTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_4__["deleteTable"]
+  }, dispatch);
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["connect"])(mapStateToProps, mapDispatchToProps)(StudentEdit));
+
+/***/ }),
+
+/***/ "./resources/js/components/components/task.js":
+/*!****************************************************!*\
+  !*** ./resources/js/components/components/task.js ***!
+  \****************************************************/
+/*! exports provided: TaskList, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TaskList", function() { return TaskList; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/ */ "./resources/js/components/actions/index.js");
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
+/* harmony import */ var _taskEdit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./taskEdit */ "./resources/js/components/components/taskEdit.js");
+/* harmony import */ var _actions_requestActions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../actions/requestActions */ "./resources/js/components/actions/requestActions.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+
+
+
 var TaskList =
 /*#__PURE__*/
 function (_Component) {
@@ -32187,17 +34506,13 @@ function (_Component) {
     _classCallCheck(this, TaskList);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(TaskList).call(this, props));
-    var getTask = _this.props.getTask;
-    fetch('http://olympic.test/api/task/' + props.olympiadID).then(function (response) {
-      if (response.ok) {
-        response.json().then(function (v) {
-          return getTask(v);
-        });
-      } else {
-        response.json().then(function (data) {
-          alert(data.error);
-        });
-      }
+    console.log("here");
+    var _this$props = _this.props,
+        getTable = _this$props.getTable,
+        olympiadID = _this$props.olympiadID;
+    getTable({
+      name: "task",
+      id: olympiadID
     });
     _this.setWrapperRef = _this.setWrapperRef.bind(_assertThisInitialized(_this));
     _this.handleClickOutside = _this.handleClickOutside.bind(_assertThisInitialized(_this));
@@ -32246,13 +34561,13 @@ function (_Component) {
     value: function createTaskList() {
       var _this2 = this;
 
-      var _this$props = this.props,
-          tasks = _this$props.tasks,
-          selectedTask = _this$props.selectedTask,
-          selectTask = _this$props.selectTask;
+      var _this$props2 = this.props,
+          table = _this$props2.table,
+          selectedTask = _this$props2.selectedTask,
+          selectTask = _this$props2.selectTask;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
         border: "1"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Description"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Hardness"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Time")), tasks.map(function (task) {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Description"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Hardness"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Time")), table.map(function (task) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
           key: task.id,
           className: task.id === selectedTask ? "selected" : "",
@@ -32271,25 +34586,14 @@ function (_Component) {
   }, {
     key: "handleDelete",
     value: function handleDelete(task) {
-      var _this$props2 = this.props,
-          getTask = _this$props2.getTask,
-          olympiadID = _this$props2.olympiadID;
-      fetch('http://olympic.test/api/task/' + olympiadID, {
-        method: "DELETE",
-        body: JSON.stringify(task)
-      }).then(function (response) {
-        if (response.ok) {
-          fetch('http://olympic.test/api/task/' + olympiadID).then(function (response) {
-            return response.json();
-          }).then(function (v) {
-            return getTask(v);
-          });
-        } else {
-          response.json().then(function (data) {
-            return alert(data.error);
-          });
-        }
-      });
+      var _this$props3 = this.props,
+          deleteTable = _this$props3.deleteTable,
+          getTable = _this$props3.getTable;
+      deleteTable({
+        name: "task",
+        data: task,
+        id: task
+      }); //.then(getTable({name : "olympiad"}));
     }
   }, {
     key: "taskEdit",
@@ -32298,10 +34602,10 @@ function (_Component) {
       props.getTaskEdit({}, props.olympiadID, false);
 
       if (button != "edit" || props.selectedTask != undefined) {
-        var task = props.tasks.find(function (v) {
+        var table = props.table.find(function (v) {
           return v.id === props.selectedTask;
         }) || {};
-        props.getTaskEdit(task, props.olympiadID, true);
+        props.getTaskEdit(table, props.olympiadID, true);
       }
 
       if (button == "add") {
@@ -32311,11 +34615,11 @@ function (_Component) {
       }
 
       if (button == "delete") {
-        var _task = props.tasks.find(function (v) {
+        var _table = props.table.find(function (v) {
           return v.id === props.selectedTask;
         }) || {};
 
-        this.handleDelete(_task);
+        this.handleDelete(_table);
         props.getTaskEdit({
           olympiad_id: props.olympiadID
         }, props.olympiadID, false);
@@ -32363,7 +34667,9 @@ function (_Component) {
         onClick: function onClick() {
           return _this3.handleToOlym();
         }
-      }, "to olympiads"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_taskEdit__WEBPACK_IMPORTED_MODULE_4__["default"], null));
+      }, "to olympiads"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_taskEdit__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        getTable: this.props.getTable
+      }));
     }
   }]);
 
@@ -32372,7 +34678,7 @@ function (_Component) {
 
 var mapStateToProps = function mapStateToProps(state) {
   return {
-    tasks: state.taskStore.tasks,
+    table: state.taskStore.table,
     selectedTask: state.taskStore.selectedTask,
     olympiadID: state.taskStore.olympiadID
   };
@@ -32381,7 +34687,7 @@ var mapStateToProps = function mapStateToProps(state) {
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return Object(redux__WEBPACK_IMPORTED_MODULE_3__["bindActionCreators"])({
     getTaskEdit: _actions___WEBPACK_IMPORTED_MODULE_1__["getTaskEdit"],
-    getTask: _actions___WEBPACK_IMPORTED_MODULE_1__["getTask"],
+    getTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_5__["getTable"],
     selectTask: _actions___WEBPACK_IMPORTED_MODULE_1__["selectTask"]
   }, dispatch);
 };
@@ -32405,6 +34711,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _actions___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/ */ "./resources/js/components/actions/index.js");
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
 /* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
+/* harmony import */ var _olympiad__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./olympiad */ "./resources/js/components/components/olympiad.js");
+/* harmony import */ var _actions_requestActions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../actions/requestActions */ "./resources/js/components/actions/requestActions.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -32422,6 +34730,8 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
 
 
 
@@ -32444,7 +34754,7 @@ function (_Component) {
       var _this = this;
 
       var _this$props = this.props,
-          task = _this$props.task,
+          table = _this$props.table,
           getTaskEdit = _this$props.getTaskEdit;
       return function (event) {
         var change = {};
@@ -32456,41 +34766,32 @@ function (_Component) {
           change["time"] = event.target.value + ":" + document.getElementById("minutes").value;
         } else change[field] = event.target.value;
 
-        getTaskEdit(Object.assign({}, task, change), _this.props.olympiadID, true);
+        getTaskEdit(Object.assign({}, table, change), _this.props.olympiadID, true);
       };
     }
   }, {
     key: "handleSubmit",
     value: function handleSubmit() {
       var _this$props2 = this.props,
-          task = _this$props2.task,
-          olympiadID = _this$props2.olympiadID,
-          getTask = _this$props2.getTask;
-      var method = this.props.task.id ? "PUT" : "POST";
-      if (!task) method = "POST";
-      var site = "/api/task/" + olympiadID;
-      fetch(site, {
-        method: method,
-        body: JSON.stringify(task)
-      }).then(function (response) {
-        if (response.ok) {
-          fetch(site).then(function (response) {
-            if (response.ok) {
-              response.json().then(function (v) {
-                return getTask(v, olympiadID);
-              });
-            } else {
-              response.json().then(function (data) {
-                return alert(data.error);
-              });
-            }
-          });
-        } else {
-          response.json().then(function (data) {
-            return alert(data.error);
-          });
-        }
-      });
+          table = _this$props2.table,
+          postTable = _this$props2.postTable,
+          getTable = _this$props2.getTable;
+      if (table.id) postTable({
+        name: "task",
+        data: JSON.stringify(table),
+        method: "PUT",
+        id: table.olympiadID
+      }).then(getTable({
+        name: "olympiad"
+      }));else postTable({
+        name: "task",
+        data: JSON.stringify(table),
+        method: "POST",
+        put_id: table.id,
+        id: table.olympiadID
+      }).then(getTable({
+        name: "olympiad"
+      }));
       this.hide();
     }
   }, {
@@ -32501,34 +34802,34 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var task = this.props.task;
+      var table = this.props.table;
       return this.props.show ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "taskEdit"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "text",
-        value: task.name || "",
+        value: table.name || "",
         onChange: this.handleChange("name")
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Description"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "text",
-        value: task.description || "",
+        value: table.description || "",
         onChange: this.handleChange("description")
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Hardness"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "number",
-        value: task.hardness || "",
+        value: table.hardness || "",
         onChange: this.handleChange("hardness")
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Time"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "range",
         id: "hours",
         min: "0",
         max: "6",
-        value: task.time != undefined ? task.time.split(":")[0] : 0,
+        value: table.time != undefined ? table.time.split(":")[0] : 0,
         onChange: this.handleChange("hours")
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "range",
         id: "minutes",
         min: "0",
         max: "59",
-        value: task.time != undefined ? task.time.split(":")[1] : 0,
+        value: table.time != undefined ? table.time.split(":")[1] : 0,
         onChange: this.handleChange("minutes")
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "ok",
@@ -32545,7 +34846,7 @@ function (_Component) {
 
 var mapStateToProps = function mapStateToProps(state) {
   return {
-    task: state.taskEditStore.task,
+    table: state.taskEditStore.table,
     show: state.taskEditStore.show,
     olympiadID: state.taskEditStore.olympiadID
   };
@@ -32554,387 +34855,12 @@ var mapStateToProps = function mapStateToProps(state) {
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return Object(redux__WEBPACK_IMPORTED_MODULE_3__["bindActionCreators"])({
     getTaskEdit: _actions___WEBPACK_IMPORTED_MODULE_1__["getTaskEdit"],
-    getTask: _actions___WEBPACK_IMPORTED_MODULE_1__["getTask"]
+    postTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_5__["postTable"],
+    deleteTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_5__["deleteTable"]
   }, dispatch);
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["connect"])(mapStateToProps, mapDispatchToProps)(TaskEdit));
-
-/***/ }),
-
-/***/ "./resources/js/components/components/user.js":
-/*!****************************************************!*\
-  !*** ./resources/js/components/components/user.js ***!
-  \****************************************************/
-/*! exports provided: UserList, default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UserList", function() { return UserList; });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _actions___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/ */ "./resources/js/components/actions/index.js");
-/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
-/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _userEdit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./userEdit */ "./resources/js/components/components/userEdit.js");
-/* harmony import */ var _olympiad__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./olympiad */ "./resources/js/components/components/olympiad.js");
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-
-
-
-
-
-
-var UserList =
-/*#__PURE__*/
-function (_Component) {
-  _inherits(UserList, _Component);
-
-  function UserList(props) {
-    var _this;
-
-    _classCallCheck(this, UserList);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(UserList).call(this, props));
-    var getUser = _this.props.getUser;
-    fetch('api/user/').then(function (response) {
-      if (response.ok) {
-        response.json().then(function (v) {
-          return getUser(v);
-        });
-      } else {
-        response.json().then(function (data) {
-          alert(data.error);
-        });
-      }
-    });
-    _this.setWrapperRef = _this.setWrapperRef.bind(_assertThisInitialized(_this));
-    _this.handleClickOutside = _this.handleClickOutside.bind(_assertThisInitialized(_this));
-    return _this;
-  }
-
-  _createClass(UserList, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      document.addEventListener('mousedown', this.handleClickOutside);
-    }
-  }, {
-    key: "componentWillUnmount",
-    value: function componentWillUnmount() {
-      document.removeEventListener('mousedown', this.handleClickOutside);
-    }
-  }, {
-    key: "createUserList",
-    value: function createUserList() {
-      var _this2 = this;
-
-      var _this$props = this.props,
-          users = _this$props.users,
-          selectedUser = _this$props.selectedUser;
-      return users ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
-        border: "1"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Role"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Olympiads")), users.map(function (user) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
-          key: user.id,
-          className: user.id === selectedUser ? "selected" : "",
-          onClick: _this2.userSelected(user.id)
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-          className: "name"
-        }, " ", user.last_name, " "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-          className: "role"
-        }, " ", user.user_role, " "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
-          className: "olympiads"
-        }, " ", user.olympiads, " "));
-      }))) : "Empty user's list";
-    }
-  }, {
-    key: "handleDelete",
-    value: function handleDelete(user) {
-      //find in olympiads table and delete
-      var getUser = this.props.getUser;
-      fetch('api/user/', {
-        method: "DELETE",
-        body: JSON.stringify(user)
-      }).then(function (response) {
-        if (response.ok) {
-          fetch('api/user/').then(function (response) {
-            return response.json();
-          }).then(function (v) {
-            return getUser(v);
-          });
-        } else {
-          response.json();
-        }
-      });
-    }
-  }, {
-    key: "userEdit",
-    value: function userEdit(props, button) {
-      props.getUserEdit({}, false);
-
-      if (button != "edit" || props.selectedUser != -1) {
-        var user = props.users.find(function (v) {
-          return v.id === props.selectedUser;
-        }) || {};
-        props.getUserEdit(user, true);
-      }
-
-      if (button == "add") {
-        props.getUserEdit({}, true);
-      }
-
-      if (button == "delete") {
-        var _user = props.users.find(function (v) {
-          return v.id === props.selectedUser;
-        }) || {};
-
-        this.handleDelete(_user);
-        props.getUserEdit({}, false);
-      }
-    }
-  }, {
-    key: "userSelected",
-    value: function userSelected(USER_ID) {
-      var _this3 = this;
-
-      return function () {
-        _this3.props.getUserEdit({}, false);
-
-        _this3.props.selectUser(USER_ID);
-      };
-    }
-  }, {
-    key: "setWrapperRef",
-    value: function setWrapperRef(node) {
-      this.wrapperRef = node;
-    }
-  }, {
-    key: "handleClickOutside",
-    value: function handleClickOutside(event) {
-      var userEdit = document.getElementsByClassName("userEdit")[0];
-
-      if (!event.path.includes(userEdit)) {
-        if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-          this.props.selectUser(-1);
-          this.props.getUserEdit({}, false);
-        }
-      }
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this4 = this;
-
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "User",
-        ref: this.setWrapperRef
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Users"), this.createUserList(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "add",
-        onClick: function onClick() {
-          return _this4.userEdit(_this4.props, "add");
-        }
-      }, "add"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "edit",
-        onClick: function onClick() {
-          return _this4.userEdit(_this4.props, "edit");
-        }
-      }, "edit"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "delete",
-        onClick: function onClick() {
-          return _this4.userEdit(_this4.props, "delete");
-        }
-      }, "delete"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_userEdit__WEBPACK_IMPORTED_MODULE_5__["default"], null)));
-    }
-  }]);
-
-  return UserList;
-}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
-
-var mapStateToProps = function mapStateToProps(state) {
-  return {
-    users: state.userStore.users,
-    selectedUser: state.userStore.selectedUser
-  };
-};
-
-var mapDispatchToProps = function mapDispatchToProps(dispatch) {
-  return Object(redux__WEBPACK_IMPORTED_MODULE_3__["bindActionCreators"])({
-    getUserEdit: _actions___WEBPACK_IMPORTED_MODULE_1__["getUserEdit"],
-    getUser: _actions___WEBPACK_IMPORTED_MODULE_1__["getUser"],
-    selectUser: _actions___WEBPACK_IMPORTED_MODULE_1__["selectUser"]
-  }, dispatch);
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["connect"])(mapStateToProps, mapDispatchToProps)(UserList));
-
-/***/ }),
-
-/***/ "./resources/js/components/components/userEdit.js":
-/*!********************************************************!*\
-  !*** ./resources/js/components/components/userEdit.js ***!
-  \********************************************************/
-/*! exports provided: UserEdit, default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UserEdit", function() { return UserEdit; });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _actions___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/ */ "./resources/js/components/actions/index.js");
-/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
-/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-
-
-
-var UserEdit =
-/*#__PURE__*/
-function (_Component) {
-  _inherits(UserEdit, _Component);
-
-  function UserEdit() {
-    _classCallCheck(this, UserEdit);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(UserEdit).apply(this, arguments));
-  }
-
-  _createClass(UserEdit, [{
-    key: "handleChange",
-    value: function handleChange(field) {
-      var _this$props = this.props,
-          user = _this$props.user,
-          getUserEdit = _this$props.getUserEdit; //    this.props.getTaskEdit({}, -1, false);
-
-      return function (event) {
-        var change = {};
-        change[field] = event.target.value;
-        getUserEdit(Object.assign({}, user, change), true);
-      };
-    }
-  }, {
-    key: "handleSubmit",
-    value: function handleSubmit() {
-      var _this$props2 = this.props,
-          user = _this$props2.user,
-          getUser = _this$props2.getUser;
-      var method = user.id ? "PUT" : "POST";
-      fetch('api/user/', {
-        method: method,
-        body: JSON.stringify(user)
-      }).then(function (response) {
-        if (response.ok) {
-          fetch('api/user/').then(function (response) {
-            if (response.ok) {
-              response.json().then(function (v) {
-                return getUser(v);
-              });
-            } else {
-              response.json().then(function (data) {
-                return alert(data.error);
-              });
-            }
-          });
-        } else {
-          response.json().then(function (data) {
-            return alert(data.error);
-          });
-        }
-      });
-      this.hide();
-    }
-  }, {
-    key: "hide",
-    value: function hide() {
-      this.props.getUserEdit({}, false);
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var user = this.props.user;
-      return this.props.show ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "userEdit"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Last name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-        type: "text",
-        value: user.last_name || "",
-        onChange: this.handleChange("last_name")
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Role"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
-        value: user.user_role || "",
-        onChange: this.handleChange("user_role")
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
-        value: "admin"
-      }, "admin"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
-        value: "student"
-      }, "student")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        type: "text",
-        className: "ok",
-        onClick: this.handleSubmit.bind(this)
-      }, "ok"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "cancel",
-        onClick: this.hide.bind(this)
-      }, "cancel")) : "";
-    }
-  }]);
-
-  return UserEdit;
-}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
-
-var mapStateToProps = function mapStateToProps(state) {
-  return {
-    user: state.userEditStore.user,
-    show: state.userEditStore.show
-  };
-};
-
-var mapDispatchToProps = function mapDispatchToProps(dispatch) {
-  return Object(redux__WEBPACK_IMPORTED_MODULE_3__["bindActionCreators"])({
-    getUserEdit: _actions___WEBPACK_IMPORTED_MODULE_1__["getUserEdit"],
-    getTaskEdit: _actions___WEBPACK_IMPORTED_MODULE_1__["getTaskEdit"],
-    getUser: _actions___WEBPACK_IMPORTED_MODULE_1__["getUser"],
-    getConformity: _actions___WEBPACK_IMPORTED_MODULE_1__["getConformity"]
-  }, dispatch);
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_2__["connect"])(mapStateToProps, mapDispatchToProps)(UserEdit));
 
 /***/ }),
 
@@ -32952,13 +34878,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
-/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var _components_user__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/user */ "./resources/js/components/components/user.js");
-/* harmony import */ var _components_olympiad__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/olympiad */ "./resources/js/components/components/olympiad.js");
-/* harmony import */ var _components_task__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/task */ "./resources/js/components/components/task.js");
-/* harmony import */ var _reducers__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./reducers */ "./resources/js/components/reducers/index.js");
-/* harmony import */ var _components_app__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/app */ "./resources/js/components/components/app.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+/* harmony import */ var _components_student__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/student */ "./resources/js/components/components/student.js");
+/* harmony import */ var _components_olympiad__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/olympiad */ "./resources/js/components/components/olympiad.js");
+/* harmony import */ var _components_task__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/task */ "./resources/js/components/components/task.js");
+/* harmony import */ var _reducers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./reducers */ "./resources/js/components/reducers/index.js");
+/* harmony import */ var redux_devtools_extension__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! redux-devtools-extension */ "./node_modules/redux-devtools-extension/index.js");
+/* harmony import */ var redux_devtools_extension__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(redux_devtools_extension__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
+/* harmony import */ var redux_thunk__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! redux-thunk */ "./node_modules/redux-thunk/es/index.js");
+
 
 
 
@@ -32970,20 +34899,20 @@ __webpack_require__.r(__webpack_exports__);
 
 
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_redux__WEBPACK_IMPORTED_MODULE_2__["Provider"], {
-  store: Object(redux__WEBPACK_IMPORTED_MODULE_3__["createStore"])(_reducers__WEBPACK_IMPORTED_MODULE_8__["default"])
-}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["BrowserRouter"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["Link"], {
+  store: Object(redux__WEBPACK_IMPORTED_MODULE_9__["createStore"])(_reducers__WEBPACK_IMPORTED_MODULE_7__["default"], Object(redux_devtools_extension__WEBPACK_IMPORTED_MODULE_8__["composeWithDevTools"])(Object(redux__WEBPACK_IMPORTED_MODULE_9__["applyMiddleware"])(redux_thunk__WEBPACK_IMPORTED_MODULE_10__["default"])))
+}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["BrowserRouter"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Link"], {
   to: "/olympiad"
-}, "Olympiad "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["Link"], {
-  to: "/user"
-}, "User"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["Route"], {
+}, "Olympiad "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Link"], {
+  to: "/student"
+}, "Student"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Route"], {
   path: "/olympiad",
-  component: _components_olympiad__WEBPACK_IMPORTED_MODULE_6__["default"]
-}), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["Route"], {
-  path: "/user",
-  component: _components_user__WEBPACK_IMPORTED_MODULE_5__["default"]
-}), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["Route"], {
+  component: _components_olympiad__WEBPACK_IMPORTED_MODULE_5__["default"]
+}), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Route"], {
+  path: "/student",
+  component: _components_student__WEBPACK_IMPORTED_MODULE_4__["default"]
+}), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Route"], {
   path: "/task/:id",
-  component: _components_task__WEBPACK_IMPORTED_MODULE_7__["default"]
+  component: _components_task__WEBPACK_IMPORTED_MODULE_6__["default"]
 })))), document.getElementById('root'));
 
 /***/ }),
@@ -33000,6 +34929,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
 /* harmony import */ var react_router_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-redux */ "./node_modules/react-router-redux/lib/index.js");
 /* harmony import */ var react_router_redux__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_router_redux__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _actions_requestActions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../actions/requestActions */ "./resources/js/components/actions/requestActions.js");
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -33007,21 +34937,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
-var userStore = function userStore() {
+
+var studentStore = function studentStore() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-    users: [],
-    selectedUser: -1
+    table: [],
+    selectedStudent: -1
   };
   var action = arguments.length > 1 ? arguments[1] : undefined;
 
   switch (action.type) {
-    case 'GET_USER':
+    case 'STUDENT_SUCCESS':
       return _objectSpread({}, state, action);
 
-    case 'SELECT_USER':
+    case 'SELECT_STUDENT':
       return _objectSpread({}, state, {
-        selectedUser: action.id
+        selectedStudent: action.id
       });
+
+    case 'STUDENT_FAILURE':
+      alert("Error");
 
     default:
       return state;
@@ -33030,15 +34964,15 @@ var userStore = function userStore() {
 
 var taskStore = function taskStore() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-    tasks: [],
+    table: [],
     olympiadID: location.pathname.replace('/task/', '')
   };
   var action = arguments.length > 1 ? arguments[1] : undefined;
 
   switch (action.type) {
-    case 'GET_TASK':
+    case 'TASK_SUCCESS':
       return _objectSpread({}, state, {
-        tasks: action.tasks,
+        table: action.table,
         olympiadID: location.pathname.replace('/task/', '')
       });
 
@@ -33047,6 +34981,9 @@ var taskStore = function taskStore() {
         selectedTask: action.id
       });
 
+    case 'TASK_FAILURE':
+      alert("err");
+
     default:
       return state;
   }
@@ -33054,19 +34991,22 @@ var taskStore = function taskStore() {
 
 var olympiadStore = function olympiadStore() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-    olympiads: [],
+    table: [],
     selectedOlympiad: -1
   };
   var action = arguments.length > 1 ? arguments[1] : undefined;
 
   switch (action.type) {
-    case 'GET_OLYMPIAD':
+    case 'OLYMPIAD_SUCCESS':
       return _objectSpread({}, state, action);
 
     case 'SELECT_OLYMPIAD':
       return _objectSpread({}, state, {
         selectedOlympiad: action.id
       });
+
+    case 'OLYMPIAD_FAILURE':
+      alert("err");
 
     default:
       return state;
@@ -33075,7 +35015,7 @@ var olympiadStore = function olympiadStore() {
 
 var taskEditStore = function taskEditStore() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-    task: {},
+    table: {},
     olympiadID: -1,
     show: false
   };
@@ -33084,7 +35024,7 @@ var taskEditStore = function taskEditStore() {
   switch (action.type) {
     case 'GET_TASK_EDIT':
       return _objectSpread({}, state, {
-        task: action.task,
+        table: action.table,
         olympiadID: action.olympiadID,
         show: action.show
       });
@@ -33094,17 +35034,17 @@ var taskEditStore = function taskEditStore() {
   }
 };
 
-var userEditStore = function userEditStore() {
+var studentEditStore = function studentEditStore() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-    user: {},
+    table: {},
     show: false
   };
   var action = arguments.length > 1 ? arguments[1] : undefined;
 
   switch (action.type) {
-    case 'GET_USER_EDIT':
+    case 'GET_STUDENT_EDIT':
       return _objectSpread({}, state, {
-        user: action.user,
+        table: action.table,
         show: action.show
       });
 
@@ -33115,7 +35055,7 @@ var userEditStore = function userEditStore() {
 
 var olympiadEditStore = function olympiadEditStore() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-    olympiad: {},
+    table: {},
     show: false
   };
   var action = arguments.length > 1 ? arguments[1] : undefined;
@@ -33123,7 +35063,7 @@ var olympiadEditStore = function olympiadEditStore() {
   switch (action.type) {
     case 'GET_OLYMPIAD_EDIT':
       return _objectSpread({}, state, {
-        olympiad: action.olympiad,
+        table: action.table,
         show: action.show
       });
 
@@ -33132,29 +35072,11 @@ var olympiadEditStore = function olympiadEditStore() {
   }
 };
 
-var mainTableStore = function mainTableStore() {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-    conformity: []
-  };
-  var action = arguments.length > 1 ? arguments[1] : undefined;
-
-  switch (action.type) {
-    case 'GET_CONFORMITY':
-      return _objectSpread({}, state, {
-        conformity: action.conformity
-      });
-
-    default:
-      return state;
-  }
-};
-
 var rootReducer = Object(redux__WEBPACK_IMPORTED_MODULE_0__["combineReducers"])({
-  userStore: userStore,
+  studentStore: studentStore,
   taskStore: taskStore,
-  userEditStore: userEditStore,
+  studentEditStore: studentEditStore,
   taskEditStore: taskEditStore,
-  mainTableStore: mainTableStore,
   olympiadEditStore: olympiadEditStore,
   olympiadStore: olympiadStore,
   routerReducer: react_router_redux__WEBPACK_IMPORTED_MODULE_1__["routerReducer"]

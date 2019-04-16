@@ -7,7 +7,6 @@ use App\Task;
 
 class TaskController extends Controller
 {
-    private $table = 'tasks';
 
     /**
      * Store a newly created resource in storage.
@@ -31,7 +30,7 @@ class TaskController extends Controller
     public function show($id)
     {
         $response = Task::getAllTasks($id);
-        $answer = '{' . '"' .$this->table. '"' . ':' . $response . '}';
+        $answer = '{' . '"' ."table". '"' . ':' . $response . '}';
         return response($answer, 200);
     }
 
@@ -63,6 +62,6 @@ class TaskController extends Controller
     }
 
     public function task(){
-        return view('task');
+        return view('index');
     }
 }

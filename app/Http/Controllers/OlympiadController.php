@@ -7,8 +7,6 @@ use App\Olympiad;
 
 class OlympiadController extends Controller
 {
-
-    private $table = 'olympiads';
     /**
      * Display a listing of the resource.
      *
@@ -17,19 +15,19 @@ class OlympiadController extends Controller
     public function index()
     {
         $response = Olympiad::getAllOlympiads();
-        $answer = '{' . '"' .$this->table. '"' . ':' . $response . '}';
+        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
         return response($answer, 200);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $content =$request->json()->all();
+        $content = $request->json()->all();
         Olympiad::addOlympiad($content);
         return response(200);
     }
@@ -41,9 +39,9 @@ class OlympiadController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-        $json =$request->json()->all();
+        $json = $request->json()->all();
         Olympiad::editOlympiad($json);
         return response(200);
     }
@@ -51,17 +49,18 @@ class OlympiadController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+
+    public function destroy($id)
     {
-        $json =$request->json()->all();
-        Olympiad::deleteOlympiad($json['id']);
+        Olympiad::deleteOlympiad($id);
         return response(200);
     }
 
-    public function olympiad(){
-        return view('olympiad');
+    public function olympiad()
+    {
+        return view('index');
     }
 }

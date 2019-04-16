@@ -3,23 +3,14 @@ import * as actionCreators from '../actions/';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import TaskEdit from './taskEdit';
-
+import * as requestActionCreators from '../actions/requestActions';
 export class TaskList extends Component {
 
     constructor(props) {
         super(props);
-        const getTask = this.props.getTask;
-        fetch('http://olympic.test/api/task/' + props.olympiadID)
-            .then(function (response) {
-                if (response.ok) {
-                    response.json().then(v => getTask(v));
-                } else {
-                    response.json()
-                        .then(function (data) {
-                            alert(data.error);
-                        })
-                }
-            });
+        console.log("here");
+        const {getTable, olympiadID} = this.props;
+        getTable({name : "task", id : olympiadID});
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
     }
@@ -60,7 +51,7 @@ export class TaskList extends Component {
     }
 
     createTaskList() {
-        const {tasks, selectedTask, selectTask} = this.props;
+        const {table, selectedTask, selectTask} = this.props;
         return (
             <table border="1">
                 <tbody>
@@ -71,7 +62,7 @@ export class TaskList extends Component {
                     <th>Time</th>
                 </tr>
                 {
-                    tasks.map((task) => (<tr key={task.id} className={task.id === selectedTask ? "selected" : ""}
+                    table.map((task) => (<tr key={task.id} className={task.id === selectedTask ? "selected" : ""}
                                              onClick={this.taskSelected(task.id, selectTask)}>
                         <td className="name"> {task.name} </td>
                         <td className="description"> {task.description} </td>
@@ -86,37 +77,23 @@ export class TaskList extends Component {
 
 
     handleDelete(task) {
-        const {getTask, olympiadID} = this.props;
-        fetch('http://olympic.test/api/task/' + olympiadID, {
-            method: "DELETE",
-            body: JSON.stringify(task)
-        })
-            .then(function (response) {
-                if (response.ok) {
-                    fetch('http://olympic.test/api/task/' + olympiadID)
-                        .then(response => response.json())
-                        .then(v => getTask(v));
-                } else {
-                    response.json()
-                        .then(data => alert(data.error));
-                }
-            });
-
+        const {deleteTable, getTable} = this.props;
+        deleteTable({name : "task", data : task, id : task});//.then(getTable({name : "olympiad"}));
     }
 
     taskEdit(props, button) {
         alert(props.olympiadID);
         props.getTaskEdit({}, props.olympiadID, false);
         if (button != "edit" || props.selectedTask != undefined) {
-            const task = props.tasks.find(v => v.id === props.selectedTask) || {};
-            props.getTaskEdit(task, props.olympiadID, true);
+            const table = props.table.find(v => v.id === props.selectedTask) || {};
+            props.getTaskEdit(table, props.olympiadID, true);
         }
         if (button == "add") {
             props.getTaskEdit({olympiad_id: props.olympiadID}, props.olympiadID, true);
         }
         if (button == "delete") {
-            const task = props.tasks.find(v => v.id === props.selectedTask) || {};
-            this.handleDelete(task);
+            const table = props.table.find(v => v.id === props.selectedTask) || {};
+            this.handleDelete(table);
             props.getTaskEdit({olympiad_id: props.olympiadID}, props.olympiadID, false);
         }
     }
@@ -152,7 +129,7 @@ export class TaskList extends Component {
                         </button>
                     </div>
                 </div>
-                <TaskEdit/>
+                <TaskEdit  getTable = {this.props.getTable}/>
             </div>);
     }
 
@@ -160,7 +137,7 @@ export class TaskList extends Component {
 
 const mapStateToProps = function (state) {
     return {
-        tasks: state.taskStore.tasks,
+        table: state.taskStore.table,
         selectedTask: state.taskStore.selectedTask,
         olympiadID: state.taskStore.olympiadID
     }
@@ -169,7 +146,7 @@ const mapStateToProps = function (state) {
 const mapDispatchToProps = function (dispatch) {
     return bindActionCreators({
         getTaskEdit: actionCreators.getTaskEdit,
-        getTask: actionCreators.getTask,
+        getTable: requestActionCreators.getTable,
         selectTask: actionCreators.selectTask,
     }, dispatch)
 };

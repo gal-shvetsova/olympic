@@ -1,10 +1,3 @@
-export function getOlympiad(olympiads) {
-    return {
-        type: 'GET_OLYMPIAD',
-        ...olympiads
-    }
-}
-
 export function selectOlympiad(id){
     return {
         type: 'SELECT_OLYMPIAD',
@@ -12,33 +5,61 @@ export function selectOlympiad(id){
     }
 }
 
-export function getOlympiadEdit(olympiad, show){
+export function getStateOlympiad(id){
     return {
-        type: 'GET_OLYMPIAD_EDIT',
-        olympiad,
-        show
-    }
-}
-
-export function getUser(users) {
-    return {
-        type: 'GET_USER',
-        ...users
-    }
-}
-
-export function selectUser(id){
-    return {
-        type: 'SELECT_USER',
+        type: 'GET_STATE_OLYMPIAD',
         id
     }
 }
 
-export function getUserEdit(user, show){
+export function getOlympiadEdit(table, show){
     return {
-        type: 'GET_USER_EDIT',
-        user,
+        type: 'GET_OLYMPIAD_EDIT',
+        table,
         show
+    }
+}
+
+export function olympiadSuccess(table){
+    return {
+        type: 'OLYMPIAD_SUCCESS',
+        ...table
+    }
+}
+
+export function olympiadFailure(table){
+    return {
+        type: 'OLYMPIAD_FAILURE',
+        ...table
+    }
+}
+
+export function selectStudent(id){
+    return {
+        type: 'SELECT_STUDENT',
+        id
+    }
+}
+
+export function getStudentEdit(table, show){
+    return {
+        type: 'GET_STUDENT_EDIT',
+        table,
+        show
+    }
+}
+
+export function studentSuccess(table){
+    return {
+        type: 'STUDENT_SUCCESS',
+        ...table
+    }
+}
+
+export function studentFailure(table){
+    return {
+        type: 'STUDENT_FAILURE',
+        ...table
     }
 }
 
@@ -49,26 +70,26 @@ export function selectTask(id){
     }
 }
 
-export function getTaskEdit(task, olympiadID, show){
+export function getTaskEdit(table, olympiadID, show){
     return {
         type: 'GET_TASK_EDIT',
-        task, 
+        table,
         olympiadID,
         show 
     }
 }
 
-export function getTask(tasks, olympiadID) {
+export function taskSuccess(table){
     return {
-        type: 'GET_TASK',
-        ...tasks,
+        type: 'TASK_SUCCESS',
+        ...table,
         olympiadID
     }
 }
 
-export function getConformity(conformity) {
+export function taskFailure(table){
     return {
-        type: 'GET_CONFORMITY',
-        conformity
+        type: 'TASK_FAILURE',
+        ...table
     }
 }

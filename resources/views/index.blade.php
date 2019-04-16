@@ -10,6 +10,7 @@
     <title>React App</title>
 </head>
 <body>
+
 <div id="root"></div>
 </body>
 <script src="../index.js"></script>

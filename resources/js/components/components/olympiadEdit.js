@@ -2,11 +2,12 @@ import React, {Component} from 'react';
 import * as actionCreators from '../actions/';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import * as requestActionCreators from '../actions/requestActions';
 
 export class OlympiadEdit extends Component {
 
     handleChange(field) {
-        const {olympiad, getOlympiadEdit} = this.props;
+        const {table, getOlympiadEdit} = this.props;
 
         return (event) => {
             let today = new Date();
@@ -18,35 +19,18 @@ export class OlympiadEdit extends Component {
                 return;
                 const change = {};
                 change[field] = event.target.value;
-                getOlympiadEdit(Object.assign({}, olympiad, change), true);
+                getOlympiadEdit(Object.assign({}, table, change), true);
 
         };
     }
 
     handleSubmit() {
-        const {olympiad, getOlympiad} = this.props;
-        const method = olympiad.id ? "PUT" : "POST";
-        fetch('api/olympiad/', {
-            method,
-            body: JSON.stringify(olympiad)
-        })
-            .then(function (response) {
-                if (response.ok) {
-                    fetch('api/olympiad/')
-                        .then(function (response) {
-                            if (response.ok) {
-                                response.json()
-                                    .then(v => getOlympiad(v));
-                            } else {
-                                response.json()
-                                    .then(data => alert(data.error));
-                            }
-                        })
-                } else {
-                    response.json()
-                        .then(data => alert(data.error));
-                }
-            });
+        const {table, postTable, getTable} = this.props;
+        const method = table.id ? "PUT" : "POST";
+        if (!table.id)
+            postTable({name: "olympiad", data : JSON.stringify(table), method : "POST"}).then(getTable({name: "olympiad"}));
+        else
+            postTable({name: "olympiad", data : JSON.stringify(table), method : "PUT", id : table.id}).then(getTable({name: "olympiad"}));
         this.hide();
     }
 
@@ -55,16 +39,16 @@ export class OlympiadEdit extends Component {
     }
 
     render() {
-        const olympiad = this.props.olympiad;
+        const table = this.props.table;
         return (
             this.props.show ?
                 <div className="olympiadEdit">
                     <p>Name</p>
-                    <input type="text" value={olympiad.name || ""} onChange={this.handleChange("name")}/>
+                    <input type="text" value={table.name || ""} onChange={this.handleChange("name")}/>
                     <p>Hardness</p>
-                    <input type="number" min = "1" max = "10" value={olympiad.hardness || ""} onChange={this.handleChange("hardness")}/>
+                    <input type="number" min = "1" max = "10" value={table.hardness || ""} onChange={this.handleChange("hardness")}/>
                     <p>Deadline</p>
-                    <input type="date" value={olympiad.deadline || ""} onChange={this.handleChange("deadline")}/>
+                    <input type="date" value={table.deadline || ""} onChange={this.handleChange("deadline")}/>
                     <p/>
                     <button type="text" className="ok" onClick={this.handleSubmit.bind(this)}>ok</button>
                     <button className="cancel" onClick={this.hide.bind(this)}>cancel</button>
@@ -77,7 +61,7 @@ export class OlympiadEdit extends Component {
 
 const mapStateToProps = function (state) {
     return {
-        olympiad: state.olympiadEditStore.olympiad,
+        table: state.olympiadEditStore.table,
         show: state.olympiadEditStore.show,
     }
 }
@@ -85,7 +69,8 @@ const mapStateToProps = function (state) {
 const mapDispatchToProps = function (dispatch) {
     return bindActionCreators({
         getOlympiadEdit: actionCreators.getOlympiadEdit,
-        getOlympiad: actionCreators.getOlympiad,
+        postTable: requestActionCreators.postTable,
+        deleteTable : requestActionCreators.deleteTable
     }, dispatch)
 }
 

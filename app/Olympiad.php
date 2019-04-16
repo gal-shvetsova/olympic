@@ -22,8 +22,7 @@ class Olympiad extends Model
 
     public static function getAllOlympiads()
     {
-        $olympiads = Olympiad::withCount('students')->get();
-        return $olympiads;
+        return Olympiad::withCount('students')->get();
     }
 
     public static function addOlympiad($newOlympiad)

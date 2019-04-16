@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 
 class Student extends Model
 {
+    public $timestamps = false;
+
     public function olympiads()
     {
         return $this->belongsToMany('App\Olympiad', 'olym_user_links');
@@ -31,9 +33,8 @@ class Student extends Model
     public static function editStudent($student)
     {
         $put_student = Student::find($student['id']);
-        $put_student['name'] = $student['last_name'];
-        $put_student['hardness'] = $student['user_role'];
-        $put_student['deadline'] = $student['olympiad_id'];
+        $put_student['last_name'] = $student['last_name'];
+        $put_student['user_role'] = $student['user_role'];
         $put_student->save();
     }
 

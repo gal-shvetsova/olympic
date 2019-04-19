@@ -11,7 +11,4 @@ const mix = require('laravel-mix');
  |
  */
 
-//mix.react('resources/js/components/users.js', '/');
 mix.react('resources/js/components/index.js', '/');
-//mix.react('resources/js/components/olympiads.js', '/');
-//mix.react('resources/js/components/tasks.js', '/');

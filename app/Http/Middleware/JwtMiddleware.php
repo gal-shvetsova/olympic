@@ -1,15 +1,36 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: galina
- * Date: 18.04.19
- * Time: 10:20
- */
 
 namespace App\Http\Middleware;
 
+use Closure;
+use Tymon\JWTAuth\JWTAuth;
+use Exception;
 
 class JwtMiddleware
 {
-
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
+     */
+    public function handle($request, Closure $next)
+    {
+        try {
+            $user = JWTAuth::toUser($request->input('token'));
+        } catch (Exception $e) {
+            if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){
+                return $next($request);
+                return response()->json(['error'=>'Token is Invalid']);
+            }else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException){
+                return $next($request);
+                return response()->json(['error'=>'Token is Expired']);
+            }else{
+                return $next($request);
+                return response()->json(['error'=>'Something is wrong']);
+            }
+        }
+        return $next($request);
+    }
 }

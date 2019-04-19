@@ -41,10 +41,11 @@ export function selectStudent(id){
     }
 }
 
-export function getStudentEdit(table, show){
+export function getStudentEdit(table, action, show){
     return {
         type: 'GET_STUDENT_EDIT',
         table,
+        action,
         show
     }
 }
@@ -91,5 +92,20 @@ export function taskFailure(table){
     return {
         type: 'TASK_FAILURE',
         ...table
+    }
+}
+
+
+export function loginSuccess(data){
+    return {
+        type: 'LOGIN_SUCCESS',
+        ...data,
+    }
+}
+
+export function loginFailure(data){
+    return {
+        type: 'TASK_FAILURE',
+        ...data
     }
 }

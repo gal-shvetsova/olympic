@@ -12,16 +12,18 @@
 */
 
 
-//Route::get('/', 'SiteController@index');
-
-//Route::get('/olympiad', 'OlympiadController@olympiad');
-
 Route::any('/olympiad', 'OlympiadController@olympiad');
 
 Route::any('/student', 'StudentController@student');
 
 Route::any('/task/{id}', 'TaskController@task');
 
-Auth::routes();
+Route::get('/home', 'HomeController@index')->name('home');
 
-//Route::get('/home', 'HomeController@index')->name('home');
+
+//Auth::routes();
+
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/home', 'HomeController@index')->name('home');

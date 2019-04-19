@@ -2,16 +2,26 @@
 
 namespace App;
 
+use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class Student extends Model
 {
+
+    private static $default_password = "password";
+
     public $timestamps = false;
 
     public function olympiads()
     {
         return $this->belongsToMany('App\Olympiad', 'olym_user_links');
+    }
+
+    public function user()
+    {
+        return $this->hasOne('App\User', 'id');
     }
 
     public static function getAllStudents()
@@ -27,7 +37,16 @@ class Student extends Model
 
     public static function addStudent($newStudent)
     {
-        Student::insert($newStudent);
+        $student['last_name'] = $newStudent['last_name'];
+        $student['user_role'] = $newStudent['user_role'];
+        $user = new Request();
+        $user->name = $student['last_name'];
+        $user->email = $newStudent['email'];
+        $user->password = Student::$default_password;
+        $user->flag = true;
+        Student::insert($student);
+        $register = new RegisterController();
+        $register->register($user);
     }
 
     public static function editStudent($student)
@@ -36,12 +55,16 @@ class Student extends Model
         $put_student['last_name'] = $student['last_name'];
         $put_student['user_role'] = $student['user_role'];
         $put_student->save();
+        $put_user = $put_student->user;
+        $put_user['name'] = $put_student['last_name'];
+        $put_user->save();
     }
 
     public static function deleteStudent($student)
     {
-        $student_del = Olympiad::find($student);
+        $student_del = Student::find($student);
         $student_del->olympiads()->detach();
+        $student_del->user()->delete();
         $student_del->delete();
     }
 

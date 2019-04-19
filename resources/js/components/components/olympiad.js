@@ -53,7 +53,7 @@ export class OlympiadList extends Component {
 
     handleDelete(olympiad) {
         const {deleteTable, getTable} = this.props;
-        deleteTable({name : "olympiad", data : olympiad});//.then(getTable({name : "olympiad"}));
+        deleteTable({name: "olympiad", id: olympiad}).then(getTable({name: "olympiad"}));
     }
 
 
@@ -95,7 +95,7 @@ export class OlympiadList extends Component {
     }
 
     handleToTask(id) {
-        window.location.href = "http://olympic.test/task/" + id;
+        window.location.href = "task/" + id;
     }
 
     render() {
@@ -104,12 +104,16 @@ export class OlympiadList extends Component {
                 <h4>Olympiad</h4>
                 {this.createOlympiadList()}
                 <button className="add" onClick={() => this.olympiadEdit(this.props, "add")}>add</button>
-                <button className="edit" onClick={() => this.olympiadEdit(this.props, "edit")}>edit</button>
-                <button className="delete" onClick={() => this.olympiadEdit(this.props, "delete")}>delete</button>
-                <button className={this.props.selectedOlympiad != -1 ? "show" : "hidden"}
+                <button hidden={this.props.selectedOlympiad < 0} className="edit"
+                        onClick={() => this.olympiadEdit(this.props, "edit")}>edit
+                </button>
+                <button hidden={this.props.selectedOlympiad < 0} className="delete"
+                        onClick={() => this.olympiadEdit(this.props, "delete")}>delete
+                </button>
+                <button hidden={this.props.selectedOlympiad < 0}
                         onClick={() => this.handleToTask(this.props.selectedOlympiad)}>to tasks
                 </button>
-                <OlympiadEdit getTable = {this.props.getTable}/>
+                <OlympiadEdit getTable={this.props.getTable}/>
             </div>
 
         );
@@ -131,7 +135,7 @@ const mapDispatchToProps = function (dispatch) {
         getOlympiadEdit: actionCreators.getOlympiadEdit,
         getTable: requestActionCreators.getTable,
         selectOlympiad: actionCreators.selectOlympiad,
-        deleteTable : requestActionCreators.deleteTable
+        deleteTable: requestActionCreators.deleteTable
     }, dispatch)
 };
 

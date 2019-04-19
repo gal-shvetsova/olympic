@@ -50,27 +50,27 @@ export class StudentList extends Component {
 
     handleDelete(student) {
         const {deleteTable, getTable} = this.props;
-        deleteTable({name : "student", data : student}).then(getTable({name : "olympiad"}));
+        deleteTable({name : "student", id : student}).then(getTable({name : "student"}));
     }
 
     studentEdit(props, button) {
-        props.getStudentEdit({}, false);
+        props.getStudentEdit({}, "", false);
         if (button != "edit" || props.selectedStudent != -1) {
             const student = props.table.find(v => v.id === props.selectedStudent) || {};
-            props.getStudentEdit(student, true);
+            props.getStudentEdit(student, button, true);
         }
         if (button == "add") {
-            props.getStudentEdit({}, true);
+            props.getStudentEdit({}, button, true);
         }
         if (button == "delete") {
+            props.getStudentEdit({}, "", false);
             this.handleDelete(props.selectedStudent);
-            props.getStudentEdit({}, false);
         }
     }
 
     studentSelected(STUDENT_ID) {
         return () => {
-            this.props.getStudentEdit({}, false);
+            this.props.getStudentEdit({}, "", false);
             this.props.selectStudent(STUDENT_ID);
         }
     }
@@ -85,7 +85,7 @@ export class StudentList extends Component {
         if (!event.path.includes(studentEdit)) {
             if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
                 this.props.selectStudent(-1);
-                this.props.getStudentEdit({}, false);
+                this.props.getStudentEdit({}, "", false);
             }
         }
     }
@@ -95,9 +95,9 @@ export class StudentList extends Component {
             <div className="Student" ref={this.setWrapperRef}>
                 <h4>Students</h4>
                 {this.createStudentList()}
-                <button className="add" onClick={() => this.studentEdit(this.props, "add")}>add</button>
-                <button className="edit" onClick={() => this.studentEdit(this.props, "edit")}>edit</button>
-                <button className="delete" onClick={() => this.studentEdit(this.props, "delete")}>delete</button>
+                <button  className="add" onClick={() => this.studentEdit(this.props, "add")}>add</button>
+                <button className="edit" hidden = {this.props.selectedStudent < 0} onClick={() => this.studentEdit(this.props, "edit")}>edit</button>
+                <button hidden = {this.props.selectedStudent < 0} className="delete" onClick={() => this.studentEdit(this.props, "delete")}>delete</button>
                 <div>
                     <StudentEdit  getTable = {this.props.getTable}/>
                 </div>
@@ -119,6 +119,7 @@ const mapDispatchToProps = function (dispatch) {
         getStudentEdit: actionCreators.getStudentEdit,
         getTable: requestActionCreators.getTable,
         selectStudent: actionCreators.selectStudent,
+        deleteTable : requestActionCreators.deleteTable
     }, dispatch)
 }
 

@@ -50,10 +50,10 @@ const taskEditStore = (state = {table: {}, olympiadID: -1, show: false}, action)
     }
 };
 
-const studentEditStore = (state = {table: {}, show: false}, action) => {
+const studentEditStore = (state = {table: {}, action : "", show: false}, action) => {
     switch (action.type) {
         case 'GET_STUDENT_EDIT':
-            return {...state, table: action.table, show: action.show};
+            return {...state, table: action.table, action : action.action, show: action.show};
         default:
             return state
     }
@@ -65,6 +65,14 @@ const olympiadEditStore = (state = {table: {}, show: false}, action) => {
             return {...state, table : action.table, show: action.show};
         default:
             return state
+    }
+};
+
+const loginStore = (state = {user : {email : "", password  : ""}}, action) => {
+    switch (action.type) {
+        case 'LOGIN_SUCCESS':
+
+        case 'LOGIN_FAILURE':
     }
 };
 

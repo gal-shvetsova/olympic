@@ -1,9 +1,10 @@
 import axios from 'axios';
 
+
 export function getTable(args = {id : null}) {
     return (dispatch) => {
         return new Promise((resolve, reject) => {
-            const doRequest = axios.get('http://olympic.test/api/' + args.name +  '/' + (args.id ? args.id + '/' :""));
+            const doRequest = axios.get('api/' + args.name +  '/' + (args.id ? args.id + '/' :""));
             doRequest.then(
                 (res) => {
                     dispatch({
@@ -30,9 +31,9 @@ export function postTable(args = {id : null}) {
         return new Promise((resolve, reject) => {
             let doRequest = null;
             if (args.method == "POST")
-            doRequest = axios.post('http://olympic.test/api/' + args.name + '/', args.data);
+            doRequest = axios.post('api/' + args.name + '/', args.data);
             else
-                doRequest = axios.put('http://olympic.test/api/' + args.name + '/' + args.id, args.data);
+                doRequest = axios.put('api/' + args.name + '/' + args.id, args.data);
             doRequest.then(
                 () => {
                 },
@@ -47,7 +48,7 @@ export function postTable(args = {id : null}) {
 export function deleteTable(args = {}) {
     return () => {
         return new Promise((resolve, reject) => {
-            const doRequest = axios.delete('http://olympic.test/api/' + args.name + '/' + args.id);
+            const doRequest = axios.delete('api/' + args.name + '/' + args.id);
             doRequest.then(
                 () => {
                 },

@@ -12,7 +12,7 @@
 */
 
 
-Route::any('/olympiad', 'OlympiadController@olympiad');
+Route::any('olympiad', 'OlympiadController@olympiad');
 
 Route::any('/student', 'StudentController@student');
 

@@ -38,9 +38,6 @@ const Login = ({ history, loginUser = f => f }) => {
                     Login
                 </button>
             </form>
-            <Link  to="/register">
-                Register
-            </Link>
         </div>
     );
 };

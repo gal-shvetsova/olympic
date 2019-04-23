@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
 import OlympiadEdit from "./olympiadEdit";
+import {hasRole, isRole} from "../actions/roleActions";
 
 export class OlympiadList extends Component {
 
@@ -85,8 +86,8 @@ export class OlympiadList extends Component {
 
     handleClickOutside(event) {
         const olympiadEdit = document.getElementsByClassName("olympiadEdit")[0];
-
-        if (!event.path.includes(olympiadEdit)) {
+        const join = document.getElementsByClassName("join")[0];
+        if (!event.path.includes(olympiadEdit) && !event.path.includes(olympiadEdit)) {
             if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
                 this.props.selectOlympiad(-1);
                 this.props.getOlympiadEdit({}, false);
@@ -98,24 +99,51 @@ export class OlympiadList extends Component {
         window.location.href = "task/" + id;
     }
 
+
     render() {
         return (
             <div className="Olympiad" ref={this.setWrapperRef}>
                 <h4>Olympiad</h4>
                 {this.createOlympiadList()}
-                <button className="add" onClick={() => this.olympiadEdit(this.props, "add")}>add</button>
-                <button hidden={this.props.selectedOlympiad < 0} className="edit"
-                        onClick={() => this.olympiadEdit(this.props, "edit")}>edit
-                </button>
-                <button hidden={this.props.selectedOlympiad < 0} className="delete"
-                        onClick={() => this.olympiadEdit(this.props, "delete")}>delete
-                </button>
-                <button hidden={this.props.selectedOlympiad < 0}
-                        onClick={() => this.handleToTask(this.props.selectedOlympiad)}>to tasks
-                </button>
+                {
+                    isRole(this.props.role, ["admin"]) &&
+                    <button
+                        className="add"
+                        onClick={() => this.olympiadEdit(this.props, "add")}>
+                        add
+                    </button>
+                }
+                {
+                    isRole(this.props.role, ["admin"]) &&
+                    <button
+                        className="edit"
+                        hidden={this.props.selectedOlympiad < 0}
+                        onClick={() => this.olympiadEdit(this.props, "edit")}>
+                        edit
+                    </button>
+                }
+                {
+                    isRole(this.props.role, ["admin"]) &&
+                    <button
+                        className="delete"
+                        hidden={this.props.selectedOlympiad < 0}
+                        onClick={() => this.olympiadEdit(this.props, "delete")}>
+                        delete
+                    </button>
+                }
+                {
+                    isRole(this.props.role, ["admin"]) &&
+                    <button
+                        hidden={this.props.selectedOlympiad < 0}
+                        onClick={() => this.handleToTask(this.props.selectedOlympiad)}>
+                        to tasks
+                    </button>
+                }
+                {
+
+                }
                 <OlympiadEdit getTable={this.props.getTable}/>
             </div>
-
         );
     }
 }
@@ -135,7 +163,7 @@ const mapDispatchToProps = function (dispatch) {
         getOlympiadEdit: actionCreators.getOlympiadEdit,
         getTable: requestActionCreators.getTable,
         selectOlympiad: actionCreators.selectOlympiad,
-        deleteTable: requestActionCreators.deleteTable
+        deleteTable: requestActionCreators.deleteTable,
     }, dispatch)
 };
 

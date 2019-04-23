@@ -4,6 +4,8 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import TaskEdit from './taskEdit';
 import * as requestActionCreators from '../actions/requestActions';
+import {hasRole, isRole} from "../actions/roleActions";
+
 export class TaskList extends Component {
 
     constructor(props) {
@@ -116,13 +118,20 @@ export class TaskList extends Component {
                     {this.createTaskList()}
                     <div>
                         <button className="add"
-                                onClick={() => this.taskEdit(this.props, "add")}>add
+                                onClick={() => this.taskEdit(this.props, "add")}
+                                hidden = {isRole(this.props.role, ["admin"])}>add
                         </button>
                         <button className="edit"
-                                onClick={() => this.taskEdit(this.props, "edit")}>edit
+                                onClick={() => this.taskEdit(this.props, "edit")}
+                                hidden = {isRole(this.props.role, ["admin"])}>edit
                         </button>
                         <button className="delete"
-                                onClick={() => this.taskEdit(this.props, "delete")}>delete
+                                onClick={() => this.taskEdit(this.props, "delete")}
+                                hidden = {isRole(this.props.role, ["admin"])}>delete
+                        </button>
+                        <button className="solve"
+                                onClick={() => this.taskEdit(this.props, "solve")}
+                                hidden = {isRole(this.props.role, ["participant"])}>solve
                         </button>
                         <button className="back"
                                 onClick={() => this.handleToOlym()}>to olympiads

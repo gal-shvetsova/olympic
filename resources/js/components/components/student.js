@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import StudentEdit from './studentEdit';
 import * as requestActionCreators from '../actions/requestActions';
+import {isRole} from "../actions/roleActions";
 
 export class StudentList extends Component {
 
@@ -36,7 +37,7 @@ export class StudentList extends Component {
                     </tr>
                     {
                         table.map((student) => (
-                            <tr key={student.id} className={student.id === selectedStudent? "selected" : ""}
+                            <tr key={student.id} className={student.id === selectedStudent ? "selected" : ""}
                                 onClick={this.studentSelected(student.id)}>
                                 <td className="name"> {student.last_name} </td>
                                 <td className="role"> {student.user_role} </td>
@@ -50,7 +51,7 @@ export class StudentList extends Component {
 
     handleDelete(student) {
         const {deleteTable, getTable} = this.props;
-        deleteTable({name : "student", id : student}).then(getTable({name : "student"}));
+        deleteTable({name: "student", id: student}).then(getTable({name: "student"}));
     }
 
     studentEdit(props, button) {
@@ -92,16 +93,31 @@ export class StudentList extends Component {
 
     render() {
         return (
-            <div className="Student" ref={this.setWrapperRef}>
-                <h4>Students</h4>
-                {this.createStudentList()}
-                <button  className="add" onClick={() => this.studentEdit(this.props, "add")}>add</button>
-                <button className="edit" hidden = {this.props.selectedStudent < 0} onClick={() => this.studentEdit(this.props, "edit")}>edit</button>
-                <button hidden = {this.props.selectedStudent < 0} className="delete" onClick={() => this.studentEdit(this.props, "delete")}>delete</button>
-                <div>
-                    <StudentEdit  getTable = {this.props.getTable}/>
-                </div>
-            </div>
+            isRole(this.props.role, ["admin"]) ?
+                <div className="Student" ref={this.setWrapperRef}>
+                    <h4>Students</h4>
+                    {this.createStudentList()}
+                    <button
+                        className="add"
+                        onClick={() => this.studentEdit(this.props, "add")}>
+                        add
+                    </button>
+                    <button
+                        className="edit"
+                        hidden={this.props.selectedStudent < 0}
+                        onClick={() => this.studentEdit(this.props, "edit")}>
+                        edit
+                    </button>
+                    <button
+                        className="delete"
+                        hidden={this.props.selectedStudent < 0}
+                        onClick={() => this.studentEdit(this.props, "delete")}>
+                        delete
+                    </button>
+                    <div>
+                        <StudentEdit getTable={this.props.getTable}/>
+                    </div>
+                </div> : "You don't have permission to be here"
         );
     }
 }
@@ -119,7 +135,7 @@ const mapDispatchToProps = function (dispatch) {
         getStudentEdit: actionCreators.getStudentEdit,
         getTable: requestActionCreators.getTable,
         selectStudent: actionCreators.selectStudent,
-        deleteTable : requestActionCreators.deleteTable
+        deleteTable: requestActionCreators.deleteTable
     }, dispatch)
 }
 

@@ -68,16 +68,12 @@ const olympiadEditStore = (state = {table: {}, show: false}, action) => {
     }
 };
 
-const loginStore = (state = {user : {email : "", password  : ""}}, action) => {
-    switch (action.type) {
-        case 'LOGIN_SUCCESS':
-
-        case 'LOGIN_FAILURE':
-    }
+const appStore = (state = {isLoggedIn : false, user : {}}) => {
+    return {...state};
 };
 
 const rootReducer = combineReducers({
-    studentStore, taskStore, studentEditStore, taskEditStore, olympiadEditStore, olympiadStore, routerReducer
+    studentStore, taskStore, studentEditStore, taskEditStore, olympiadEditStore, olympiadStore, routerReducer, appStore
 });
 
 export default rootReducer;

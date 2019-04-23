@@ -1,33 +1,38 @@
 import axios from 'axios';
 
-export function _registerUser (name, email, password)  {
-    var formData = new FormData();
+const password_lenght  = 10;
+const login_lenght  = 5;
+const password_set = "abcdefghijklmnopqrstuvwxyz1234567890";
+const login_set = "ABCDEFGHIJKLMNOPRSTUVWXYZ";
+
+export function _registerUser(name, email, password) {
+
+    let formData = new FormData();
     formData.append("password", password);
     formData.append("email", email);
     formData.append("name", name);
 
     axios
-        .post("api/user/register", formData)
+        .post("register", formData)
         .then(response => {
-            console.log(response);
             return response;
         })
         .then(json => {
             if (json.data.success) {
-                alert(`Registration Successful!`);
-
+                const {name, id, email, auth_token, role, olympiad_id} = json.data.data;
                 let userData = {
-                    name: json.data.data.name,
-                    id: json.data.data.id,
-                    email: json.data.data.email,
-                    auth_token: json.data.data.auth_token,
+                    name,
+                    id,
+                    email,
+                    auth_token,
+                    role,
+                    olympiad_id,
                     timestamp: new Date().toString()
                 };
                 let appState = {
                     isLoggedIn: true,
                     user: userData
                 };
-                // save app state with user date in local storage
                 localStorage["appState"] = JSON.stringify(appState);
                 this.setState({
                     isLoggedIn: appState.isLoggedIn,
@@ -39,6 +44,49 @@ export function _registerUser (name, email, password)  {
         })
         .catch(error => {
             alert("An Error Occured!" + error);
-            console.log(`${formData} ${error}`);
         });
 }
+
+
+export function _registerParticipant(args = {password : "", login : ""}) {
+
+    let formData = new FormData();
+
+    formData.append("password", args.password);
+    formData.append("email", args.login);
+    formData.append("name", args.login);
+    axios
+        .post("register", formData)
+        .then(response => {
+            return response;
+        })
+        .then(json => {
+            if (json.data.success) {
+                const {name, id, email, auth_token, role, olympiad_id} = json.data.data;
+                let userData = {
+                    name,
+                    id,
+                    email,
+                    auth_token,
+                    role,
+                    olympiad_id,
+                    timestamp: new Date().toString()
+                };
+                let appState = {
+                    isLoggedIn: true,
+                    user: userData
+                };
+                localStorage["appState"] = JSON.stringify(appState);
+                this.setState({
+                    isLoggedIn: appState.isLoggedIn,
+                    user: appState.user
+                });
+            } else {
+                alert(`Registration Failed!`);
+            }
+        })
+        .catch(error => {
+            alert("An Error Occured!" + error);
+        });
+}
+

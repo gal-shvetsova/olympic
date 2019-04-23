@@ -1,18 +1,18 @@
-export function selectOlympiad(id){
+export function selectOlympiad(id) {
     return {
         type: 'SELECT_OLYMPIAD',
         id
     }
 }
 
-export function getStateOlympiad(id){
+export function getStateOlympiad(id) {
     return {
         type: 'GET_STATE_OLYMPIAD',
         id
     }
 }
 
-export function getOlympiadEdit(table, show){
+export function getOlympiadEdit(table, show) {
     return {
         type: 'GET_OLYMPIAD_EDIT',
         table,
@@ -20,28 +20,28 @@ export function getOlympiadEdit(table, show){
     }
 }
 
-export function olympiadSuccess(table){
+export function olympiadSuccess(table) {
     return {
         type: 'OLYMPIAD_SUCCESS',
         ...table
     }
 }
 
-export function olympiadFailure(table){
+export function olympiadFailure(table) {
     return {
         type: 'OLYMPIAD_FAILURE',
         ...table
     }
 }
 
-export function selectStudent(id){
+export function selectStudent(id) {
     return {
         type: 'SELECT_STUDENT',
         id
     }
 }
 
-export function getStudentEdit(table, action, show){
+export function getStudentEdit(table, action, show) {
     return {
         type: 'GET_STUDENT_EDIT',
         table,
@@ -50,37 +50,37 @@ export function getStudentEdit(table, action, show){
     }
 }
 
-export function studentSuccess(table){
+export function studentSuccess(table) {
     return {
         type: 'STUDENT_SUCCESS',
         ...table
     }
 }
 
-export function studentFailure(table){
+export function studentFailure(table) {
     return {
         type: 'STUDENT_FAILURE',
         ...table
     }
 }
 
-export function selectTask(id){
+export function selectTask(id) {
     return {
         type: 'SELECT_TASK',
         id
     }
 }
 
-export function getTaskEdit(table, olympiadID, show){
+export function getTaskEdit(table, olympiadID, show) {
     return {
         type: 'GET_TASK_EDIT',
         table,
         olympiadID,
-        show 
+        show
     }
 }
 
-export function taskSuccess(table){
+export function taskSuccess(table) {
     return {
         type: 'TASK_SUCCESS',
         ...table,
@@ -88,7 +88,7 @@ export function taskSuccess(table){
     }
 }
 
-export function taskFailure(table){
+export function taskFailure(table) {
     return {
         type: 'TASK_FAILURE',
         ...table
@@ -96,16 +96,24 @@ export function taskFailure(table){
 }
 
 
-export function loginSuccess(data){
+export function loginSuccess(data) {
     return {
         type: 'LOGIN_SUCCESS',
         ...data,
     }
 }
 
-export function loginFailure(data){
+export function loginFailure(data) {
     return {
-        type: 'TASK_FAILURE',
+        type: 'LOGIN_FAILURE',
         ...data
     }
 }
+
+export function appUpdate(data) {
+    return {
+        type: 'APP_UPDATE',
+        ...data
+    }
+}
+

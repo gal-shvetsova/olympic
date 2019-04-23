@@ -49,10 +49,6 @@ const Register = ({ history, registerUser = f => f }) => {
                 >
                     Register
                 </button>
-
-                <Link  to="/login">
-                    Login
-                </Link>
             </form>
         </div>
     );

@@ -21,7 +21,7 @@ class Student extends Model
 
     public function user()
     {
-        return $this->hasOne('App\User', 'id');
+        return $this->hasOne('App\User', 'id', 'id');
     }
 
     public static function getAllStudents()

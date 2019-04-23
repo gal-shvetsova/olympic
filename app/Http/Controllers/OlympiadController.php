@@ -61,7 +61,6 @@ class OlympiadController extends Controller
 
     public function olympiad()
     {
-        echo "here";
         return view('index');
     }
 }

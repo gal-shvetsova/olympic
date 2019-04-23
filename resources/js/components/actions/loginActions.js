@@ -1,53 +1,62 @@
 import axios from 'axios';
+import $ from "jquery";
 
-export function _loginUser(email, password) {
+export function _loginUser  (email, password)  {
+    $("#login-form button")
+        .attr("disabled", "disabled")
+        .html(
+            '<i class="fa fa-spinner fa-spin fa-1x fa-fw"></i><span class="sr-only">Loading...</span>'
+        );
     let formData = new FormData();
     formData.append("email", email);
     formData.append("password", password);
-
-    axios.post("api/user/login/", formData)
+    axios.post("login/", formData)
         .then(response => {
-            console.log(response);
             return response;
         })
         .then(json => {
             if (json.data.success) {
-                alert("Login Successful!");
-                const {name, id, email, auth_token} = json.data.data;
+                const {name, id, email, auth_token, role, olympiad_id} = json.data.data;
 
                 let userData = {
                     name,
                     id,
                     email,
                     auth_token,
+                    role,
+                    olympiad_id,
                     timestamp: new Date().toString()
                 };
                 let appState = {
                     isLoggedIn: true,
                     user: userData
                 };
-                // save app state with user date in local storage
                 localStorage["appState"] = JSON.stringify(appState);
                 this.setState({
                     isLoggedIn: appState.isLoggedIn,
                     user: appState.user
                 });
             } else alert("Login Failed!");
-
+            $("#login-form button")
+                .removeAttr("disabled")
+                .html("Login");
 
         })
         .catch(error => {
             alert(`An Error Occured! ${error}`);
+            $("#login-form button")
+                .removeAttr("disabled")
+                .html("Login");
         });
 }
-
 
 export function _logoutUser() {
     let appState = {
         isLoggedIn: false,
-        user: {}
+        user: {
+            role: "guest"
+        }
     };
-    // save app state with user date in local storage
     localStorage["appState"] = JSON.stringify(appState);
     this.setState(appState);
 }

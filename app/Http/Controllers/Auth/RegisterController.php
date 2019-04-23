@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+
 class RegisterController extends Controller
 {
     /*
@@ -48,7 +49,7 @@ class RegisterController extends Controller
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
+     * @param  array $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
@@ -63,7 +64,7 @@ class RegisterController extends Controller
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
+     * @param  array $data
      * @return \App\User
      */
     protected function create(array $data)
@@ -72,10 +73,12 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'olympiad_id' => $data['olympiad_id'] ? $data['olympiad_id'] : 0
         ]);
     }
 
-    public function showRegistrationForm() {
+    public function showRegistrationForm()
+    {
         return view('.index');
     }
 
@@ -100,30 +103,14 @@ class RegisterController extends Controller
         return $token;
     }
 
-    public function login(Request $request)
-    {
-        $user = User::where('email', $request->email)->get()->first();
-        if ($user && \Hash::check($request->password, $user->password)) // The passwords match...
-        {
-            $token = self::getToken($request->email, $request->password);
-            $user->auth_token = $token;
-            $user->save();
-            $response = ['success' => true, 'data' => ['id' => $user->id, 'auth_token' => $user->auth_token, 'name' => $user->name, 'email' => $user->email]];
-        } else
-            $response = ['success' => false, 'data' => 'Record doesnt exists'];
-
-        return response()->json($response, 201);
-    }
-
     public function register(Request $request)
     {
-
-
         $payload = [
             'password' => \Hash::make($request->password),
             'email' => $request->email,
             'name' => $request->name,
-            'auth_token' => ''
+            'auth_token' => '',
+            'olympiad_id' => property_exists($request,'olympiad_id') ? $request->olympiad_id : -1
         ];
 
         $user = new User($payload);
@@ -139,13 +126,13 @@ class RegisterController extends Controller
 
             $user->save();
 
-            $response = ['success' => true, 'data' => ['name' => $user->name, 'id' => $user->id, 'email' => $request->email, 'auth_token' => $token]];
+            $response = ['success' => true, 'data' => ['name' => $user->name, 'id' => $user->id, 'email' => $request->email, 'auth_token' => $token, 'olympiad_id' => $user->olympiad_id, 'role' => $user->role]];
         } else
             $response = ['success' => false, 'data' => 'Couldnt register user'];
         if (!property_exists($request, "flag")) {
             Student::insert([
                 'last_name' => $request->name,
-                'user_role' => 'student',
+                'user_role' =>  property_exists($request,'olympiad_id') ? 'participant' : 'student',
                 'id' => $user->id
             ]);
         }

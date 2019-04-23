@@ -31,8 +31,6 @@ Route::group(['middleware' => ['jwt.auth','api-header']], function () {
     });
 });
 
-//Route::post('register', 'UserController@register');
-
 Route::group(['middleware' => 'api-header'], function () {
     // The registration and login requests doesn't come with tokens
     // as users at that point have not been authenticated yet

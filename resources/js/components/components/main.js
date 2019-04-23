@@ -1,121 +1,32 @@
 import React from "react";
 import {render} from "react-dom";
-import {BrowserRouter, Route, Switch, withRouter} from "react-router-dom";
+import {BrowserRouter as Router, BrowserRouter, Link, Route, Switch, withRouter} from "react-router-dom";
 import Login from "./login";
 import Register from "./register";
-import axios from "axios";
-import $ from "jquery";
+import {_loginUser, _logoutUser} from "../actions/loginActions";
+import * as registerActionCreators from "../actions/registerAction";
+import {hasRole, isAllowed, isRole} from "../actions/roleActions";
+import OlympiadList from "./olympiad";
+import StudentList from "./student";
+import TaskList from "./task";
+import Join from "./join";
+import {applyMiddleware, bindActionCreators, createStore} from "redux";
+import * as actionCreators from "../actions";
+import {connect} from "react-redux";
+import {composeWithDevTools} from "redux-devtools-extension";
+import thunk from "redux-thunk";
+import * as requestActionCreators from "../actions/requestActions";
 
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            isLoggedIn: false,
-            user: {}
-        };
-    }
-
-    _loginUser  (email, password)  {
-        $("#login-form button")
-            .attr("disabled", "disabled")
-            .html(
-                '<i class="fa fa-spinner fa-spin fa-1x fa-fw"></i><span class="sr-only">Loading...</span>'
-            );
-        let formData = new FormData();
-        formData.append("email", email);
-        formData.append("password", password);
-        axios.post("login/", formData)
-            .then(response => {
-                return response;
-            })
-            .then(json => {
-                if (json.data.success) {
-                    alert("Login Successful!");
-                    const {name, id, email, auth_token} = json.data.data;
-
-                    let userData = {
-                        name,
-                        id,
-                        email,
-                        auth_token,
-                        timestamp: new Date().toString()
-                    };
-                    let appState = {
-                        isLoggedIn: true,
-                        user: userData
-                    };
-                    // save app state with user date in local storage
-                    localStorage["appState"] = JSON.stringify(appState);
-                    this.setState({
-                        isLoggedIn: appState.isLoggedIn,
-                        user: appState.user
-                    });
-                } else alert("Login Failed!");
-                $("#login-form button")
-                    .removeAttr("disabled")
-                    .html("Login");
-
-            })
-            .catch(error => {
-                alert(`An Error Occured! ${error}`);
-                $("#login-form button")
-                    .removeAttr("disabled")
-                    .html("Login");
-            });
+        this.state =
+            {
+                isLoggedIn: false,
+                user: {role: "guest"}
+            };
     };
 
-    _registerUser(name, email, password) {
-
-        let formData = new FormData();
-        formData.append("password", password);
-        formData.append("email", email);
-        formData.append("name", name);
-
-        axios
-            .post("register", formData)
-            .then(response => {
-                return response;
-            })
-            .then(json => {
-                if (json.data.success) {
-                    alert(`Registration Successful!`);
-                    const {name, id, email, auth_token} = json.data.data;
-                    let userData = {
-                        name,
-                        id,
-                        email,
-                        auth_token,
-                        timestamp: new Date().toString()
-                    };
-                    let appState = {
-                        isLoggedIn: true,
-                        user: userData
-                    };
-                    // save app state with user date in local storage
-                    localStorage["appState"] = JSON.stringify(appState);
-                    this.setState({
-                        isLoggedIn: appState.isLoggedIn,
-                        user: appState.user
-                    });
-                    // redirect home
-                    //this.props.history.push("/");
-                } else {
-                    alert(`Registration Failed!`);
-                }
-            })
-            .catch(error => {
-                alert("An Error Occured!" + error);
-            });
-    };
-
-    _logoutUser() {
-        let appState = {
-            isLoggedIn: false,
-            user: {}
-        };
-        localStorage["appState"] = JSON.stringify(appState);
-        this.setState(appState);
-    };
 
     componentDidMount() {
         let state = localStorage["appState"];
@@ -126,6 +37,7 @@ class App extends React.Component {
     }
 
     render() {
+
         if (
             !this.state.isLoggedIn &&
             this.props.location.pathname !== "/login" &&
@@ -137,30 +49,84 @@ class App extends React.Component {
         if (
             this.state.isLoggedIn &&
             (this.props.location.pathname === "/login" ||
-                this.props.location.pathname === "/register" )
+                this.props.location.pathname === "/register")
         ) {
 
             this.props.history.push("/olympiad");
         }
         return (
+
             <Switch data="data">
                 <div id="main">
+                    {
+                        isRole(this.state.user.role, ["admin"]) &&
+                        <Link to="/student">Student</Link>
+                    }
+                    <Link to="/olympiad">Olympiad </Link>
                     <Route
                         path="/login"
-                        render={props => (<Login {...props} loginUser={this._loginUser.bind(this)}/>)}
+                        render={props => (<Login {...props} loginUser={_loginUser.bind(this)}/>)}
                     />
 
                     <Route
                         path="/register"
-                        render={props => (<Register {...props} registerUser={this._registerUser.bind(this)}/>)}
+                        render={props => (
+                            <Register {...props} registerUser={registerActionCreators._registerUser.bind(this)}/>)}
                     />
-                    <button onClick={this._logoutUser.bind(this)}>Logout</button>
+
+                    <Route
+                        path="/join"
+                        render={props => (<Join {...props}
+                                                registerParticipant={registerActionCreators._registerParticipant.bind(this)}/>)}
+                    />
+                    <Route
+                        path="/olympiad"
+                        render={props => <OlympiadList {...props}
+                                                       role={this.state.user.role}/>}
+                    />
+                    {
+                        isRole(this.state.user.role, ["student"]) && this.props.location.pathname === "/olympiad" &&
+                        <button
+                            className="join"
+                            hidden={this.props.selectedOlympiad < 0}
+                            onClick={() =>  this.props.history.push("/join")}>
+                            join
+                        </button>
+                    }
+                    <Route
+                        path="/student"
+                        render={() => <StudentList role={this.state.user.role}/>}
+                    />
+                    <Route
+                        path="/task/:id"
+                        render={() => <TaskList role={this.state.user.role}/>}
+                    />
+
+                    {
+                        // isRole(this.state.user.role, ["admin", "participant", "student"]) &&
+                        <button onClick={_logoutUser.bind(this)}>Logout</button>
+                    }
+                    {
+                        isRole(this.state.user.role, "guest") &&
+                        this.props.location.pathname !== "/register" &&
+                        <Link to="/register">
+                            Register
+                        </Link>
+                    }
+                    {
+                        isRole(this.state.user.role, "guest") &&
+                        this.props.location.pathname !== "/login" &&
+                        <Link to="/login">
+                            Login
+                        </Link>
+                    }
                 </div>
-           </Switch>
+            </Switch>
         );
     }
 }
 
-const AppContainer = withRouter((props) => (<App {...props} />));
+const AppContainer = withRouter((props) => (
+    <App {...props} store={createStore(composeWithDevTools(applyMiddleware(thunk)))}/>));
 
-export default AppContainer
+export default (AppContainer)

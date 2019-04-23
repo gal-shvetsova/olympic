@@ -11,6 +11,7 @@ use App\User;
 
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+
 class LoginController extends Controller
 {
     /*
@@ -43,9 +44,11 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    public function showLoginForm() {
+    public function showLoginForm()
+    {
         return view('.index');
     }
+
     private function getToken($email, $password)
     {
         $token = null;
@@ -70,12 +73,25 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $user = User::where('email', $request->email)->get()->first();
+        if ($user->olympiad_id > 0)
+            $role = "participant";
+        else
+            $role = $user->student()->get()[0]->user_role;
         if ($user && \Hash::check($request->password, $user->password)) // The passwords match...
         {
             $token = self::getToken($request->email, $request->password);
             $user->auth_token = $token;
             $user->save();
-            $response = ['success' => true, 'data' => ['id' => $user->id, 'auth_token' => $user->auth_token, 'name' => $user->name, 'email' => $user->email]];
+            $response = ['success' => true,
+                'data' =>
+                    [
+                        'id' => $user->id,
+                        'auth_token' => $user->auth_token,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'olympiad_id' => $user->olympiad_id,
+                        'role' => $role
+                    ]];
         } else
             $response = ['success' => false, 'data' => 'Record doesnt exists'];
 

@@ -23,7 +23,7 @@ class App extends React.Component {
         this.state =
             {
                 isLoggedIn: false,
-                user: {role: "guest"}
+                user: {role: "guest", id : -1}
             };
     };
 
@@ -77,6 +77,8 @@ class App extends React.Component {
                     <Route
                         path="/join"
                         render={props => (<Join {...props}
+                                                olympiad_id = {this.props.olympiad_id}
+                                                student_id = {this.state.user.id}
                                                 registerParticipant={registerActionCreators._registerParticipant.bind(this)}/>)}
                     />
                     <Route
@@ -84,15 +86,7 @@ class App extends React.Component {
                         render={props => <OlympiadList {...props}
                                                        role={this.state.user.role}/>}
                     />
-                    {
-                        isRole(this.state.user.role, ["student"]) && this.props.location.pathname === "/olympiad" &&
-                        <button
-                            className="join"
-                            hidden={this.props.selectedOlympiad < 0}
-                            onClick={() =>  this.props.history.push("/join")}>
-                            join
-                        </button>
-                    }
+
                     <Route
                         path="/student"
                         render={() => <StudentList role={this.state.user.role}/>}
@@ -103,9 +97,15 @@ class App extends React.Component {
                     />
 
                     {
-                        // isRole(this.state.user.role, ["admin", "participant", "student"]) &&
+                        isRole(this.state.user.role, ["admin", "participant", "student"]) &&
                         <button onClick={_logoutUser.bind(this)}>Logout</button>
                     }
+
+                    {
+                        isRole(this.state.user.role, ["participant", "student"]) &&
+                        <button onClick={_deleteAccount.bind(this)}>Delete account</button>
+                    }
+
                     {
                         isRole(this.state.user.role, "guest") &&
                         this.props.location.pathname !== "/register" &&
@@ -126,7 +126,13 @@ class App extends React.Component {
     }
 }
 
+const mapStateToProps = (state, ownProps) => {
+    return {
+        olympiad_id: state.olympiadStore.selectedOlympiad,
+        ownProps
+    }
+};
 const AppContainer = withRouter((props) => (
     <App {...props} store={createStore(composeWithDevTools(applyMiddleware(thunk)))}/>));
 
-export default (AppContainer)
+export default connect(mapStateToProps)(AppContainer)

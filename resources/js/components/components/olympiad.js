@@ -6,8 +6,11 @@ import {bindActionCreators} from 'redux';
 
 import OlympiadEdit from "./olympiadEdit";
 import {hasRole, isRole} from "../actions/roleActions";
+import Join from "./join"
+import * as registerActionCreators from "../actions/registerAction";
 
 export class OlympiadList extends Component {
+
 
     constructor(props) {
         super(props);
@@ -44,7 +47,7 @@ export class OlympiadList extends Component {
                                 <td className="name"> {olympiad.name} </td>
                                 <td className="hardness"> {olympiad.hardness} </td>
                                 <td className="deadline"> {olympiad.deadline} </td>
-                                <td className="participants"> {olympiad.students_count} </td>
+                                <td className="participants"> {olympiad.participants} </td>
                             </tr>))
                     }
                     </tbody>
@@ -87,7 +90,7 @@ export class OlympiadList extends Component {
     handleClickOutside(event) {
         const olympiadEdit = document.getElementsByClassName("olympiadEdit")[0];
         const join = document.getElementsByClassName("join")[0];
-        if (!event.path.includes(olympiadEdit) && !event.path.includes(olympiadEdit)) {
+        if (!event.path.includes(olympiadEdit) && !event.path.includes(join)) {
             if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
                 this.props.selectOlympiad(-1);
                 this.props.getOlympiadEdit({}, false);
@@ -98,7 +101,6 @@ export class OlympiadList extends Component {
     handleToTask(id) {
         window.location.href = "task/" + id;
     }
-
 
     render() {
         return (
@@ -139,8 +141,15 @@ export class OlympiadList extends Component {
                         to tasks
                     </button>
                 }
-                {
 
+                {
+                    isRole(this.props.role, ["student"]) &&
+                    <button
+                        className="join"
+                        hidden={this.props.selectedOlympiad < 0}
+                        onClick={() => this.props.history.push("/join")}>
+                        join
+                    </button>
                 }
                 <OlympiadEdit getTable={this.props.getTable}/>
             </div>

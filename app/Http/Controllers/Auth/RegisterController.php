@@ -85,7 +85,6 @@ class RegisterController extends Controller
     private function getToken($email, $password)
     {
         $token = null;
-        //$credentials = $request->only('email', 'password');
         try {
             if (!$token = JWTAuth::attempt(['email' => $email, 'password' => $password])) {
                 return response()->json([
@@ -105,37 +104,48 @@ class RegisterController extends Controller
 
     public function register(Request $request)
     {
+        $student_id = $request->student_id;
+
+        if ($accounts = Student::find($student_id)) {
+            if ($accounts->user()->where('olympiad_id', '=', $request->olympiad_id)->count() > 1) {
+                $response = ['success' => false, 'data' => 'You already joined this olympiad'];
+                return response()->json($response, 201);
+            }
+        }
+
+        if ($request->role !== "participant") {
+            $student = new Student();
+            $student['last_name'] = $request->name;
+            $student['user_role'] = $request->role;
+            $student->save();
+            $student_id = $student['id'];
+        }
+
         $payload = [
             'password' => \Hash::make($request->password),
             'email' => $request->email,
             'name' => $request->name,
             'auth_token' => '',
-            'olympiad_id' => property_exists($request,'olympiad_id') ? $request->olympiad_id : -1
+            'olympiad_id' => $request->olympiad_id,
+            'role' => $request->role,
+            'student_id' => $student_id
         ];
 
         $user = new User($payload);
+
         if ($user->save()) {
 
-            $token = self::getToken($request->email, $request->password); // generate user token
+            $token = self::getToken($request->email, $request->password);
 
             if (!is_string($token)) return response()->json(['success' => false, 'data' => 'Token generation failed'], 201);
 
             $user = User::where('email', $request->email)->get()->first();
-
-            $user->auth_token = $token; // update user token
-
+            $user->auth_token = $token;
             $user->save();
 
-            $response = ['success' => true, 'data' => ['name' => $user->name, 'id' => $user->id, 'email' => $request->email, 'auth_token' => $token, 'olympiad_id' => $user->olympiad_id, 'role' => $user->role]];
+            $response = ['success' => true, 'data' => ['name' => $user->name, 'id' => $user->student_id, 'email' => $request->email, 'auth_token' => $token, 'olympiad_id' => $user->olympiad_id, 'role' => $request->role]];
         } else
             $response = ['success' => false, 'data' => 'Couldnt register user'];
-        if (!property_exists($request, "flag")) {
-            Student::insert([
-                'last_name' => $request->name,
-                'user_role' =>  property_exists($request,'olympiad_id') ? 'participant' : 'student',
-                'id' => $user->id
-            ]);
-        }
         return response()->json($response, 201);
     }
 }

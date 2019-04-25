@@ -6,13 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Olympiad extends Model
 {
-    protected $fillable = ['name', 'hardness', 'deadline'];
+    protected $fillable = ['name', 'hardness', 'deadline', 'student_id'];
     public $timestamps = false;
 
-
-    public function students()
+    public function users()
     {
-        return $this->belongsToMany('App\Student', 'olym_user_links');
+        return $this->hasMany('App\User', 'olympiad_id', 'id');
     }
 
     public function tasks()
@@ -22,7 +21,7 @@ class Olympiad extends Model
 
     public static function getAllOlympiads()
     {
-        return Olympiad::withCount('students')->get();
+        return Olympiad::withCount('users as participants')->get();
     }
 
     public static function addOlympiad($newOlympiad)
@@ -43,7 +42,7 @@ class Olympiad extends Model
     public static function deleteOlympiad($olympiad)
     {
         $olympiad_del = Olympiad::find($olympiad);
-        $olympiad_del->students()->detach();
+        $olympiad_del->users()->delete();
         $olympiad_del->tasks()->delete($olympiad);
         $olympiad_del->delete();
     }

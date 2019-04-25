@@ -10,8 +10,10 @@ export function _registerUser(name, email, password) {
     let formData = new FormData();
     formData.append("password", password);
     formData.append("email", email);
-    formData.append("name", name);
-
+    formData.append("name", name)
+    formData.append("olympiad_id", -1);
+    formData.append("role", "student");
+    formData.append("student_id", -1);
     axios
         .post("register", formData)
         .then(response => {
@@ -48,13 +50,16 @@ export function _registerUser(name, email, password) {
 }
 
 
-export function _registerParticipant(args = {password : "", login : ""}) {
+export function _registerParticipant(args = {password : "", login : "", olympiad_id : -1, role : "student", student_id : -1}) {
 
     let formData = new FormData();
 
     formData.append("password", args.password);
     formData.append("email", args.login);
     formData.append("name", args.login);
+    formData.append("olympiad_id", args.olympiad_id);
+    formData.append("role", args.role);
+    formData.append("student_id", args.student_id);
     axios
         .post("register", formData)
         .then(response => {
@@ -88,5 +93,17 @@ export function _registerParticipant(args = {password : "", login : ""}) {
         .catch(error => {
             alert("An Error Occured!" + error);
         });
+}
+
+export function _deleteAccount(args={id : -1}) {
+    axios
+        .delete("/delete", agrs)
+        .then (json => {
+            if (json.data.success) {
+                alert("Success");
+            }
+            else
+                alert("no");
+        })
 }
 

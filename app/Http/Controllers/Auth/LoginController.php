@@ -52,7 +52,6 @@ class LoginController extends Controller
     private function getToken($email, $password)
     {
         $token = null;
-        //$credentials = $request->only('email', 'password');
         try {
             if (!$token = JWTAuth::attempt(['email' => $email, 'password' => $password])) {
                 return response()->json([
@@ -73,10 +72,6 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $user = User::where('email', $request->email)->get()->first();
-        if ($user->olympiad_id > 0)
-            $role = "participant";
-        else
-            $role = $user->student()->get()[0]->user_role;
         if ($user && \Hash::check($request->password, $user->password)) // The passwords match...
         {
             $token = self::getToken($request->email, $request->password);
@@ -85,12 +80,12 @@ class LoginController extends Controller
             $response = ['success' => true,
                 'data' =>
                     [
-                        'id' => $user->id,
+                        'id' => $user->student_id,
                         'auth_token' => $user->auth_token,
                         'name' => $user->name,
                         'email' => $user->email,
                         'olympiad_id' => $user->olympiad_id,
-                        'role' => $role
+                        'role' => $user->role
                     ]];
         } else
             $response = ['success' => false, 'data' => 'Record doesnt exists'];

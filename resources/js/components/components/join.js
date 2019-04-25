@@ -22,12 +22,13 @@ function login() {
     return login;
 }
 
-const Join = ({ history, registerParticipant = f => f }) => {
-    console.log("i'm here");
+const Join = ({ history, registerParticipant, olympiad_id, student_id = f => f }) => {
     let _login, _password;
+    console.log("olym" +  olympiad_id);
     const handleJoin = e => {
         e.preventDefault();
-        registerParticipant({login : _login.value, password : _password.value});
+        registerParticipant({login : _login.value, password : _password.value, olympiad_id : olympiad_id, role : "participant", student_id : student_id });
+        history.push("/olympiad");
     };
     return (
         <div id="main">

@@ -5,7 +5,6 @@ namespace App;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class Student extends Model
 {
@@ -14,25 +13,15 @@ class Student extends Model
 
     public $timestamps = false;
 
-    public function olympiads()
-    {
-        return $this->belongsToMany('App\Olympiad', 'olym_user_links');
-    }
-
     public function user()
     {
-        return $this->hasOne('App\User', 'id', 'id');
+        return $this->hasMany('App\User', 'student_id', 'id');
     }
 
     public static function getAllStudents()
     {
-        return DB::table('students', 'olympiads')
-            ->select("students.id", "students.last_name", "students.user_role"
-                , DB::raw("(GROUP_CONCAT(olympiads.name SEPARATOR ',')) as 'olympiads'"))
-            ->leftjoin('olym_user_links', 'students.id', '=', 'olym_user_links.student_id')
-            ->leftjoin('olympiads', 'olym_user_links.olympiad_id', '=', 'olympiads.id')
-            ->groupBy('students.id')
-            ->get();
+        return Student::withCount(['user as olympiads' => function ($query) {
+            $query->where('role', '=', 'participant');}])->get();
     }
 
     public static function addStudent($newStudent)
@@ -64,7 +53,9 @@ class Student extends Model
     {
         $student_del = Student::find($student);
         $student_del->olympiads()->detach();
-        $student_del->user()->delete();
+        $users = $student_del->user();
+        foreach ($users as $user)
+            $user->delete();
         $student_del->delete();
     }
 

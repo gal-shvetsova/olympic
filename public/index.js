@@ -44379,6 +44379,9 @@ function _registerUser(name, email, password) {
   formData.append("password", password);
   formData.append("email", email);
   formData.append("name", name);
+  formData.append("olympiad_id", -1);
+  formData.append("role", "student");
+  formData.append("student_id", -1);
   axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("register", formData).then(function (response) {
     return response;
   }).then(function (json) {
@@ -44421,12 +44424,18 @@ function _registerParticipant() {
 
   var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
     password: "",
-    login: ""
+    login: "",
+    olympiad_id: -1,
+    role: "student",
+    student_id: -1
   };
   var formData = new FormData();
   formData.append("password", args.password);
   formData.append("email", args.login);
   formData.append("name", args.login);
+  formData.append("olympiad_id", args.olympiad_id);
+  formData.append("role", args.role);
+  formData.append("student_id", args.student_id);
   axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("register", formData).then(function (response) {
     return response;
   }).then(function (json) {
@@ -44606,20 +44615,27 @@ function login() {
 
 var Join = function Join(_ref) {
   var history = _ref.history,
-      _ref$registerParticip = _ref.registerParticipant,
-      registerParticipant = _ref$registerParticip === void 0 ? function (f) {
+      registerParticipant = _ref.registerParticipant,
+      olympiad_id = _ref.olympiad_id,
+      _ref$student_id = _ref.student_id,
+      student_id = _ref$student_id === void 0 ? function (f) {
     return f;
-  } : _ref$registerParticip;
-  console.log("i'm here");
+  } : _ref$student_id;
 
   var _login, _password;
+
+  console.log("olym" + olympiad_id);
 
   var handleJoin = function handleJoin(e) {
     e.preventDefault();
     registerParticipant({
       login: _login.value,
-      password: _password.value
+      password: _password.value,
+      olympiad_id: olympiad_id,
+      role: "participant",
+      student_id: student_id
     });
+    history.push("/olympiad");
   };
 
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -44818,7 +44834,8 @@ function (_React$Component) {
     _this.state = {
       isLoggedIn: false,
       user: {
-        role: "guest"
+        role: "guest",
+        id: -1
       }
     };
     return _this;
@@ -44876,6 +44893,8 @@ function (_React$Component) {
         path: "/join",
         render: function render(props) {
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_join__WEBPACK_IMPORTED_MODULE_11__["default"], _extends({}, props, {
+            olympiad_id: _this2.props.olympiad_id,
+            student_id: _this2.state.user.id,
             registerParticipant: _actions_registerAction__WEBPACK_IMPORTED_MODULE_6__["_registerParticipant"].bind(_this2)
           }));
         }
@@ -44886,13 +44905,7 @@ function (_React$Component) {
             role: _this2.state.user.role
           }));
         }
-      }), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_7__["isRole"])(this.state.user.role, ["student"]) && this.props.location.pathname === "/olympiad" && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "join",
-        hidden: this.props.selectedOlympiad < 0,
-        onClick: function onClick() {
-          return _this2.props.history.push("/join");
-        }
-      }, "join"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], {
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], {
         path: "/student",
         render: function render() {
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_student__WEBPACK_IMPORTED_MODULE_9__["default"], {
@@ -44920,12 +44933,19 @@ function (_React$Component) {
   return App;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
+var mapStateToProps = function mapStateToProps(state, ownProps) {
+  return {
+    olympiad_id: state.olympiadStore.selectedOlympiad,
+    ownProps: ownProps
+  };
+};
+
 var AppContainer = Object(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["withRouter"])(function (props) {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(App, _extends({}, props, {
     store: Object(redux__WEBPACK_IMPORTED_MODULE_12__["createStore"])(Object(redux_devtools_extension__WEBPACK_IMPORTED_MODULE_15__["composeWithDevTools"])(Object(redux__WEBPACK_IMPORTED_MODULE_12__["applyMiddleware"])(redux_thunk__WEBPACK_IMPORTED_MODULE_16__["default"])))
   }));
 });
-/* harmony default export */ __webpack_exports__["default"] = (AppContainer);
+/* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_14__["connect"])(mapStateToProps)(AppContainer));
 
 /***/ }),
 
@@ -44943,11 +44963,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/index.js */ "./resources/js/components/actions/index.js");
 /* harmony import */ var _actions_requestActions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../actions/requestActions */ "./resources/js/components/actions/requestActions.js");
-/* harmony import */ var _actions_registerAction__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../actions/registerAction */ "./resources/js/components/actions/registerAction.js");
-/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
-/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
-/* harmony import */ var _olympiadEdit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./olympiadEdit */ "./resources/js/components/components/olympiadEdit.js");
-/* harmony import */ var _actions_roleActions__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../actions/roleActions */ "./resources/js/components/actions/roleActions.js");
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
+/* harmony import */ var _olympiadEdit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./olympiadEdit */ "./resources/js/components/components/olympiadEdit.js");
+/* harmony import */ var _actions_roleActions__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../actions/roleActions */ "./resources/js/components/actions/roleActions.js");
+/* harmony import */ var _join__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./join */ "./resources/js/components/components/join.js");
+/* harmony import */ var _actions_registerAction__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../actions/registerAction */ "./resources/js/components/actions/registerAction.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -44965,6 +44986,7 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -45027,7 +45049,7 @@ function (_Component) {
           className: "deadline"
         }, " ", olympiad.deadline, " "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           className: "participants"
-        }, " ", olympiad.students_count, " "));
+        }, " ", olympiad.participants, " "));
       }))) : "Empty olympiad's list";
     }
   }, {
@@ -45086,7 +45108,7 @@ function (_Component) {
       var olympiadEdit = document.getElementsByClassName("olympiadEdit")[0];
       var join = document.getElementsByClassName("join")[0];
 
-      if (!event.path.includes(olympiadEdit) && !event.path.includes(olympiadEdit)) {
+      if (!event.path.includes(olympiadEdit) && !event.path.includes(join)) {
         if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
           this.props.selectOlympiad(-1);
           this.props.getOlympiadEdit({}, false);
@@ -45106,29 +45128,35 @@ function (_Component) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "Olympiad",
         ref: this.setWrapperRef
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Olympiad"), this.createOlympiadList(), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_7__["isRole"])(this.props.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Olympiad"), this.createOlympiadList(), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_6__["isRole"])(this.props.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "add",
         onClick: function onClick() {
           return _this4.olympiadEdit(_this4.props, "add");
         }
-      }, "add"), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_7__["isRole"])(this.props.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      }, "add"), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_6__["isRole"])(this.props.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "edit",
         hidden: this.props.selectedOlympiad < 0,
         onClick: function onClick() {
           return _this4.olympiadEdit(_this4.props, "edit");
         }
-      }, "edit"), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_7__["isRole"])(this.props.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      }, "edit"), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_6__["isRole"])(this.props.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "delete",
         hidden: this.props.selectedOlympiad < 0,
         onClick: function onClick() {
           return _this4.olympiadEdit(_this4.props, "delete");
         }
-      }, "delete"), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_7__["isRole"])(this.props.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      }, "delete"), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_6__["isRole"])(this.props.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         hidden: this.props.selectedOlympiad < 0,
         onClick: function onClick() {
           return _this4.handleToTask(_this4.props.selectedOlympiad);
         }
-      }, "to tasks"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_olympiadEdit__WEBPACK_IMPORTED_MODULE_6__["default"], {
+      }, "to tasks"), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_6__["isRole"])(this.props.role, ["student"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "join",
+        hidden: this.props.selectedOlympiad < 0,
+        onClick: function onClick() {
+          return _this4.props.history.push("/join");
+        }
+      }, "join"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_olympiadEdit__WEBPACK_IMPORTED_MODULE_5__["default"], {
         getTable: this.props.getTable
       }));
     }
@@ -45146,7 +45174,7 @@ var mapStateToProps = function mapStateToProps(state, ownProps) {
 };
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
-  return Object(redux__WEBPACK_IMPORTED_MODULE_5__["bindActionCreators"])({
+  return Object(redux__WEBPACK_IMPORTED_MODULE_4__["bindActionCreators"])({
     getStateOlympiad: _actions_index_js__WEBPACK_IMPORTED_MODULE_1__["getStateOlympiad"],
     getOlympiadEdit: _actions_index_js__WEBPACK_IMPORTED_MODULE_1__["getOlympiadEdit"],
     getTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_2__["getTable"],
@@ -45155,7 +45183,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   }, dispatch);
 };
 
-/* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_4__["connect"])(mapStateToProps, mapDispatchToProps)(OlympiadList));
+/* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_3__["connect"])(mapStateToProps, mapDispatchToProps)(OlympiadList));
 
 /***/ }),
 

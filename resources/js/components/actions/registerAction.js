@@ -1,10 +1,5 @@
 import axios from 'axios';
 
-const password_lenght  = 10;
-const login_lenght  = 5;
-const password_set = "abcdefghijklmnopqrstuvwxyz1234567890";
-const login_set = "ABCDEFGHIJKLMNOPRSTUVWXYZ";
-
 export function _registerUser(name, email, password) {
 
     let formData = new FormData();
@@ -95,12 +90,22 @@ export function _registerParticipant(args = {password : "", login : "", olympiad
         });
 }
 
-export function _deleteAccount(args={id : -1}) {
+export function _deleteAccount() {
+    console.log(this.state.user.id);
     axios
-        .delete("/delete", agrs)
+        .delete("api/student" + '/' + this.state.user.id)
         .then (json => {
-            if (json.data.success) {
+            console.log(json);
+            if (json.data === 200) {
                 alert("Success");
+                let appState = {
+                    isLoggedIn: false,
+                    user: {
+                        role: "guest"
+                    }
+                };
+                localStorage["appState"] = JSON.stringify(appState);
+                this.setState(appState);
             }
             else
                 alert("no");

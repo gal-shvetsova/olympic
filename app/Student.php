@@ -52,10 +52,7 @@ class Student extends Model
     public static function deleteStudent($student)
     {
         $student_del = Student::find($student);
-        $student_del->olympiads()->detach();
-        $users = $student_del->user();
-        foreach ($users as $user)
-            $user->delete();
+        $student_del->user()->delete($student);
         $student_del->delete();
     }
 

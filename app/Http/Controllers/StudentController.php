@@ -54,7 +54,7 @@ class StudentController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)  //TODO make possibility to delete by password
+    public function destroy($id)
     {
         if (Student::find($id)['user_role'] != "admin")
             Student::deleteStudent($id);

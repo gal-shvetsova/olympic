@@ -22,5 +22,9 @@ Route::any('/join', function () {
     return view('.index');
 });
 
+Route::any('/password', function () {
+    return view('.index');
+});
+
 Route::get('/home', 'HomeController@index')->name('home');
 

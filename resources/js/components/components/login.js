@@ -33,7 +33,6 @@ const Login = ({ history, loginUser = f => f }) => {
                     type="submit"
                     className="landing-page-btn center-block text-center"
                     id="email-login-btn"
-                    href="#facebook"
                 >
                     Login
                 </button>

@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,4 +17,4 @@ Route::resource('/student', 'StudentController');
 
 Route::resource('/task', 'TaskController');
 
-Route::delete('/delete', 'DeleteAccountController@delete');
+//Route::delete('/delete/{id}', 'Auth\DeleteAccountController@delete');

@@ -14,8 +14,6 @@ import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import {hasRole} from "./actions/roleActions";
 
-
-// console.log(store.getState())
 ReactDOM.render(
 
     <Provider store={createStore(reducers, composeWithDevTools(applyMiddleware(thunk)))}>

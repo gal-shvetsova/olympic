@@ -52,6 +52,7 @@ class LoginController extends Controller
     private function getToken($email, $password)
     {
         $token = null;
+
         try {
             if (!$token = JWTAuth::attempt(['email' => $email, 'password' => $password])) {
                 return response()->json([

@@ -8,12 +8,11 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class DeleteAccountController extends Controller
 {
-    public function delete(Request $request){
-        \App\Student::find($request->id)->deleteStudent();
+    public function delete($id){
+        \App\Student::find($id)->deleteStudent();
     }
 }

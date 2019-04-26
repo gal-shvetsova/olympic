@@ -1,21 +1,21 @@
 import React from "react";
-import {render} from "react-dom";
-import {BrowserRouter as Router, BrowserRouter, Link, Route, Switch, withRouter} from "react-router-dom";
+import {Link, Route, Switch, withRouter} from "react-router-dom";
 import Login from "./login";
 import Register from "./register";
 import {_loginUser, _logoutUser} from "../actions/loginActions";
 import * as registerActionCreators from "../actions/registerAction";
-import {hasRole, isAllowed, isRole} from "../actions/roleActions";
+import {_resetPassword} from "../actions/resetPasswordAction"
+import {isRole} from "../actions/roleActions";
 import OlympiadList from "./olympiad";
 import StudentList from "./student";
 import TaskList from "./task";
 import Join from "./join";
-import {applyMiddleware, bindActionCreators, createStore} from "redux";
-import * as actionCreators from "../actions";
+import {applyMiddleware, createStore} from "redux";
 import {connect} from "react-redux";
 import {composeWithDevTools} from "redux-devtools-extension";
 import thunk from "redux-thunk";
-import * as requestActionCreators from "../actions/requestActions";
+import ResetPassword from "./resetPassword";
+
 
 class App extends React.Component {
     constructor(props) {
@@ -37,7 +37,6 @@ class App extends React.Component {
     }
 
     render() {
-
         if (
             !this.state.isLoggedIn &&
             this.props.location.pathname !== "/login" &&
@@ -99,22 +98,37 @@ class App extends React.Component {
                     {
                         isRole(this.state.user.role, ["admin", "participant", "student"]) &&
                         <button onClick={_logoutUser.bind(this)}>Logout</button>
+
+                    }
+
+                    {
+                        isRole(this.state.user.role, ["participant", "student", "admin"]) &&
+                        <Route
+                            path="/password"
+                            render={props => (
+                                <ResetPassword {...props} auth_token = {this.state.user.auth_token} resetPassword={_resetPassword.bind(this)}/>)}
+                        />
+                    }
+
+                    {
+                        isRole(this.state.user.role, ["participant", "student", "admin"]) &&
+                        <button onClick={() => this.props.history.push("password")}>Reset password</button>
                     }
 
                     {
                         isRole(this.state.user.role, ["participant", "student"]) &&
-                        <button onClick={_deleteAccount.bind(this)}>Delete account</button>
+                        <button onClick={registerActionCreators._deleteAccount.bind(this)}>Delete account</button>
                     }
 
                     {
-                        isRole(this.state.user.role, "guest") &&
+                        isRole(this.state.user.role, ["guest"]) &&
                         this.props.location.pathname !== "/register" &&
                         <Link to="/register">
                             Register
                         </Link>
                     }
                     {
-                        isRole(this.state.user.role, "guest") &&
+                        isRole(this.state.user.role, ["guest"]) &&
                         this.props.location.pathname !== "/login" &&
                         <Link to="/login">
                             Login

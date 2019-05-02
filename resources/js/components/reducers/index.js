@@ -1,6 +1,5 @@
 import {combineReducers} from 'redux';
 import {routerReducer} from 'react-router-redux';
-import {requestReducer} from '../actions/requestActions'
 
 const studentStore = (state = {table: [], selectedStudent: -1}, action) => {
     switch (action.type) {
@@ -72,8 +71,29 @@ const appStore = (state = {isLoggedIn : false, user : {}}) => {
     return {...state};
 };
 
+const solutionStore = (state = {table: [], selectedTask : -1}, action) => {
+    switch (action.type) {
+        case 'SOLUTION_SUCCESS':
+            return {...state, table: action.table};
+        case 'SOLUTION_TASK':
+            return {...state, selectedTask: action.id};
+        case 'SELECT_TASK_TO_SOLVE':
+            return {...state, selectedTask: action.id};
+        case 'SOLUTION_FAILURE':
+            alert("err");
+        default:
+            return state
+    }
+};
+
+const queueStore = (state = {table : []}) => {
+    return {...state};
+};
+
+
+
 const rootReducer = combineReducers({
-    studentStore, taskStore, studentEditStore, taskEditStore, olympiadEditStore, olympiadStore, routerReducer, appStore
+    studentStore, taskStore, studentEditStore, taskEditStore, olympiadEditStore, olympiadStore, routerReducer, appStore, solutionStore, queueStore
 });
 
 export default rootReducer;

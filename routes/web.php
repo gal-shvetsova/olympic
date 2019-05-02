@@ -26,5 +26,14 @@ Route::any('/password', function () {
     return view('.index');
 });
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::any('/solution/{id}', function () {
+    return view('.index');
+});
 
+Route::any('/solution', function () {
+    return view('.index');
+});
+
+Route::any('/login', function () {
+    return view('.index');
+});

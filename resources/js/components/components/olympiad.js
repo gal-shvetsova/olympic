@@ -5,9 +5,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
 import OlympiadEdit from "./olympiadEdit";
-import {hasRole, isRole} from "../actions/roleActions";
-import Join from "./join"
-import * as registerActionCreators from "../actions/registerAction";
+import {isRole} from "../actions/roleActions";
 
 export class OlympiadList extends Component {
 
@@ -60,7 +58,6 @@ export class OlympiadList extends Component {
         deleteTable({name: "olympiad", id: olympiad}).then(getTable({name: "olympiad"}));
     }
 
-
     olympiadEdit(props, button) {
         props.getOlympiadEdit({}, false);
         if (button != "edit" || props.selectedOlympiad != -1) {
@@ -99,11 +96,11 @@ export class OlympiadList extends Component {
     }
 
     handleToTask(id) {
-        window.location.href = "task/" + id;
+        this.props.history.push("task/" + id);
     }
 
     render() {
-        return (
+        return ( !isRole(this.props.role, ["participant"]) ?
             <div className="Olympiad" ref={this.setWrapperRef}>
                 <h4>Olympiad</h4>
                 {this.createOlympiadList()}
@@ -152,7 +149,7 @@ export class OlympiadList extends Component {
                     </button>
                 }
                 <OlympiadEdit getTable={this.props.getTable}/>
-            </div>
+            </div> : "You don't have permissions"
         );
     }
 }

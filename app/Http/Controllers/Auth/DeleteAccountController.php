@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 
 class DeleteAccountController extends Controller
 {
+
     public function delete($id){
         \App\Student::find($id)->deleteStudent();
     }

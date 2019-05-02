@@ -4,32 +4,20 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import TaskEdit from './taskEdit';
 import * as requestActionCreators from '../actions/requestActions';
-import {hasRole, isRole} from "../actions/roleActions";
+import {isRole} from "../actions/roleActions";
 
 export class TaskList extends Component {
 
     constructor(props) {
         super(props);
-        console.log("here");
-        const {getTable, olympiadID} = this.props;
-        getTable({name : "task", id : olympiadID});
+        const {getTable, olympiad_id} = this.props;
+        getTable({name: "task", id: olympiad_id});
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
     }
 
     componentDidMount() {
         document.addEventListener('mousedown', this.handleClickOutside);
-        //    const {getTask, olympiadID} = this.props;
-        //  fetch('api/task/' + olympiadID)
-        //      .then(function (response) {
-        //        if (response.ok) {
-        //           response.json()
-        //               .then(v => getTask(v))
-        //      } else {
-        //         response.json()
-        //            .then(data => alert(data.error));
-        //    }
-        //  })
     }
 
     componentWillUnmount() {
@@ -62,6 +50,7 @@ export class TaskList extends Component {
                     <th>Description</th>
                     <th>Hardness</th>
                     <th>Time</th>
+                    <th>Max score</th>
                 </tr>
                 {
                     table.map((task) => (<tr key={task.id} className={task.id === selectedTask ? "selected" : ""}
@@ -70,6 +59,7 @@ export class TaskList extends Component {
                         <td className="description"> {task.description} </td>
                         <td className="hardness"> {task.hardness} </td>
                         <td className="time"> {task.time} </td>
+                        <td className="max_score"> {task.max_score} </td>
                     </tr>))
                 }
                 </tbody>
@@ -80,23 +70,23 @@ export class TaskList extends Component {
 
     handleDelete(task) {
         const {deleteTable, getTable} = this.props;
-        deleteTable({name : "task", data : task, id : task});//.then(getTable({name : "olympiad"}));
+        deleteTable({name: "task", data: task, id: task}).then(getTable({name : "olympiad"}));
     }
 
     taskEdit(props, button) {
-        alert(props.olympiadID);
-        props.getTaskEdit({}, props.olympiadID, false);
+        alert(props.olympiad_id);
+        props.getTaskEdit({}, props.olympiad_id, false);
         if (button != "edit" || props.selectedTask != undefined) {
             const table = props.table.find(v => v.id === props.selectedTask) || {};
-            props.getTaskEdit(table, props.olympiadID, true);
+            props.getTaskEdit(table, props.olympiad_id, true);
         }
         if (button == "add") {
-            props.getTaskEdit({olympiad_id: props.olympiadID}, props.olympiadID, true);
+            props.getTaskEdit({olympiad_id: props.olympiadID}, props.olympiad_id, true);
         }
         if (button == "delete") {
             const table = props.table.find(v => v.id === props.selectedTask) || {};
             this.handleDelete(table);
-            props.getTaskEdit({olympiad_id: props.olympiadID}, props.olympiadID, false);
+            props.getTaskEdit({olympiad_id: props.olympiadID}, props.olympiad_id, false);
         }
     }
 
@@ -107,39 +97,45 @@ export class TaskList extends Component {
     }
 
     handleToOlym() {
-        window.location.href ="http://olympic.test/olympiad";
+        this.props.history.push("/olympiad");
     }
 
     render() {
-        return (
-            <div className="Task" ref={this.setWrapperRef}>
-                <h4>Tasks</h4>
-                <div className="taskList">
-                    {this.createTaskList()}
-                    <div>
-                        <button className="add"
-                                onClick={() => this.taskEdit(this.props, "add")}
-                                hidden = {isRole(this.props.role, ["admin"])}>add
-                        </button>
-                        <button className="edit"
-                                onClick={() => this.taskEdit(this.props, "edit")}
-                                hidden = {isRole(this.props.role, ["admin"])}>edit
-                        </button>
-                        <button className="delete"
-                                onClick={() => this.taskEdit(this.props, "delete")}
-                                hidden = {isRole(this.props.role, ["admin"])}>delete
-                        </button>
-                        <button className="solve"
-                                onClick={() => this.taskEdit(this.props, "solve")}
-                                hidden = {isRole(this.props.role, ["participant"])}>solve
-                        </button>
-                        <button className="back"
-                                onClick={() => this.handleToOlym()}>to olympiads
-                        </button>
+        return (isRole(this.props.role, ["admin", "participant"]) ?
+                <div className="Task" ref={this.setWrapperRef}>
+                    <h4>Tasks</h4>
+                    <div className="taskList">
+                        {this.createTaskList()}
+                        <div>
+                            <button className="add"
+                                    onClick={() => this.taskEdit(this.props, "add")}
+                                    hidden={!isRole(this.props.role, ["admin"]) && this.props.selectedTask < 0}
+                            >add
+                            </button>
+
+                            <button className="edit"
+                                     onClick={() => this.taskEdit(this.props, "edit")}
+                                     hidden={!isRole(this.props.role, ["admin"]) && this.props.selectedTask < 0}
+                            >edit
+                            </button>
+
+
+                            <button className="delete"
+                                    onClick={() => this.taskEdit(this.props, "delete")}
+                                    hidden={!isRole(this.props.role, ["admin"]) && this.props.selectedTask < 0}
+                            >delete
+                            </button>
+
+                            <button className="back"
+                                    onClick={() => this.handleToOlym()}
+                                    hidden={!isRole(this.props.role, ["admin"]) && this.props.selectedTask < 0}
+                            >to olympiads
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <TaskEdit  getTable = {this.props.getTable}/>
-            </div>);
+                    <TaskEdit getTable={this.props.getTable}/>
+                </div> : "You don't have permissions"
+        );
     }
 
 }
@@ -148,7 +144,6 @@ const mapStateToProps = function (state) {
     return {
         table: state.taskStore.table,
         selectedTask: state.taskStore.selectedTask,
-        olympiadID: state.taskStore.olympiadID
     }
 };
 

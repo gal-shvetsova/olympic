@@ -56,14 +56,14 @@ export class StudentList extends Component {
 
     studentEdit(props, button) {
         props.getStudentEdit({}, "", false);
-        if (button != "edit" || props.selectedStudent != -1) {
+        if (button !== "edit" || props.selectedStudent !== -1) {
             const student = props.table.find(v => v.id === props.selectedStudent) || {};
             props.getStudentEdit(student, button, true);
         }
-        if (button == "add") {
+        if (button === "add") {
             props.getStudentEdit({}, button, true);
         }
-        if (button == "delete") {
+        if (button === "delete") {
             props.getStudentEdit({}, "", false);
             this.handleDelete(props.selectedStudent);
         }
@@ -128,7 +128,7 @@ const mapStateToProps = function (state) {
         table: state.studentStore.table,
         selectedStudent: state.studentStore.selectedStudent
     }
-}
+};
 
 const mapDispatchToProps = function (dispatch) {
     return bindActionCreators({
@@ -137,6 +137,6 @@ const mapDispatchToProps = function (dispatch) {
         selectStudent: actionCreators.selectStudent,
         deleteTable: requestActionCreators.deleteTable
     }, dispatch)
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(StudentList)

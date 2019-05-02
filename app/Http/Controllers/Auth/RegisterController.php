@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Olympiad;
+use App\Solution;
+use App\Task;
 use App\User;
 use App\Student;
 use App\Http\Controllers\Controller;
@@ -34,7 +37,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = 'olympiad';
+    protected $redirectTo = '/task/1';
 
     /**
      * Create a new controller instance.
@@ -142,6 +145,20 @@ class RegisterController extends Controller
             $user = User::where('email', $request->email)->get()->first();
             $user->auth_token = $token;
             $user->save();
+
+            if  ($request->role === "participant") {
+                foreach (Olympiad::find($request->olympiad_id)->tasks()->get() as $task) {
+                    $solution = new Solution();
+                    $solution['start'] =  date("Y-m-d H:i:s", mktime(0, 0, 0, 0, 0, 0000));
+                    $solution['student_id'] = $user->id;
+                    $solution['olympiad_id'] = $request->olympiad_id;
+                    $solution['task_id'] = $task['id'];
+                    $solution['status'] = "not started";
+                    $solution['score'] = 0;
+                    $solution->save();
+                }
+
+            }
 
             $response = ['success' => true, 'data' => ['name' => $user->name, 'id' => $user->student_id, 'email' => $request->email, 'auth_token' => $token, 'olympiad_id' => $user->olympiad_id, 'role' => $request->role]];
         } else

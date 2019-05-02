@@ -13,6 +13,8 @@ export class TaskEdit extends Component {
             const change = {};
             if (field == "hardness" && (event.target.value > 10 || event.target.value < 0))
                 return;
+            if (field == "max_score"  && (event.target.value > 100 || event.target.value < 0))
+                return;
             if (field == "minutes") {
                 change["time"] = document.getElementById("hours").value + ":" + event.target.value;
             }
@@ -27,6 +29,7 @@ export class TaskEdit extends Component {
 
     handleSubmit() {
         const {table, postTable, getTable} = this.props;
+        table.olympiad_id = this.props.olympiadID;
         if (table.id)
             postTable({name: "task", data : JSON.stringify(table), method : "PUT", id : table.olympiadID }).then(getTable({name: "olympiad"}));
         else
@@ -53,6 +56,8 @@ export class TaskEdit extends Component {
                         <input type="range" id="hours" min = "0" max = "6" value= { table.time != undefined ? table.time.split(":")[0] : 0} onChange={this.handleChange("hours")}/>
                         <input type="range" id="minutes" min = "0" max = "59" value={ table.time != undefined?  table.time.split(":")[1] : 0} onChange={this.handleChange("minutes")}/>
                         <p/>
+                        <p>Max score</p>
+                        <input type="number" value={table.max_score || ""} onChange={this.handleChange("max_score")}/>
                         <button className="ok" onClick={this.handleSubmit.bind(this)}>ok</button>
                         <button className="cancel" onClick={this.hide.bind(this)}>cancel</button>
                     </div>)

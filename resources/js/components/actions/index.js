@@ -80,6 +80,7 @@ export function getTaskEdit(table, olympiadID, show) {
     }
 }
 
+
 export function taskSuccess(table) {
     return {
         type: 'TASK_SUCCESS',
@@ -110,9 +111,44 @@ export function loginFailure(data) {
     }
 }
 
+export function solutionSuccess(data) {
+    return {
+        type: 'SOLUTION_SUCCESS',
+        ...data,
+    }
+}
+
+export function solutionFailure(data) {
+    return {
+        type: 'SOLUTION_FAILURE',
+        ...data
+    }
+}
+
 export function appUpdate(data) {
     return {
         type: 'APP_UPDATE',
+        ...data
+    }
+}
+
+export function selectTaskToSolve(id) {
+    return {
+        type: 'SELECT_TASK_TO_SOLVE',
+        id
+    }
+}
+
+export function queueSuccess(data) {
+    return {
+        type: 'QUEUE_SUCCESS',
+        ...data,
+    }
+}
+
+export function queueFailure(data) {
+    return {
+        type: 'QUEUE_FAILURE',
         ...data
     }
 }

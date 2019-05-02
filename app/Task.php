@@ -13,9 +13,18 @@ class Task extends Model
         return $this->belongsTo(Olympiad::class);
     }
 
+    public function solution(){
+        return $this->hasMany('App\Solution', 'task_id', 'id');
+    }
+
     public static function getAllTasks($olym_id)
     {
         return Task::where('olympiad_id','=', $olym_id)->get();
+    }
+
+    public static function getTask($id)
+    {
+        return Task::where('id', '=', $id);
     }
 
     public static function addTask($newTask)
@@ -29,6 +38,7 @@ class Task extends Model
         $put_task['description'] = $task['description'];
         $put_task['time'] = $task['time'];
         $put_task['olympiad_id'] = $task['olympiad_id'];
+        $put_task['max_score'] = $task['max_score'];
         $put_task->save();
     }
 

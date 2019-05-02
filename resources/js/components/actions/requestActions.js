@@ -2,9 +2,11 @@ import axios from 'axios';
 
 
 export function getTable(args = {id : null}) {
+    let host = window.location.hostname;
+    console.log(args.name.toUpperCase() + '_SUCCESS');
     return (dispatch) => {
         return new Promise((resolve, reject) => {
-            const doRequest = axios.get('api/' + args.name +  '/' + (args.id ? args.id + '/' :""));
+            const doRequest = axios.get('http://' + host + '/api/' + args.name +  '/' + (args.id ? args.id + '/' :""));
             doRequest.then(
                 (res) => {
                     dispatch({
@@ -27,13 +29,14 @@ export function getTable(args = {id : null}) {
 }
 
 export function postTable(args = {id : null}) {
+    let host = window.location.hostname;
     return () => {
         return new Promise((resolve, reject) => {
             let doRequest = null;
             if (args.method == "POST")
-            doRequest = axios.post('api/' + args.name + '/', args.data);
+            doRequest = axios.post('http://' + host + '/api/' + args.name + '/', args.data);
             else
-                doRequest = axios.put('api/' + args.name + '/' + args.id, args.data);
+                doRequest = axios.put('http://' + host +  '/api/' + args.name + '/' + args.id, args.data);
             doRequest.then(
                 () => {
                 },
@@ -48,7 +51,7 @@ export function postTable(args = {id : null}) {
 export function deleteTable(args = {}) {
     return () => {
         return new Promise((resolve, reject) => {
-            const doRequest = axios.delete('api/' + args.name + '/' + args.id);
+            const doRequest = axios.delete('http://' + host + '/api/' + args.name + '/' + args.id);
             doRequest.then(
                 () => {
                 },

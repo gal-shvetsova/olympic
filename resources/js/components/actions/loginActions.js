@@ -1,16 +1,11 @@
 import axios from 'axios';
 import $ from "jquery";
 
-export function _loginUser  (email, password)  {
-    $("#login-form button")
-        .attr("disabled", "disabled")
-        .html(
-            '<i class="fa fa-spinner fa-spin fa-1x fa-fw"></i><span class="sr-only">Loading...</span>'
-        );
+export function _loginUser(email, password) {
     let formData = new FormData();
     formData.append("email", email);
     formData.append("password", password);
-    axios.post("login/", formData)
+    axios.post("api/login/", formData)
         .then(response => {
             return response;
         })

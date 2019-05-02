@@ -10,7 +10,7 @@ export function _registerUser(name, email, password) {
     formData.append("role", "student");
     formData.append("student_id", -1);
     axios
-        .post("register", formData)
+        .post("/api/register", formData)
         .then(response => {
             return response;
         })
@@ -56,7 +56,7 @@ export function _registerParticipant(args = {password : "", login : "", olympiad
     formData.append("role", args.role);
     formData.append("student_id", args.student_id);
     axios
-        .post("register", formData)
+        .post("api/register", formData)
         .then(response => {
             return response;
         })
@@ -91,7 +91,6 @@ export function _registerParticipant(args = {password : "", login : "", olympiad
 }
 
 export function _deleteAccount() {
-    console.log(this.state.user.id);
     axios
         .delete("api/student" + '/' + this.state.user.id)
         .then (json => {

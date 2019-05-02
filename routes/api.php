@@ -17,4 +17,22 @@ Route::resource('/student', 'StudentController');
 
 Route::resource('/task', 'TaskController');
 
-//Route::delete('/delete/{id}', 'Auth\DeleteAccountController@delete');
+Route::resource('/solution', 'SolutionController');
+
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
+});
+Route::group(['middleware' => ['jwt.auth', 'api-header']], function () {
+
+    // all routes to protected resources are registered here
+    Route::get('users/list', function () {
+        $users = App\User::all();
+
+        $response = ['success' => true, 'data' => $users];
+        return response()->json($response, 201);
+    });
+});
+Route::group(['middleware' => 'api-header'], function () {
+
+    Route::auth();
+});

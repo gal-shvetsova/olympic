@@ -8,6 +8,7 @@ const Register = ({ history, registerUser = f => f }) => {
         e.preventDefault();
 
         registerUser(_name.value, _email.value, _password.value);
+        history.push("olympiad");
     };
     return (
         <div id="main">

@@ -7,7 +7,7 @@ export function _resetPassword(new_password, password, auth_token) {
     formData.append("new_password", new_password);
     formData.append("auth_token", auth_token);
     axios
-        .post("password/reset", formData)
+        .post("api/password/reset", formData)
         .then(response => {
             return response;
         })

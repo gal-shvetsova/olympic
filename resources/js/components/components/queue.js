@@ -3,13 +3,41 @@ import {isRole} from "../actions/roleActions";
 import {bindActionCreators} from "redux";
 import * as requestActionCreators from "../actions/requestActions";
 import {connect} from "react-redux";
+import io from 'socket.io-client';
 
 export class Queue extends Component {
 
     constructor(props) {
         super(props);
-        const {getTable, id} = this.props;
-        getTable({name: "queue", id: id});
+        this.state = {
+            table: [],
+        };
+        this.socket = '';
+       // const {getTable, id} = this.props;
+        //getTable({name: "queue", id: id});
+    }
+
+    componentDidMount() {
+        this.socket = io('http://olympic.test:8000'); //TODO remove hardcode
+        this.socket.on(
+            'timer',
+            data =>
+                this.setState(
+                    { table: data },
+                    // the second parameter to setState will be called on completion, so you'll log every time the speed changes
+                    () => console.log("got the speed: " + JSON.stringify(this.state.table))
+                )
+        );
+
+        this.socket.open();
+
+        this.socket.emit('subscribeToTimer', 1000, this.props.id);
+
+       // document.getElementsByClassName("Queue")[0].insertAdjacentElement(this.createQueue());
+    }
+
+    componentWillUnmount() {
+        this.socket.close();
     }
 
     createQueue() {
@@ -41,6 +69,7 @@ export class Queue extends Component {
                 <div className="Queue">
                     <h4>Queue</h4>
                         {this.createQueue()}
+                        <h4>This is the timer value: {this.state.timestamp}</h4>
                 </div> : "You don't have permissions"
         );
     }

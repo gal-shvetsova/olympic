@@ -140,7 +140,7 @@ class App extends React.Component {
 
                     {
                         isRole(this.state.user.role, ["participant", "student", "admin"]) &&
-                        <button onClick={() => this.props.history.push("password")}>Reset password</button>
+                        <button onClick={() => this.props.history.replace("password")}>Reset password</button>
                     }
 
                     {

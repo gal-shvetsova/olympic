@@ -86,10 +86,16 @@ const solutionStore = (state = {table: [], selectedTask : -1}, action) => {
     }
 };
 
-const queueStore = (state = {table : []}) => {
-    return {...state};
+const queueStore = (state = {table: []}, action) => {
+    switch (action.type) {
+        case 'QUEUE_SUCCESS':
+            return {...state, table: action.table};
+        case 'QUEUE_FAILURE':
+            alert("err");
+        default:
+            return state
+    }
 };
-
 
 
 const rootReducer = combineReducers({

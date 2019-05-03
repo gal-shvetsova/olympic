@@ -19,6 +19,8 @@ Route::resource('/task', 'TaskController');
 
 Route::resource('/solution', 'SolutionController');
 
+Route::resource('/queue', 'QueueController');
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

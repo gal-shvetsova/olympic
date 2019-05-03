@@ -19,14 +19,14 @@ export class Queue extends Component {
                 <tbody>
                 <tr>
                     <th>Task</th>
-                    <th>State</th>
+                    <th>Progress</th>
                     <th>Your score</th>
                     <th>Max score</th>
                 </tr>
                 {
                     table.map((task) => (<tr key={task.id}>
                         <td className="name"> {task.name} </td>
-                        <td className="state"> {task.state} </td>
+                        <td className="progress"> {task.progress} </td>
                         <td className="score"> {task.score} </td>
                         <td className="max_score"> {task.max_score} </td>
                     </tr>))
@@ -39,10 +39,8 @@ export class Queue extends Component {
     render() {
         return (isRole(this.props.role, ["participant"]) ?
                 <div className="Queue">
-                    <h4>Tasks</h4>
-                    <div className="queue">
-                        {this.createQueue}
-                    </div>
+                    <h4>Queue</h4>
+                        {this.createQueue()}
                 </div> : "You don't have permissions"
         );
     }

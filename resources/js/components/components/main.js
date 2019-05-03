@@ -119,7 +119,7 @@ class App extends React.Component {
 
                     <Route
                         path="/queue/:id"
-                        render={props => (<Queue id = {this.state.user.id} {...props}/>)}
+                        render={props => (<Queue id = {this.state.user.id} role = {this.state.user.role}{...props}/>)}
                     />
 
                     {

@@ -69,13 +69,13 @@ class SolutionController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  int  $id  of solution
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
         $json =$request->json()->all();
-        Solution::editSolution($json);
+        Solution::editSolution($json, $id);
         return response(200);
     }
 

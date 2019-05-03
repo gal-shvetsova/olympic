@@ -34,8 +34,8 @@ class Solution extends Model
         select('name', 'description', 'hardness', 'time', 'start', 'status', 'max_score', 'score', 'solutions.id')->get();
     }
 
-    public static function editSolution($solution){
-        $put_solution = Solution::find($solution['id']);
+    public static function editSolution($solution, $id){
+        $put_solution = Solution::find($id);
         $put_solution['start'] = date ("Y-m-d H:i:s", strtotime($put_solution['start']) + intval($solution['start']));
         $put_solution['status'] = $solution['status'];
         $put_solution->save();

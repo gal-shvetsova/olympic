@@ -16,7 +16,7 @@ class Queue extends Model
 
 
     public static function getAll($id){
-        return Queue::where('student_id', '=', $id)->join('solution', 'queue.solution_id', '=', 'solutions.id')->get();
+        return Queue::where('queue.student_id', '=', $id)->join('solutions', 'queue.solution_id', '=', 'solutions.id')->join('tasks', 'solutions.task_id', '=', 'tasks.id')->get();
     }
 
     public static function create($element){

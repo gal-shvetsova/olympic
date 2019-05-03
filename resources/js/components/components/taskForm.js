@@ -54,12 +54,13 @@ export class TaskForm extends Component {
     }
 
     handleSubmit() {
-            const args = {};
+            const args = {data : {}};
             args.data.student_id = this.props.id;
             args.data.solution_id = this.state.solutionID;
             args.data.progress = 0;
             args.history = this.props.history;
             this.props.sendSolution(args);
+            this.props.history.replace("/queue/" + args.data.student_id);
     }
 
 
@@ -70,7 +71,7 @@ export class TaskForm extends Component {
                         </textarea>
                 <button className="ok" onClick={this.handleSubmit.bind(this)}>ok</button>
                 <button className="back"
-                        onClick={() => this.props.history.push("/solution/" + this.props.id)}>back
+                        onClick={() => this.props.history.push("/queue/" + this.props.id)}>back
                 </button>
             </div>);
     }

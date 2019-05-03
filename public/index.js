@@ -44704,9 +44704,7 @@ function sendSolution() {
   var host = window.location.hostname;
   return function () {
     return new Promise(function (resolve, reject) {
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('http://' + host + '/api/queue', args.data).then(function () {
-        args.history.push("queue/" + args.student_id);
-      }, function (err) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('http://' + host + '/api/queue', args.data).then(function () {}, function (err) {
         reject(err);
       });
     });
@@ -45084,7 +45082,8 @@ function (_React$Component) {
         path: "/queue/:id",
         render: function render(props) {
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_queue__WEBPACK_IMPORTED_MODULE_4__["default"], _extends({
-            id: _this2.state.user.id
+            id: _this2.state.user.id,
+            role: _this2.state.user.role
           }, props));
         }
       }), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_8__["isRole"])(this.state.user.role, ["admin", "participant", "student"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
@@ -45597,9 +45596,7 @@ function (_Component) {
     value: function render() {
       return Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_1__["isRole"])(this.props.role, ["participant"]) ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "Queue"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Tasks"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "queue"
-      }, this.createQueue)) : "You don't have permissions";
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Queue"), this.createQueue()) : "You don't have permissions";
     }
   }]);
 
@@ -46852,11 +46849,15 @@ function (_Component) {
   }, {
     key: "handleSubmit",
     value: function handleSubmit() {
-      var args = {};
-      args.student_id = this.props.id;
-      args.solution_id = this.state.solutionID;
-      args.progress = 0;
+      var args = {
+        data: {}
+      };
+      args.data.student_id = this.props.id;
+      args.data.solution_id = this.state.solutionID;
+      args.data.progress = 0;
+      args.history = this.props.history;
       this.props.sendSolution(args);
+      this.props.history.replace("/queue/" + args.data.student_id);
     }
   }, {
     key: "render",
@@ -46875,7 +46876,7 @@ function (_Component) {
       }, "ok"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "back",
         onClick: function onClick() {
-          return _this3.props.history.push("/solution/" + _this3.props.id);
+          return _this3.props.history.push("/queue/" + _this3.props.id);
         }
       }, "back"));
     }
@@ -47146,7 +47147,20 @@ var queueStore = function queueStore() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
     table: []
   };
-  return _objectSpread({}, state);
+  var action = arguments.length > 1 ? arguments[1] : undefined;
+
+  switch (action.type) {
+    case 'QUEUE_SUCCESS':
+      return _objectSpread({}, state, {
+        table: action.table
+      });
+
+    case 'QUEUE_FAILURE':
+      alert("err");
+
+    default:
+      return state;
+  }
 };
 
 var rootReducer = Object(redux__WEBPACK_IMPORTED_MODULE_0__["combineReducers"])({

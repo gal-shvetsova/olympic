@@ -73,6 +73,15 @@ class App extends React.Component {
                         <Link to="/olympiad">Olympiad </Link>
                     }
 
+                    {
+                        isRole(this.state.user.role, ["participant"]) &&
+                        <Link to={"/queue/" + this.state.user.id}>Queue</Link>
+                    }
+                    {
+                        isRole(this.state.user.role, ["participant"]) &&
+                        <Link to={"/solution/" + this.state.user.id}>Your tasks</Link>
+                    }
+
                     <Route
                         path="/login"
                         render={props => (<Login {...props} loginUser={_loginUser.bind(this)}/>)}

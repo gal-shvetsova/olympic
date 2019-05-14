@@ -41,3 +41,7 @@ Route::any('/login', function () {
 Route::any('/queue/{id}', function () {
     return view('.index');
 });
+
+Route::any('/solution/{id}/edit', function () {
+    return view('.index');
+});

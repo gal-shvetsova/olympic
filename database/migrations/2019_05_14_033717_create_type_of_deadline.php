@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddIdInTasks extends Migration
+class CreateTypeOfDeadline extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class AddIdInTasks extends Migration
      */
     public function up()
     {
-        Schema::table('tasks', function (Blueprint $table) {
-            $table->dropColumn('olym_id');
-            $table->integer('olympiad_id');
+        Schema::table('olympiads', function (Blueprint $table) {
+            $table->dropColumn('deadline');
         });
     }
 
@@ -26,8 +25,8 @@ class AddIdInTasks extends Migration
      */
     public function down()
     {
-        Schema::table('tasks', function (Blueprint $table) {
-            $table->integer('olym_id');
+        Schema::table('olympiads', function (Blueprint $table) {
+            $table->dropColumn('deadline');
         });
     }
 }

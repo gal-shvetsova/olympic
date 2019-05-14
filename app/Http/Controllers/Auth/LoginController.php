@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 use App\User;
 
-use JWTAuth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 class LoginController extends Controller

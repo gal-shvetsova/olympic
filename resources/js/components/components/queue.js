@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import {isRole} from "../actions/roleActions";
-import {bindActionCreators} from "redux";
-import * as requestActionCreators from "../actions/requestActions";
-import {connect} from "react-redux";
 import io from 'socket.io-client';
+import ProgressBar from 'react-bootstrap/ProgressBar'
+import axios from "axios";
 
 export class Queue extends Component {
 
@@ -13,36 +12,40 @@ export class Queue extends Component {
             table: [],
         };
         this.socket = '';
-       // const {getTable, id} = this.props;
-        //getTable({name: "queue", id: id});
     }
+
+
+    getTable() {
+        let host = window.location.hostname;
+        const doRequest = axios.get('http://' + host + '/api/queue/' + this.props.id + '/');
+        doRequest.then(
+            (res) => {
+                this.setState({
+                    table: res.data.table
+                });
+            }
+        );
+    }
+
+
 
     componentDidMount() {
         this.socket = io('http://olympic.test:8000'); //TODO remove hardcode
         this.socket.on(
             'timer',
-            data =>
-                this.setState(
-                    { table: data },
-                    // the second parameter to setState will be called on completion, so you'll log every time the speed changes
-                    () => console.log("got the speed: " + JSON.stringify(this.state.table))
-                )
+            this.getTable.bind(this)
         );
 
         this.socket.open();
-
         this.socket.emit('subscribeToTimer', 1000, this.props.id);
-
-       // document.getElementsByClassName("Queue")[0].insertAdjacentElement(this.createQueue());
     }
 
     componentWillUnmount() {
         this.socket.close();
     }
 
-    createQueue() {
-        const {table} = this.props;
-        return (
+    createQueue(table) {
+        return table !== undefined ? (
             <table border="1">
                 <tbody>
                 <tr>
@@ -54,40 +57,29 @@ export class Queue extends Component {
                 {
                     table.map((task) => (<tr key={task.id}>
                         <td className="name"> {task.name} </td>
-                        <td className="progress"> {task.progress} </td>
-                        <td className="score"> {task.score} </td>
+                        <td className="progress">
+                            <ProgressBar now={task.progress} label={`${task.progress}%`} isChild={true} />
+                        </td>
+                        <td className="score"> {task.score > 0 ? task.score : "Checking"} </td>
                         <td className="max_score"> {task.max_score} </td>
                     </tr>))
                 }
                 </tbody>
             </table>
-        )
+        ) : <p>Loading</p>
     }
 
     render() {
         return (isRole(this.props.role, ["participant"]) ?
                 <div className="Queue">
                     <h4>Queue</h4>
-                        {this.createQueue()}
-                        <h4>This is the timer value: {this.state.timestamp}</h4>
+                    {this.createQueue(this.state.table)}
                 </div> : "You don't have permissions"
         );
     }
 
 }
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        table: state.queueStore.table,
-        ownProps
-    }
-};
 
 
-const mapDispatchToProps = function (dispatch) {
-    return bindActionCreators({
-        getTable: requestActionCreators.getTable
-    }, dispatch)
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Queue)
+export default Queue

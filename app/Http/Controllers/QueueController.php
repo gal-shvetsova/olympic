@@ -7,6 +7,7 @@ use App\Queue;
 
 class QueueController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -48,7 +49,11 @@ class QueueController extends Controller
      */
     public function show($id)
     {
-        $response = Queue::getAll($id);
+        $response = Queue::getAll($id)->get();
+        for ($i = 0; $i < sizeof($response); $i++){
+            Queue::updateQueue($response[$i]['id'], $response[$i]['task_id'], $response[$i]['solution']);
+        }
+        $response = Queue::getAll($id)->get();
         $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
         return response($answer, 200);
     }
@@ -73,7 +78,9 @@ class QueueController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $json = $request->json()->all();
+        Olympiad::editOlympiad($json);
+        return response(200);
     }
 
     /**

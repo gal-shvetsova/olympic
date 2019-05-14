@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import * as actionCreators from '../actions/index.js';
 import * as requestActionCreators from '../actions/requestActions';
+import sortTable from '../actions/sortAction'
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
@@ -14,6 +15,10 @@ export class OlympiadList extends Component {
         super(props);
         const getTable = this.props.getTable;
         getTable({name: "olympiad"});
+        this.state = {
+            sortName : "",
+            sortType : ''
+        };
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
     }
@@ -51,6 +56,14 @@ export class OlympiadList extends Component {
                     </tbody>
                 </table>
             ) : "Empty olympiad's list";
+    }
+
+    handleSort(name) {
+        this.setState({
+            sortName : name,
+            sortType : this.state.sortType === 'asc' ? 'desc' : 'asc'
+        });
+
     }
 
     handleDelete(olympiad) {

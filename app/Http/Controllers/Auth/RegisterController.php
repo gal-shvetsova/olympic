@@ -89,7 +89,7 @@ class RegisterController extends Controller
     {
         $token = null;
         try {
-            if (!$token = JWTAuth::attempt(['email' => $email, 'password' => $password])) {
+            if (!$token = auth('api')->attempt(['email' => $email, 'password' => $password])) {
                 return response()->json([
                     'response' => 'error',
                     'message' => 'Password or email is invalid',
@@ -140,7 +140,7 @@ class RegisterController extends Controller
 
             $token = self::getToken($request->email, $request->password);
 
-            if (!is_string($token)) return response()->json(['success' => false, 'data' => 'Token generation failed'], 201);
+            if (!is_string($token)) return response()->json(['success' => false, 'data' => 'Token generation failed', 'err' => $token], 201);
 
             $user = User::where('email', $request->email)->get()->first();
             $user->auth_token = $token;

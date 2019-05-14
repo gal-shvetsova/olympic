@@ -181,6 +181,172 @@ function _objectWithoutPropertiesLoose(source, excluded) {
 
 /***/ }),
 
+/***/ "./node_modules/@babel/runtime/helpers/extends.js":
+/*!********************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/extends.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _extends() {
+  module.exports = _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+module.exports = _extends;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/inheritsLoose.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/inheritsLoose.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _inheritsLoose(subClass, superClass) {
+  subClass.prototype = Object.create(superClass.prototype);
+  subClass.prototype.constructor = subClass;
+  subClass.__proto__ = superClass;
+}
+
+module.exports = _inheritsLoose;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js":
+/*!**********************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/interopRequireDefault.js ***!
+  \**********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : {
+    "default": obj
+  };
+}
+
+module.exports = _interopRequireDefault;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js":
+/*!***********************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/interopRequireWildcard.js ***!
+  \***********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _interopRequireWildcard(obj) {
+  if (obj && obj.__esModule) {
+    return obj;
+  } else {
+    var newObj = {};
+
+    if (obj != null) {
+      for (var key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};
+
+          if (desc.get || desc.set) {
+            Object.defineProperty(newObj, key, desc);
+          } else {
+            newObj[key] = obj[key];
+          }
+        }
+      }
+    }
+
+    newObj["default"] = obj;
+    return newObj;
+  }
+}
+
+module.exports = _interopRequireWildcard;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js":
+/*!*****************************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js ***!
+  \*****************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+module.exports = _objectWithoutPropertiesLoose;
+
+/***/ }),
+
+/***/ "./node_modules/@restart/context/forwardRef.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/@restart/context/forwardRef.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.default = forwardRef;
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function forwardRef(renderFn, _temp) {
+  var _ref = _temp === void 0 ? {} : _temp,
+      propTypes = _ref.propTypes,
+      defaultProps = _ref.defaultProps,
+      _ref$allowFallback = _ref.allowFallback,
+      allowFallback = _ref$allowFallback === void 0 ? false : _ref$allowFallback,
+      _ref$displayName = _ref.displayName,
+      displayName = _ref$displayName === void 0 ? renderFn.name || renderFn.displayName : _ref$displayName;
+
+  var render = function render(props, ref) {
+    return renderFn(props, ref);
+  };
+
+  return Object.assign(_react.default.forwardRef || !allowFallback ? _react.default.forwardRef(render) : function (props) {
+    return render(props, null);
+  }, {
+    displayName: displayName,
+    propTypes: propTypes,
+    defaultProps: defaultProps
+  });
+}
+
+/***/ }),
+
 /***/ "./node_modules/after/index.js":
 /*!*************************************!*\
   !*** ./node_modules/after/index.js ***!
@@ -4175,6 +4341,68 @@ function isnan (val) {
 }
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
+
+/***/ }),
+
+/***/ "./node_modules/classnames/index.js":
+/*!******************************************!*\
+  !*** ./node_modules/classnames/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+  Copyright (c) 2017 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+/* global define */
+
+(function () {
+	'use strict';
+
+	var hasOwn = {}.hasOwnProperty;
+
+	function classNames () {
+		var classes = [];
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg;
+
+			if (argType === 'string' || argType === 'number') {
+				classes.push(arg);
+			} else if (Array.isArray(arg) && arg.length) {
+				var inner = classNames.apply(null, arg);
+				if (inner) {
+					classes.push(inner);
+				}
+			} else if (argType === 'object') {
+				for (var key in arg) {
+					if (hasOwn.call(arg, key) && arg[key]) {
+						classes.push(key);
+					}
+				}
+			}
+		}
+
+		return classes.join(' ');
+	}
+
+	if ( true && module.exports) {
+		classNames.default = classNames;
+		module.exports = classNames;
+	} else if (true) {
+		// register as 'classnames', consistent with npm package name
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
+			return classNames;
+		}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+}());
+
 
 /***/ }),
 
@@ -22065,6 +22293,325 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
+
+/***/ }),
+
+/***/ "./node_modules/react-bootstrap/ProgressBar.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/react-bootstrap/ProgressBar.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+
+exports.__esModule = true;
+exports.default = void 0;
+
+var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/extends */ "./node_modules/@babel/runtime/helpers/extends.js"));
+
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/objectWithoutPropertiesLoose */ "./node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js"));
+
+var _inheritsLoose2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inheritsLoose */ "./node_modules/@babel/runtime/helpers/inheritsLoose.js"));
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _ThemeProvider = __webpack_require__(/*! ./ThemeProvider */ "./node_modules/react-bootstrap/ThemeProvider.js");
+
+var _ElementChildren = __webpack_require__(/*! ./utils/ElementChildren */ "./node_modules/react-bootstrap/utils/ElementChildren.js");
+
+var ROUND_PRECISION = 1000;
+/**
+ * Validate that children, if any, are instances of `<ProgressBar>`.
+ */
+
+function onlyProgressBar(props, propName, componentName) {
+  var children = props[propName];
+
+  if (!children) {
+    return null;
+  }
+
+  var error = null;
+
+  _react.default.Children.forEach(children, function (child) {
+    if (error) {
+      return;
+    }
+    /**
+     * Compare types in a way that works with libraries that patch and proxy
+     * components like react-hot-loader.
+     *
+     * see https://github.com/gaearon/react-hot-loader#checking-element-types
+     */
+
+
+    var element = _react.default.createElement(DecoratedProgressBar, null);
+
+    if (child.type === element.type) return;
+    var childIdentifier = _react.default.isValidElement(child) ? child.type.displayName || child.type.name || child.type : child;
+    error = new Error("Children of " + componentName + " can contain only ProgressBar " + ("components. Found " + childIdentifier + "."));
+  });
+
+  return error;
+}
+
+var defaultProps = {
+  min: 0,
+  max: 100,
+  animated: false,
+  isChild: false,
+  srOnly: false,
+  striped: false
+};
+
+function getPercentage(now, min, max) {
+  var percentage = (now - min) / (max - min) * 100;
+  return Math.round(percentage * ROUND_PRECISION) / ROUND_PRECISION;
+}
+
+var ProgressBar =
+/*#__PURE__*/
+function (_React$Component) {
+  (0, _inheritsLoose2.default)(ProgressBar, _React$Component);
+
+  function ProgressBar() {
+    return _React$Component.apply(this, arguments) || this;
+  }
+
+  var _proto = ProgressBar.prototype;
+
+  _proto.renderProgressBar = function renderProgressBar(_ref) {
+    var _classNames;
+
+    var min = _ref.min,
+        now = _ref.now,
+        max = _ref.max,
+        label = _ref.label,
+        srOnly = _ref.srOnly,
+        striped = _ref.striped,
+        animated = _ref.animated,
+        className = _ref.className,
+        style = _ref.style,
+        variant = _ref.variant,
+        bsPrefix = _ref.bsPrefix,
+        props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["min", "now", "max", "label", "srOnly", "striped", "animated", "className", "style", "variant", "bsPrefix"]);
+    return _react.default.createElement("div", (0, _extends2.default)({}, props, {
+      role: "progressbar",
+      className: (0, _classnames.default)(className, bsPrefix + "-bar", (_classNames = {}, _classNames["bg-" + variant] = variant, _classNames[bsPrefix + "-bar-animated"] = animated, _classNames[bsPrefix + "-bar-striped"] = animated || striped, _classNames)),
+      style: (0, _extends2.default)({
+        width: getPercentage(now, min, max) + "%"
+      }, style),
+      "aria-valuenow": now,
+      "aria-valuemin": min,
+      "aria-valuemax": max
+    }), srOnly ? _react.default.createElement("span", {
+      className: "sr-only"
+    }, label) : label);
+  };
+
+  _proto.render = function render() {
+    var _this$props = this.props,
+        isChild = _this$props.isChild,
+        props = (0, _objectWithoutPropertiesLoose2.default)(_this$props, ["isChild"]);
+
+    if (isChild) {
+      return this.renderProgressBar(props);
+    }
+
+    var min = props.min,
+        now = props.now,
+        max = props.max,
+        label = props.label,
+        srOnly = props.srOnly,
+        striped = props.striped,
+        animated = props.animated,
+        bsPrefix = props.bsPrefix,
+        variant = props.variant,
+        className = props.className,
+        children = props.children,
+        wrapperProps = (0, _objectWithoutPropertiesLoose2.default)(props, ["min", "now", "max", "label", "srOnly", "striped", "animated", "bsPrefix", "variant", "className", "children"]);
+    return _react.default.createElement("div", (0, _extends2.default)({}, wrapperProps, {
+      className: (0, _classnames.default)(className, bsPrefix)
+    }), children ? (0, _ElementChildren.map)(children, function (child) {
+      return (0, _react.cloneElement)(child, {
+        isChild: true
+      });
+    }) : this.renderProgressBar({
+      min: min,
+      now: now,
+      max: max,
+      label: label,
+      srOnly: srOnly,
+      striped: striped,
+      animated: animated,
+      bsPrefix: bsPrefix,
+      variant: variant
+    }));
+  };
+
+  return ProgressBar;
+}(_react.default.Component);
+
+ProgressBar.defaultProps = defaultProps;
+var DecoratedProgressBar = (0, _ThemeProvider.createBootstrapComponent)(ProgressBar, 'progress');
+var _default = DecoratedProgressBar;
+exports.default = _default;
+module.exports = exports["default"];
+
+/***/ }),
+
+/***/ "./node_modules/react-bootstrap/ThemeProvider.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/react-bootstrap/ThemeProvider.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+
+exports.__esModule = true;
+exports.useBootstrapPrefix = useBootstrapPrefix;
+exports.createBootstrapComponent = createBootstrapComponent;
+exports.default = exports.ThemeConsumer = void 0;
+
+var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/extends */ "./node_modules/@babel/runtime/helpers/extends.js"));
+
+var _inheritsLoose2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inheritsLoose */ "./node_modules/@babel/runtime/helpers/inheritsLoose.js"));
+
+var _forwardRef = _interopRequireDefault(__webpack_require__(/*! @restart/context/forwardRef */ "./node_modules/@restart/context/forwardRef.js"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var ThemeContext = _react.default.createContext(new Map());
+
+var Consumer = ThemeContext.Consumer,
+    Provider = ThemeContext.Provider;
+exports.ThemeConsumer = Consumer;
+
+var ThemeProvider =
+/*#__PURE__*/
+function (_React$Component) {
+  (0, _inheritsLoose2.default)(ThemeProvider, _React$Component);
+
+  function ThemeProvider() {
+    var _this;
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _React$Component.call.apply(_React$Component, [this].concat(args)) || this;
+    _this.prefixes = new Map();
+    Object.keys(_this.props.prefixes).forEach(function (key) {
+      _this.prefixes.set(key, _this.props.prefixes[key]);
+    });
+    return _this;
+  }
+
+  var _proto = ThemeProvider.prototype;
+
+  _proto.render = function render() {
+    return _react.default.createElement(Provider, {
+      value: this.prefixes
+    }, this.props.children);
+  };
+
+  return ThemeProvider;
+}(_react.default.Component);
+
+function useBootstrapPrefix(prefix, defaultPrefix) {
+  var prefixes = (0, _react.useContext)(ThemeContext);
+  return prefix || prefixes.get(defaultPrefix) || defaultPrefix;
+}
+
+function createBootstrapComponent(Component, opts) {
+  if (typeof opts === 'string') opts = {
+    prefix: opts
+  };
+  var isClassy = Component.prototype && Component.prototype.isReactComponent; // If it's a functional component make sure we don't break it with a ref
+
+  var _opts = opts,
+      prefix = _opts.prefix,
+      _opts$forwardRefAs = _opts.forwardRefAs,
+      forwardRefAs = _opts$forwardRefAs === void 0 ? isClassy ? 'ref' : 'innerRef' : _opts$forwardRefAs;
+  return (0, _forwardRef.default)(function (_ref, ref) {
+    var props = (0, _extends2.default)({}, _ref);
+    props[forwardRefAs] = ref;
+    var prefixes = (0, _react.useContext)(ThemeContext);
+    return _react.default.createElement(Component, (0, _extends2.default)({}, props, {
+      // eslint-disable-next-line react/prop-types
+      bsPrefix: props.bsPrefix || prefixes.get(prefix) || prefix
+    }));
+  }, {
+    displayName: "Bootstrap(" + (Component.displayName || Component.name) + ")"
+  });
+}
+
+var _default = ThemeProvider;
+exports.default = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-bootstrap/utils/ElementChildren.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/react-bootstrap/utils/ElementChildren.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+
+exports.__esModule = true;
+exports.map = map;
+exports.forEach = forEach;
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+/**
+ * Iterates through children that are typically specified as `props.children`,
+ * but only maps over children that are "valid elements".
+ *
+ * The mapFunction provided index will be normalised to the components mapped,
+ * so an invalid component would not increase the index.
+ *
+ */
+function map(children, func) {
+  var index = 0;
+  return _react.default.Children.map(children, function (child) {
+    return _react.default.isValidElement(child) ? func(child, index++) : child;
+  });
+}
+/**
+ * Iterates through children that are "valid elements".
+ *
+ * The provided forEachFunc(child, index) will be called for each
+ * leaf child with the index reflecting the position relative to "valid components".
+ */
+
+
+function forEach(children, func) {
+  var index = 0;
+
+  _react.default.Children.forEach(children, function (child) {
+    if (_react.default.isValidElement(child)) func(child, index++);
+  });
+}
 
 /***/ }),
 
@@ -54589,6 +55136,36 @@ function sendSolution() {
 
 /***/ }),
 
+/***/ "./resources/js/components/actions/sortAction.js":
+/*!*******************************************************!*\
+  !*** ./resources/js/components/actions/sortAction.js ***!
+  \*******************************************************/
+/*! exports provided: sortTable */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sortTable", function() { return sortTable; });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+
+function sortTable() {
+  var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+    id: null
+  };
+  var host = window.location.hostname;
+  return function () {
+    return new Promise(function (resolve, reject) {
+      var doRequest = axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('http://' + host + '/api/' + args.name + '/sort', args.data);
+      doRequest.then(function () {}, function (err) {
+        reject(err);
+      });
+    });
+  };
+}
+
+/***/ }),
+
 /***/ "./resources/js/components/components/join.js":
 /*!****************************************************!*\
   !*** ./resources/js/components/components/join.js ***!
@@ -54894,7 +55471,11 @@ function (_React$Component) {
         to: "/student"
       }, "Student"), !Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_8__["isRole"])(this.state.user.role, ["participant"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
         to: "/olympiad"
-      }, "Olympiad "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
+      }, "Olympiad "), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_8__["isRole"])(this.state.user.role, ["participant"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
+        to: "/queue/" + this.state.user.id
+      }, "Queue"), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_8__["isRole"])(this.state.user.role, ["participant"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
+        to: "/solution/" + this.state.user.id
+      }, "Your tasks"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
         path: "/login",
         render: function render(props) {
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_login__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({}, props, {
@@ -55019,10 +55600,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/index.js */ "./resources/js/components/actions/index.js");
 /* harmony import */ var _actions_requestActions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../actions/requestActions */ "./resources/js/components/actions/requestActions.js");
-/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
-/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
-/* harmony import */ var _olympiadEdit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./olympiadEdit */ "./resources/js/components/components/olympiadEdit.js");
-/* harmony import */ var _actions_roleActions__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../actions/roleActions */ "./resources/js/components/actions/roleActions.js");
+/* harmony import */ var _actions_sortAction__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../actions/sortAction */ "./resources/js/components/actions/sortAction.js");
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
+/* harmony import */ var _olympiadEdit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./olympiadEdit */ "./resources/js/components/components/olympiadEdit.js");
+/* harmony import */ var _actions_roleActions__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../actions/roleActions */ "./resources/js/components/actions/roleActions.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -55048,6 +55630,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var OlympiadList =
 /*#__PURE__*/
 function (_Component) {
@@ -55063,6 +55646,10 @@ function (_Component) {
     getTable({
       name: "olympiad"
     });
+    _this.state = {
+      sortName: "",
+      sortType: ''
+    };
     _this.setWrapperRef = _this.setWrapperRef.bind(_assertThisInitialized(_this));
     _this.handleClickOutside = _this.handleClickOutside.bind(_assertThisInitialized(_this));
     return _this;
@@ -55103,6 +55690,14 @@ function (_Component) {
           className: "participants"
         }, " ", olympiad.participants, " "));
       }))) : "Empty olympiad's list";
+    }
+  }, {
+    key: "handleSort",
+    value: function handleSort(name) {
+      this.setState({
+        sortName: name,
+        sortType: this.state.sortType === 'asc' ? 'desc' : 'asc'
+      });
     }
   }, {
     key: "handleDelete",
@@ -55177,38 +55772,38 @@ function (_Component) {
     value: function render() {
       var _this4 = this;
 
-      return !Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_6__["isRole"])(this.props.role, ["participant"]) ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      return !Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_7__["isRole"])(this.props.role, ["participant"]) ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "Olympiad",
         ref: this.setWrapperRef
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Olympiad"), this.createOlympiadList(), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_6__["isRole"])(this.props.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Olympiad"), this.createOlympiadList(), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_7__["isRole"])(this.props.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "add",
         onClick: function onClick() {
           return _this4.olympiadEdit(_this4.props, "add");
         }
-      }, "add"), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_6__["isRole"])(this.props.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      }, "add"), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_7__["isRole"])(this.props.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "edit",
         hidden: this.props.selectedOlympiad < 0,
         onClick: function onClick() {
           return _this4.olympiadEdit(_this4.props, "edit");
         }
-      }, "edit"), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_6__["isRole"])(this.props.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      }, "edit"), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_7__["isRole"])(this.props.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "delete",
         hidden: this.props.selectedOlympiad < 0,
         onClick: function onClick() {
           return _this4.olympiadEdit(_this4.props, "delete");
         }
-      }, "delete"), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_6__["isRole"])(this.props.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      }, "delete"), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_7__["isRole"])(this.props.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         hidden: this.props.selectedOlympiad < 0,
         onClick: function onClick() {
           return _this4.handleToTask(_this4.props.selectedOlympiad);
         }
-      }, "to tasks"), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_6__["isRole"])(this.props.role, ["student"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      }, "to tasks"), Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_7__["isRole"])(this.props.role, ["student"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "join",
         hidden: this.props.selectedOlympiad < 0,
         onClick: function onClick() {
           return _this4.props.history.push("/join");
         }
-      }, "join"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_olympiadEdit__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      }, "join"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_olympiadEdit__WEBPACK_IMPORTED_MODULE_6__["default"], {
         getTable: this.props.getTable
       })) : "You don't have permissions";
     }
@@ -55226,7 +55821,7 @@ var mapStateToProps = function mapStateToProps(state, ownProps) {
 };
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
-  return Object(redux__WEBPACK_IMPORTED_MODULE_4__["bindActionCreators"])({
+  return Object(redux__WEBPACK_IMPORTED_MODULE_5__["bindActionCreators"])({
     getStateOlympiad: _actions_index_js__WEBPACK_IMPORTED_MODULE_1__["getStateOlympiad"],
     getOlympiadEdit: _actions_index_js__WEBPACK_IMPORTED_MODULE_1__["getOlympiadEdit"],
     getTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_2__["getTable"],
@@ -55235,7 +55830,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   }, dispatch);
 };
 
-/* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_3__["connect"])(mapStateToProps, mapDispatchToProps)(OlympiadList));
+/* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_4__["connect"])(mapStateToProps, mapDispatchToProps)(OlympiadList));
 
 /***/ }),
 
@@ -55400,11 +55995,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_roleActions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/roleActions */ "./resources/js/components/actions/roleActions.js");
-/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
-/* harmony import */ var _actions_requestActions__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../actions/requestActions */ "./resources/js/components/actions/requestActions.js");
-/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
-/* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! socket.io-client */ "./node_modules/socket.io-client/lib/index.js");
-/* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(socket_io_client__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! socket.io-client */ "./node_modules/socket.io-client/lib/index.js");
+/* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(socket_io_client__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var react_bootstrap_ProgressBar__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/ProgressBar */ "./node_modules/react-bootstrap/ProgressBar.js");
+/* harmony import */ var react_bootstrap_ProgressBar__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_bootstrap_ProgressBar__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_4__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -55428,7 +56024,6 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-
 var Queue =
 /*#__PURE__*/
 function (_Component) {
@@ -55443,27 +56038,29 @@ function (_Component) {
     _this.state = {
       table: []
     };
-    _this.socket = ''; // const {getTable, id} = this.props;
-    //getTable({name: "queue", id: id});
-
+    _this.socket = '';
     return _this;
   }
 
   _createClass(Queue, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
+    key: "getTable",
+    value: function getTable() {
       var _this2 = this;
 
-      this.socket = socket_io_client__WEBPACK_IMPORTED_MODULE_5___default()('http://olympic.test:8000'); //TODO remove hardcode
-
-      this.socket.on('timer', function (data) {
-        return _this2.setState({
-          table: data
-        }, // the second parameter to setState will be called on completion, so you'll log every time the speed changes
-        function () {
-          return console.log("got the speed: " + JSON.stringify(_this2.state.table));
+      var host = window.location.hostname;
+      var doRequest = axios__WEBPACK_IMPORTED_MODULE_4___default.a.get('http://' + host + '/api/queue/' + this.props.id + '/');
+      doRequest.then(function (res) {
+        _this2.setState({
+          table: res.data.table
         });
       });
+    }
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.socket = socket_io_client__WEBPACK_IMPORTED_MODULE_2___default()('http://olympic.test:8000'); //TODO remove hardcode
+
+      this.socket.on('timer', this.getTable.bind(this));
       this.socket.open();
       this.socket.emit('subscribeToTimer', 1000, this.props.id);
     }
@@ -55474,9 +56071,8 @@ function (_Component) {
     }
   }, {
     key: "createQueue",
-    value: function createQueue() {
-      var table = this.props.table;
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
+    value: function createQueue(table) {
+      return table !== undefined ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
         border: "1"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Task"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Progress"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Your score"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Max score")), table.map(function (task) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
@@ -55485,39 +56081,29 @@ function (_Component) {
           className: "name"
         }, " ", task.name, " "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           className: "progress"
-        }, " ", task.progress, " "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap_ProgressBar__WEBPACK_IMPORTED_MODULE_3___default.a, {
+          now: task.progress,
+          label: "".concat(task.progress, "%"),
+          isChild: true
+        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           className: "score"
-        }, " ", task.score, " "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+        }, " ", task.score > 0 ? task.score : "Checking", " "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
           className: "max_score"
         }, " ", task.max_score, " "));
-      })));
+      }))) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Loading");
     }
   }, {
     key: "render",
     value: function render() {
       return Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_1__["isRole"])(this.props.role, ["participant"]) ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "Queue"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Queue"), this.createQueue(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "This is the timer value: ", this.state.timestamp)) : "You don't have permissions";
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, "Queue"), this.createQueue(this.state.table)) : "You don't have permissions";
     }
   }]);
 
   return Queue;
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
-
-var mapStateToProps = function mapStateToProps(state, ownProps) {
-  return {
-    table: state.queueStore.table,
-    ownProps: ownProps
-  };
-};
-
-var mapDispatchToProps = function mapDispatchToProps(dispatch) {
-  return Object(redux__WEBPACK_IMPORTED_MODULE_2__["bindActionCreators"])({
-    getTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_3__["getTable"]
-  }, dispatch);
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_4__["connect"])(mapStateToProps, mapDispatchToProps)(Queue));
+/* harmony default export */ __webpack_exports__["default"] = (Queue);
 
 /***/ }),
 
@@ -55818,6 +56404,8 @@ function (_Component) {
     value: function render() {
       var _this3 = this;
 
+      var show = this.props.table[this.props.selectedTask] < 0 && this.props.selectedTask < 0;
+      console.log(show);
       return Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_5__["isRole"])(this.props.role, ["participant"]) ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "Solution",
         ref: this.setWrapperRef
@@ -55828,7 +56416,7 @@ function (_Component) {
         onClick: function onClick() {
           return _this3.handleSolve();
         },
-        hidden: this.props.selectedTask < 0
+        hidden: !show
       }, "solve")))) : "You don't have permissions";
     }
   }]);
@@ -56819,22 +57407,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var _components_student__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/student */ "./resources/js/components/components/student.js");
-/* harmony import */ var _components_olympiad__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/olympiad */ "./resources/js/components/components/olympiad.js");
-/* harmony import */ var _components_task__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/task */ "./resources/js/components/components/task.js");
-/* harmony import */ var _components_login__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/login */ "./resources/js/components/components/login.js");
-/* harmony import */ var _components_main__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/main */ "./resources/js/components/components/main.js");
-/* harmony import */ var _reducers__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./reducers */ "./resources/js/components/reducers/index.js");
-/* harmony import */ var redux_devtools_extension__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! redux-devtools-extension */ "./node_modules/redux-devtools-extension/index.js");
-/* harmony import */ var redux_devtools_extension__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(redux_devtools_extension__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
-/* harmony import */ var redux_thunk__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! redux-thunk */ "./node_modules/redux-thunk/es/index.js");
-/* harmony import */ var _actions_roleActions__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./actions/roleActions */ "./resources/js/components/actions/roleActions.js");
-
-
-
-
-
+/* harmony import */ var _components_main__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/main */ "./resources/js/components/components/main.js");
+/* harmony import */ var _reducers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./reducers */ "./resources/js/components/reducers/index.js");
+/* harmony import */ var redux_devtools_extension__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! redux-devtools-extension */ "./node_modules/redux-devtools-extension/index.js");
+/* harmony import */ var redux_devtools_extension__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(redux_devtools_extension__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
+/* harmony import */ var redux_thunk__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! redux-thunk */ "./node_modules/redux-thunk/es/index.js");
 
 
 
@@ -56845,8 +57423,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_redux__WEBPACK_IMPORTED_MODULE_2__["Provider"], {
-  store: Object(redux__WEBPACK_IMPORTED_MODULE_11__["createStore"])(_reducers__WEBPACK_IMPORTED_MODULE_9__["default"], Object(redux_devtools_extension__WEBPACK_IMPORTED_MODULE_10__["composeWithDevTools"])(Object(redux__WEBPACK_IMPORTED_MODULE_11__["applyMiddleware"])(redux_thunk__WEBPACK_IMPORTED_MODULE_12__["default"])))
-}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["BrowserRouter"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_main__WEBPACK_IMPORTED_MODULE_8__["default"], null)))), document.getElementById('root'));
+  store: Object(redux__WEBPACK_IMPORTED_MODULE_7__["createStore"])(_reducers__WEBPACK_IMPORTED_MODULE_5__["default"], Object(redux_devtools_extension__WEBPACK_IMPORTED_MODULE_6__["composeWithDevTools"])(Object(redux__WEBPACK_IMPORTED_MODULE_7__["applyMiddleware"])(redux_thunk__WEBPACK_IMPORTED_MODULE_8__["default"])))
+}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["BrowserRouter"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_main__WEBPACK_IMPORTED_MODULE_4__["default"], null)))), document.getElementById('root'));
 
 /***/ }),
 

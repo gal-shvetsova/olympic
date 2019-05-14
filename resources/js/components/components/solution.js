@@ -80,6 +80,8 @@ export class Solution extends Component {
     }
 
     render() {
+        let show = this.props.table[this.props.selectedTask] < 0 && this.props.selectedTask < 0;
+        console.log(show);
         return (isRole(this.props.role, ["participant"]) ?
                 <div className="Solution" ref={this.setWrapperRef}>
                     <h4>Tasks</h4>
@@ -88,7 +90,7 @@ export class Solution extends Component {
                         <div>
                             <button className="solve"
                                     onClick={() => this.handleSolve()}
-                                    hidden={this.props.selectedTask < 0}
+                                    hidden={!show}
                             >solve
                             </button>
                         </div>

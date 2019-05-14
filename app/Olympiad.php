@@ -47,4 +47,9 @@ class Olympiad extends Model
         $olympiad_del->delete();
     }
 
+    public static function sort($field, $type){
+        $olympiads = Olympiad::withCount('users as participants');
+        return $olympiads->orderBy($field, $type)->get();
+    }
+
 }

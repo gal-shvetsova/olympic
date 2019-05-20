@@ -18,6 +18,8 @@ import {composeWithDevTools} from "redux-devtools-extension";
 import thunk from "redux-thunk";
 import ResetPassword from "./resetPassword";
 import Solution from "./solution";
+import Verify from "./verifyEmail";
+import {_verifyEmail} from "../actions/registerAction";
 
 
 class App extends React.Component {
@@ -44,25 +46,17 @@ class App extends React.Component {
     }
 
     render() {
-        if (this.state.isLoggedIn && (this.props.location.pathname === "/login" || this.props.location.pathname === "/register"))
-        {
+        if (this.state.isLoggedIn && (this.props.location.pathname === "/login" || this.props.location.pathname === "/register")) {
             if (isRole(this.state.user.role, ["admin", "guest", "student"])) {
                 this.props.history.push("/olympiad");
-            }
-            else {
+            } else {
                 this.props.history.push("/solution/" + this.state.user.id);
             }
         }
-        if (!this.state.isLoggedIn &&
-            this.props.location.pathname !== "/login" &&
-            this.props.location.pathname !== "/register" &&
-            this.props.location.pathname !== "/olympiad")
-        {
-            this.props.history.push("/login");
-        }
+
         return (
 
-            <Switch data="data">
+            <Switch>
                 <div id="main">
                     {
                         isRole(this.state.user.role, ["admin"]) &&
@@ -88,10 +82,17 @@ class App extends React.Component {
                     />
 
                     <Route
-                        path="/register"
-                        render={props => (
-                            <Register {...props} registerUser={registerActionCreators._registerUser.bind(this)}/>)}
+                        path="/register/confirm/:token/"
+                        render={props => (<Verify {...props} verifyEmail={_verifyEmail.bind(this)}/>)}
                     />
+                    {
+                        this.props.history.location.pathname === '/register' &&
+                        <Route
+                            path="/register/"
+                            render={props => (
+                                <Register {...props} registerUser={registerActionCreators._registerUser.bind(this)}/>)}
+                        />
+                    }
 
                     <Route
                         path="/join"
@@ -113,23 +114,26 @@ class App extends React.Component {
                     />
                     <Route
                         path="/task/:id"
-                        render={(props) => <TaskList {...props}  olympiad_id={this.props.olympiad_id} role={this.state.user.role}/>}
+                        render={(props) => <TaskList {...props} olympiad_id={this.props.olympiad_id}
+                                                     role={this.state.user.role}/>}
                     />
 
                     <Route
                         path="/solution/:id/"
-                        render={props => (<Solution student_id = {this.state.user.id} role = {this.state.user.role} {...props}/>)}
+                        render={props => (
+                            <Solution student_id={this.state.user.id} role={this.state.user.role} {...props}/>)}
                     />
 
                     <Route
                         path="/solution/:id/edit"
-                        render={props => (<TaskForm id = {this.state.user.id} {...props}/>)}
+                        render={props => (<TaskForm id={this.state.user.id} {...props}/>)}
                     />
 
                     <Route
-                        path="/queue/:id"
-                        render={props => (<Queue id = {this.state.user.id} role = {this.state.user.role}{...props}/>)}
+                        path="/queue/:id/"
+                        render={props => (<Queue id={this.state.user.id} role={this.state.user.role}{...props}/>)}
                     />
+
 
                     {
                         isRole(this.state.user.role, ["admin", "participant", "student"]) &&

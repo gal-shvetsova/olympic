@@ -31,7 +31,9 @@ class StudentController extends Controller
     {
         $content = $request->json()->all();
         Student::addStudent($content);
-        return response(200);
+        $response = Student::sort($content['field'], $content['type']);
+        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
+        return response($answer, 200);
     }
 
     /**
@@ -45,20 +47,35 @@ class StudentController extends Controller
     {
         $json = $request->json()->all();
         Student::editStudent($json);
-        return response(200);
+        $response = Student::sort($json['field'], $json['type']);
+        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
+        return response($answer, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  int $id
+     * @param int $type
+     * @param int $field
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id, $type, $field)
     {
         if (Student::find($id)['user_role'] != "admin")
             Student::deleteStudent($id);
-        return response(200);
+        $response = Student::sort($field, $type);
+        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
+        return response($answer, 200);
+    }
+
+    public function sort(Request $request)
+    {
+        $json = $request->json()->all();
+        $response = Student::sort($json['field'], $json['type']);
+        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
+        return response($answer, 200);
+
     }
 
     public function student()

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import * as actionCreators from '../actions/index.js';
 import * as requestActionCreators from '../actions/requestActions';
-import sortTable from '../actions/sortAction'
+import * as sortAction from '../actions/sortAction'
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
@@ -16,8 +16,8 @@ export class OlympiadList extends Component {
         const getTable = this.props.getTable;
         getTable({name: "olympiad"});
         this.state = {
-            sortName : "",
-            sortType : ''
+            sortName : "id",
+            sortType : 'asc'
         };
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
@@ -38,10 +38,10 @@ export class OlympiadList extends Component {
                 <table border="1">
                     <tbody>
                     <tr>
-                        <th>Name</th>
-                        <th>Hardness</th>
-                        <th>Deadline</th>
-                        <th>Participants</th>
+                        <th onClick={() => this.handleSort("name")}>Name</th>
+                        <th onClick={() => this.handleSort("hardness")}>Hardness</th>
+                        <th onClick={() => this.handleSort("deadline")}>Deadline</th>
+                        <th onClick={() => this.handleSort("participants")}>Participants</th>
                     </tr>
                     {
                         table.map((olympiad) => (
@@ -63,12 +63,13 @@ export class OlympiadList extends Component {
             sortName : name,
             sortType : this.state.sortType === 'asc' ? 'desc' : 'asc'
         });
-
+        const type = this.state.sortType === 'asc' ? 'desc' : 'asc';
+        this.props.sortTable({name : "olympiad", data : {type : type, field : name}});
     }
 
     handleDelete(olympiad) {
-        const {deleteTable, getTable} = this.props;
-        deleteTable({name: "olympiad", id: olympiad}).then(getTable({name: "olympiad"}));
+        const {deleteTable} = this.props;
+        deleteTable({name: "olympiad", id: olympiad, type : this.state.sortType, field : this.state.sortName});
     }
 
     olympiadEdit(props, button) {
@@ -103,7 +104,7 @@ export class OlympiadList extends Component {
         if (!event.path.includes(olympiadEdit) && !event.path.includes(join)) {
             if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
                 this.props.selectOlympiad(-1);
-                this.props.getOlympiadEdit({}, false);
+                this.props.getOlympiadEdit({}, false);  //TODO sort when add/edit
             }
         }
     }
@@ -161,7 +162,7 @@ export class OlympiadList extends Component {
                         join
                     </button>
                 }
-                <OlympiadEdit getTable={this.props.getTable}/>
+                <OlympiadEdit type={this.state.sortType} field={this.state.sortName} getTable={this.props.getTable}/>
             </div> : "You don't have permissions"
         );
     }
@@ -183,6 +184,7 @@ const mapDispatchToProps = function (dispatch) {
         getTable: requestActionCreators.getTable,
         selectOlympiad: actionCreators.selectOlympiad,
         deleteTable: requestActionCreators.deleteTable,
+        sortTable : sortAction.sortTable
     }, dispatch)
 };
 

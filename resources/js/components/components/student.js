@@ -5,13 +5,17 @@ import {bindActionCreators} from 'redux';
 import StudentEdit from './studentEdit';
 import * as requestActionCreators from '../actions/requestActions';
 import {isRole} from "../actions/roleActions";
+import * as sortAction from '../actions/sortAction'
 
 export class StudentList extends Component {
 
     constructor(props) {
         super(props);
         this.props.getTable({name: "student"});
-
+        this.state = {
+            sortName : "id",
+            sortType : 'asc'
+        };
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
     }
@@ -31,9 +35,9 @@ export class StudentList extends Component {
                 <table border="1">
                     <tbody>
                     <tr>
-                        <th>Name</th>
-                        <th>Role</th>
-                        <th>Olympiads</th>
+                        <th onClick={() => this.handleSort("last_name")}>Name</th>
+                        <th onClick={() => this.handleSort("user_role")}>Role</th>
+                        <th onClick={() => this.handleSort("olympiads")}>Olympiads</th>
                     </tr>
                     {
                         table.map((student) => (
@@ -49,9 +53,18 @@ export class StudentList extends Component {
             ) : "Empty student's list";
     }
 
+    handleSort(name) {
+        this.setState({
+            sortName : name,
+            sortType : this.state.sortType === 'asc' ? 'desc' : 'asc'
+        });
+        const type = this.state.sortType === 'asc' ? 'desc' : 'asc';
+        this.props.sortTable({name : "student", data : {type : type, field : name}});
+    }
+
     handleDelete(student) {
-        const {deleteTable, getTable} = this.props;
-        deleteTable({name: "student", id: student}).then(getTable({name: "student"}));
+        const {deleteTable} = this.props;
+        deleteTable({name: "student", id: student, type : this.state.sortType, field : this.state.sortName});
     }
 
     studentEdit(props, button) {
@@ -115,7 +128,7 @@ export class StudentList extends Component {
                         delete
                     </button>
                     <div>
-                        <StudentEdit getTable={this.props.getTable}/>
+                        <StudentEdit type={this.state.sortType} field={this.state.sortName} getTable={this.props.getTable}/>
                     </div>
                 </div> : "You don't have permission to be here"
         );
@@ -135,7 +148,8 @@ const mapDispatchToProps = function (dispatch) {
         getStudentEdit: actionCreators.getStudentEdit,
         getTable: requestActionCreators.getTable,
         selectStudent: actionCreators.selectStudent,
-        deleteTable: requestActionCreators.deleteTable
+        deleteTable: requestActionCreators.deleteTable,
+        sortTable : sortAction.sortTable
     }, dispatch)
 };
 

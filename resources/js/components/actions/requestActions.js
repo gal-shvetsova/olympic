@@ -3,7 +3,6 @@ import axios from 'axios';
 
 export function getTable(args = {id : null}) {
     let host = window.location.hostname;
-    console.log(args.name.toUpperCase() + '_SUCCESS');
     return (dispatch) => {
         return new Promise((resolve, reject) => {
             const doRequest = axios.get('http://' + host + '/api/' + args.name +  '/' + (args.id ? args.id + '/' :""));
@@ -30,7 +29,7 @@ export function getTable(args = {id : null}) {
 
 export function postTable(args = {id : null}) {
     let host = window.location.hostname;
-    return () => {
+    return (dispatch) => {
         return new Promise((resolve, reject) => {
             let doRequest = null;
             if (args.method == "POST")
@@ -38,7 +37,12 @@ export function postTable(args = {id : null}) {
             else
                 doRequest = axios.put('http://' + host +  '/api/' + args.name + '/' + args.id, args.data);
             doRequest.then(
-                () => {
+                (res) => {
+                    dispatch({
+                        type: args.name.toUpperCase() + '_SUCCESS',
+                        table: res.data.table,
+                    });
+                    resolve(res);
                 },
                 (err) => {
                     reject(err);
@@ -49,11 +53,17 @@ export function postTable(args = {id : null}) {
 }
 
 export function deleteTable(args = {}) {
-    return () => {
+    let host = window.location.hostname;
+    return (dispatch) => {
         return new Promise((resolve, reject) => {
-            const doRequest = axios.delete('http://' + host + '/api/' + args.name + '/' + args.id);
+            const doRequest = axios.delete('http://' + host + '/api/' + args.name + '/' + args.id + '/' + args.type + '/' + args.field);
             doRequest.then(
-                () => {
+                (res) => {
+                    dispatch({
+                        type: args.name.toUpperCase() + '_SUCCESS',
+                        table: res.data.table,
+                    });
+                    resolve(res);
                 },
                 (err) => {
                     reject(err);

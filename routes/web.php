@@ -45,3 +45,9 @@ Route::any('/queue/{id}', function () {
 Route::any('/solution/{id}/edit', function () {
     return view('.index');
 });
+
+Route::any('/register/confirm/{token}', function () {
+    return view('.index');
+});
+
+Route::auth(['verify' => true]);

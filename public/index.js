@@ -54811,7 +54811,7 @@ function _logoutUser() {
 /*!***********************************************************!*\
   !*** ./resources/js/components/actions/registerAction.js ***!
   \***********************************************************/
-/*! exports provided: _registerUser, _registerParticipant, _deleteAccount */
+/*! exports provided: _registerUser, _registerParticipant, _deleteAccount, _verifyEmail */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -54819,6 +54819,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "_registerUser", function() { return _registerUser; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "_registerParticipant", function() { return _registerParticipant; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "_deleteAccount", function() { return _deleteAccount; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "_verifyEmail", function() { return _verifyEmail; });
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 
@@ -54836,31 +54837,10 @@ function _registerUser(name, email, password) {
     return response;
   }).then(function (json) {
     if (json.data.success) {
-      var _json$data$data = json.data.data,
-          _name = _json$data$data.name,
-          id = _json$data$data.id,
-          _email = _json$data$data.email,
-          auth_token = _json$data$data.auth_token,
-          role = _json$data$data.role,
-          olympiad_id = _json$data$data.olympiad_id;
-      var userData = {
-        name: _name,
-        id: id,
-        email: _email,
-        auth_token: auth_token,
-        role: role,
-        olympiad_id: olympiad_id,
-        timestamp: new Date().toString()
-      };
-      var appState = {
-        isLoggedIn: true,
-        user: userData
-      };
-      localStorage["appState"] = JSON.stringify(appState);
+      alert("Verificate");
 
       _this.setState({
-        isLoggedIn: appState.isLoggedIn,
-        user: appState.user
+        user: "verificate"
       });
     } else {
       alert("Registration Failed!");
@@ -54890,13 +54870,13 @@ function _registerParticipant() {
     return response;
   }).then(function (json) {
     if (json.data.success) {
-      var _json$data$data2 = json.data.data,
-          name = _json$data$data2.name,
-          id = _json$data$data2.id,
-          email = _json$data$data2.email,
-          auth_token = _json$data$data2.auth_token,
-          role = _json$data$data2.role,
-          olympiad_id = _json$data$data2.olympiad_id;
+      var _json$data$data = json.data.data,
+          name = _json$data$data.name,
+          id = _json$data$data.id,
+          email = _json$data$data.email,
+          auth_token = _json$data$data.auth_token,
+          role = _json$data$data.role,
+          olympiad_id = _json$data$data.olympiad_id;
       var userData = {
         name: name,
         id: id,
@@ -54943,6 +54923,20 @@ function _deleteAccount() {
     } else alert("no");
   });
 }
+function _verifyEmail($token) {
+  var host = window.location.hostname;
+  axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('http://' + host + '/api' + $token).then(function (response) {
+    return response;
+  }).then(function (json) {
+    if (json.data.response === 'ok') {
+      alert("Verifieid");
+    } else {
+      alert("Verification Failed!");
+    }
+  }).catch(function (error) {
+    alert("An Error Occured!" + error);
+  });
+}
 
 /***/ }),
 
@@ -54966,7 +54960,6 @@ function getTable() {
     id: null
   };
   var host = window.location.hostname;
-  console.log(args.name.toUpperCase() + '_SUCCESS');
   return function (dispatch) {
     return new Promise(function (resolve, reject) {
       var doRequest = axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('http://' + host + '/api/' + args.name + '/' + (args.id ? args.id + '/' : ""));
@@ -54993,11 +54986,17 @@ function postTable() {
     id: null
   };
   var host = window.location.hostname;
-  return function () {
+  return function (dispatch) {
     return new Promise(function (resolve, reject) {
       var doRequest = null;
       if (args.method == "POST") doRequest = axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('http://' + host + '/api/' + args.name + '/', args.data);else doRequest = axios__WEBPACK_IMPORTED_MODULE_0___default.a.put('http://' + host + '/api/' + args.name + '/' + args.id, args.data);
-      doRequest.then(function () {}, function (err) {
+      doRequest.then(function (res) {
+        dispatch({
+          type: args.name.toUpperCase() + '_SUCCESS',
+          table: res.data.table
+        });
+        resolve(res);
+      }, function (err) {
         reject(err);
       });
     });
@@ -55005,10 +55004,17 @@ function postTable() {
 }
 function deleteTable() {
   var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  return function () {
+  var host = window.location.hostname;
+  return function (dispatch) {
     return new Promise(function (resolve, reject) {
-      var doRequest = axios__WEBPACK_IMPORTED_MODULE_0___default.a.delete('http://' + host + '/api/' + args.name + '/' + args.id);
-      doRequest.then(function () {}, function (err) {
+      var doRequest = axios__WEBPACK_IMPORTED_MODULE_0___default.a.delete('http://' + host + '/api/' + args.name + '/' + args.id + '/' + args.type + '/' + args.field);
+      doRequest.then(function (res) {
+        dispatch({
+          type: args.name.toUpperCase() + '_SUCCESS',
+          table: res.data.table
+        });
+        resolve(res);
+      }, function (err) {
         reject(err);
       });
     });
@@ -55154,10 +55160,16 @@ function sortTable() {
     id: null
   };
   var host = window.location.hostname;
-  return function () {
+  return function (dispatch) {
     return new Promise(function (resolve, reject) {
       var doRequest = axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('http://' + host + '/api/' + args.name + '/sort', args.data);
-      doRequest.then(function () {}, function (err) {
+      doRequest.then(function (res) {
+        dispatch({
+          type: args.name.toUpperCase() + '_SUCCESS',
+          table: res.data.table
+        });
+        resolve(res);
+      }, function (err) {
         reject(err);
       });
     });
@@ -55368,6 +55380,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var redux_thunk__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! redux-thunk */ "./node_modules/redux-thunk/es/index.js");
 /* harmony import */ var _resetPassword__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./resetPassword */ "./resources/js/components/components/resetPassword.js");
 /* harmony import */ var _solution__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./solution */ "./resources/js/components/components/solution.js");
+/* harmony import */ var _verifyEmail__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./verifyEmail */ "./resources/js/components/components/verifyEmail.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -55387,6 +55400,8 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
 
 
 
@@ -55454,18 +55469,21 @@ function (_React$Component) {
       if (this.state.isLoggedIn && (this.props.location.pathname === "/login" || this.props.location.pathname === "/register")) {
         if (Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_8__["isRole"])(this.state.user.role, ["admin", "guest", "student"])) {
           this.props.history.push("/olympiad");
-        } else {
-          this.props.history.push("/solution/" + this.state.user.id);
-        }
-      }
+        } // if (isRole(this.state.user.role, ['participant'])) {
+        else {
+            this.props.history.push("/solution/" + this.state.user.id);
+          }
+      } //    if (!this.state.isLoggedIn &&
+      //       this.props.location.pathname !== "/login" &&
+      //       this.props.location.pathname !== "/register" &&
+      //       this.props.location.pathname !== "/register/confirm/:token" &&
+      //       this.props.location.pathname !== "/olympiad")
+      //  {
+      //      this.props.history.push("/login");
+      //  }
 
-      if (!this.state.isLoggedIn && this.props.location.pathname !== "/login" && this.props.location.pathname !== "/register" && this.props.location.pathname !== "/olympiad") {
-        this.props.history.push("/login");
-      }
 
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Switch"], {
-        data: "data"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Switch"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "main"
       }, Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_8__["isRole"])(this.state.user.role, ["admin"]) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
         to: "/student"
@@ -55483,7 +55501,14 @@ function (_React$Component) {
           }));
         }
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
-        path: "/register",
+        path: "/register/confirm/:token/",
+        render: function render(props) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_verifyEmail__WEBPACK_IMPORTED_MODULE_20__["default"], _extends({}, props, {
+            verifyEmail: _actions_registerAction__WEBPACK_IMPORTED_MODULE_6__["_verifyEmail"].bind(_this2)
+          }));
+        }
+      }), console.log(this.props.history.location.pathname), this.props.history.location.pathname === '/register' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
+        path: "/register/",
         render: function render(props) {
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_register__WEBPACK_IMPORTED_MODULE_3__["default"], _extends({}, props, {
             registerUser: _actions_registerAction__WEBPACK_IMPORTED_MODULE_6__["_registerUser"].bind(_this2)
@@ -55536,7 +55561,7 @@ function (_React$Component) {
           }, props));
         }
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
-        path: "/queue/:id",
+        path: "/queue/:id/",
         render: function render(props) {
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_queue__WEBPACK_IMPORTED_MODULE_4__["default"], _extends({
             id: _this2.state.user.id,
@@ -55647,8 +55672,8 @@ function (_Component) {
       name: "olympiad"
     });
     _this.state = {
-      sortName: "",
-      sortType: ''
+      sortName: "id",
+      sortType: 'asc'
     };
     _this.setWrapperRef = _this.setWrapperRef.bind(_assertThisInitialized(_this));
     _this.handleClickOutside = _this.handleClickOutside.bind(_assertThisInitialized(_this));
@@ -55675,7 +55700,23 @@ function (_Component) {
           selectedOlympiad = _this$props.selectedOlympiad;
       return table ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
         border: "1"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Hardness"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Deadline"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Participants")), table.map(function (olympiad) {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+        onClick: function onClick() {
+          return _this2.handleSort("name");
+        }
+      }, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+        onClick: function onClick() {
+          return _this2.handleSort("hardness");
+        }
+      }, "Hardness"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+        onClick: function onClick() {
+          return _this2.handleSort("deadline");
+        }
+      }, "Deadline"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+        onClick: function onClick() {
+          return _this2.handleSort("participants");
+        }
+      }, "Participants")), table.map(function (olympiad) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
           key: olympiad.id,
           className: olympiad.id === selectedOlympiad ? "selected" : "",
@@ -55698,19 +55739,25 @@ function (_Component) {
         sortName: name,
         sortType: this.state.sortType === 'asc' ? 'desc' : 'asc'
       });
+      var type = this.state.sortType === 'asc' ? 'desc' : 'asc';
+      this.props.sortTable({
+        name: "olympiad",
+        data: {
+          type: type,
+          field: name
+        }
+      });
     }
   }, {
     key: "handleDelete",
     value: function handleDelete(olympiad) {
-      var _this$props2 = this.props,
-          deleteTable = _this$props2.deleteTable,
-          getTable = _this$props2.getTable;
+      var deleteTable = this.props.deleteTable;
       deleteTable({
         name: "olympiad",
-        id: olympiad
-      }).then(getTable({
-        name: "olympiad"
-      }));
+        id: olympiad,
+        type: this.state.sortType,
+        field: this.state.sortName
+      });
     }
   }, {
     key: "olympiadEdit",
@@ -55758,7 +55805,7 @@ function (_Component) {
       if (!event.path.includes(olympiadEdit) && !event.path.includes(join)) {
         if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
           this.props.selectOlympiad(-1);
-          this.props.getOlympiadEdit({}, false);
+          this.props.getOlympiadEdit({}, false); //TODO sort when add/edit
         }
       }
     }
@@ -55804,6 +55851,8 @@ function (_Component) {
           return _this4.props.history.push("/join");
         }
       }, "join"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_olympiadEdit__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        type: this.state.sortType,
+        field: this.state.sortName,
         getTable: this.props.getTable
       })) : "You don't have permissions";
     }
@@ -55826,7 +55875,8 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     getOlympiadEdit: _actions_index_js__WEBPACK_IMPORTED_MODULE_1__["getOlympiadEdit"],
     getTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_2__["getTable"],
     selectOlympiad: _actions_index_js__WEBPACK_IMPORTED_MODULE_1__["selectOlympiad"],
-    deleteTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_2__["deleteTable"]
+    deleteTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_2__["deleteTable"],
+    sortTable: _actions_sortAction__WEBPACK_IMPORTED_MODULE_3__["sortTable"]
   }, dispatch);
 };
 
@@ -55905,23 +55955,21 @@ function (_Component) {
     value: function handleSubmit() {
       var _this$props2 = this.props,
           table = _this$props2.table,
-          postTable = _this$props2.postTable,
-          getTable = _this$props2.getTable;
-      var method = table.id ? "PUT" : "POST";
+          postTable = _this$props2.postTable;
+      var data = table;
+      data['type'] = this.props.type;
+      data['field'] = this.props.field;
+      data = JSON.stringify(data);
       if (!table.id) postTable({
         name: "olympiad",
-        data: JSON.stringify(table),
+        data: data,
         method: "POST"
-      }).then(getTable({
-        name: "olympiad"
-      }));else postTable({
+      });else postTable({
         name: "olympiad",
-        data: JSON.stringify(table),
+        data: data,
         method: "PUT",
         id: table.id
-      }).then(getTable({
-        name: "olympiad"
-      }));
+      });
       this.hide();
     }
   }, {
@@ -55973,8 +56021,7 @@ var mapStateToProps = function mapStateToProps(state) {
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return Object(redux__WEBPACK_IMPORTED_MODULE_3__["bindActionCreators"])({
     getOlympiadEdit: _actions___WEBPACK_IMPORTED_MODULE_1__["getOlympiadEdit"],
-    postTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_4__["postTable"],
-    deleteTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_4__["deleteTable"]
+    postTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_4__["postTable"]
   }, dispatch);
 };
 
@@ -56415,8 +56462,7 @@ function (_Component) {
         className: "solve",
         onClick: function onClick() {
           return _this3.handleSolve();
-        },
-        hidden: !show
+        }
       }, "solve")))) : "You don't have permissions";
     }
   }]);
@@ -56460,6 +56506,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _studentEdit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./studentEdit */ "./resources/js/components/components/studentEdit.js");
 /* harmony import */ var _actions_requestActions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../actions/requestActions */ "./resources/js/components/actions/requestActions.js");
 /* harmony import */ var _actions_roleActions__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../actions/roleActions */ "./resources/js/components/actions/roleActions.js");
+/* harmony import */ var _actions_sortAction__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../actions/sortAction */ "./resources/js/components/actions/sortAction.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -56485,6 +56532,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var StudentList =
 /*#__PURE__*/
 function (_Component) {
@@ -56501,6 +56549,10 @@ function (_Component) {
       name: "student"
     });
 
+    _this.state = {
+      sortName: "id",
+      sortType: 'asc'
+    };
     _this.setWrapperRef = _this.setWrapperRef.bind(_assertThisInitialized(_this));
     _this.handleClickOutside = _this.handleClickOutside.bind(_assertThisInitialized(_this));
     return _this;
@@ -56526,7 +56578,19 @@ function (_Component) {
           selectedStudent = _this$props.selectedStudent;
       return table ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
         border: "1"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Role"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Olympiads")), table.map(function (student) {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+        onClick: function onClick() {
+          return _this2.handleSort("last_name");
+        }
+      }, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+        onClick: function onClick() {
+          return _this2.handleSort("user_role");
+        }
+      }, "Role"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+        onClick: function onClick() {
+          return _this2.handleSort("olympiads");
+        }
+      }, "Olympiads")), table.map(function (student) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
           key: student.id,
           className: student.id === selectedStudent ? "selected" : "",
@@ -56541,17 +56605,31 @@ function (_Component) {
       }))) : "Empty student's list";
     }
   }, {
+    key: "handleSort",
+    value: function handleSort(name) {
+      this.setState({
+        sortName: name,
+        sortType: this.state.sortType === 'asc' ? 'desc' : 'asc'
+      });
+      var type = this.state.sortType === 'asc' ? 'desc' : 'asc';
+      this.props.sortTable({
+        name: "student",
+        data: {
+          type: type,
+          field: name
+        }
+      });
+    }
+  }, {
     key: "handleDelete",
     value: function handleDelete(student) {
-      var _this$props2 = this.props,
-          deleteTable = _this$props2.deleteTable,
-          getTable = _this$props2.getTable;
+      var deleteTable = this.props.deleteTable;
       deleteTable({
         name: "student",
-        id: student
-      }).then(getTable({
-        name: "student"
-      }));
+        id: student,
+        type: this.state.sortType,
+        field: this.state.sortName
+      });
     }
   }, {
     key: "studentEdit",
@@ -56628,6 +56706,8 @@ function (_Component) {
           return _this4.studentEdit(_this4.props, "delete");
         }
       }, "delete"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_studentEdit__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        type: this.state.sortType,
+        field: this.state.sortName,
         getTable: this.props.getTable
       }))) : "You don't have permission to be here";
     }
@@ -56648,7 +56728,8 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     getStudentEdit: _actions___WEBPACK_IMPORTED_MODULE_1__["getStudentEdit"],
     getTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_5__["getTable"],
     selectStudent: _actions___WEBPACK_IMPORTED_MODULE_1__["selectStudent"],
-    deleteTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_5__["deleteTable"]
+    deleteTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_5__["deleteTable"],
+    sortTable: _actions_sortAction__WEBPACK_IMPORTED_MODULE_7__["sortTable"]
   }, dispatch);
 };
 
@@ -56724,22 +56805,21 @@ function (_Component) {
     value: function handleSubmit() {
       var _this$props2 = this.props,
           table = _this$props2.table,
-          postTable = _this$props2.postTable,
-          getTable = _this$props2.getTable;
+          postTable = _this$props2.postTable;
+      var data = table;
+      data['type'] = this.props.type;
+      data['field'] = this.props.field;
+      data = JSON.stringify(data);
       if (!table.id) postTable({
         name: "student",
-        data: JSON.stringify(table),
+        data: data,
         method: "POST"
-      }).then(getTable({
-        name: "student"
-      }));else postTable({
+      });else postTable({
         name: "student",
-        data: JSON.stringify(table),
+        data: data,
         method: "PUT",
         id: JSON.stringify(table.id)
-      }).then(getTable({
-        name: "student"
-      }));
+      });
       this.hide();
     }
   }, {
@@ -56863,6 +56943,10 @@ function (_Component) {
     var _this$props = _this.props,
         getTable = _this$props.getTable,
         olympiad_id = _this$props.olympiad_id;
+    _this.state = {
+      sortName: "id",
+      sortType: 'asc'
+    };
     getTable({
       name: "task",
       id: olympiad_id
@@ -56910,7 +56994,23 @@ function (_Component) {
           selectTask = _this$props2.selectTask;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
         border: "1"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Description"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Hardness"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Time"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Max score")), table.map(function (task) {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+        onClick: function onClick() {
+          return _this2.handleSort("last_name");
+        }
+      }, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+        onClick: function onClick() {
+          return _this2.handleSort("description");
+        }
+      }, "Description"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+        onClick: function onClick() {
+          return _this2.handleSort("hardness");
+        }
+      }, "Hardness"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
+        onClick: function onClick() {
+          return _this2.handleSort("time");
+        }
+      }, "Time"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Max score")), table.map(function (task) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", {
           key: task.id,
           className: task.id === selectedTask ? "selected" : "",
@@ -56929,18 +57029,31 @@ function (_Component) {
       })));
     }
   }, {
+    key: "handleSort",
+    value: function handleSort(name) {
+      this.setState({
+        sortName: name,
+        sortType: this.state.sortType === 'asc' ? 'desc' : 'asc'
+      });
+      var type = this.state.sortType === 'asc' ? 'desc' : 'asc';
+      this.props.sortTable({
+        name: "task",
+        data: {
+          type: type,
+          field: name
+        }
+      });
+    }
+  }, {
     key: "handleDelete",
     value: function handleDelete(task) {
-      var _this$props3 = this.props,
-          deleteTable = _this$props3.deleteTable,
-          getTable = _this$props3.getTable;
+      var deleteTable = this.props.deleteTable;
       deleteTable({
         name: "task",
-        data: task,
-        id: task
-      }).then(getTable({
-        name: "olympiad"
-      }));
+        id: task,
+        type: this.state.sortType,
+        field: this.state.sortName
+      });
     }
   }, {
     key: "taskEdit",
@@ -56980,8 +57093,8 @@ function (_Component) {
       };
     }
   }, {
-    key: "handleToOlym",
-    value: function handleToOlym() {
+    key: "handleToOlympiad",
+    value: function handleToOlympiad() {
       this.props.history.push("/olympiad");
     }
   }, {
@@ -57015,10 +57128,12 @@ function (_Component) {
       }, "delete"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         className: "back",
         onClick: function onClick() {
-          return _this3.handleToOlym();
+          return _this3.handleToOlympiad();
         },
         hidden: !Object(_actions_roleActions__WEBPACK_IMPORTED_MODULE_6__["isRole"])(this.props.role, ["admin"]) && this.props.selectedTask < 0
       }, "to olympiads"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_taskEdit__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        type: this.state.sortType,
+        field: this.state.sortName,
         getTable: this.props.getTable
       })) : "You don't have permissions";
     }
@@ -57125,25 +57240,25 @@ function (_Component) {
     value: function handleSubmit() {
       var _this$props2 = this.props,
           table = _this$props2.table,
-          postTable = _this$props2.postTable,
-          getTable = _this$props2.getTable;
+          postTable = _this$props2.postTable;
+      table.olympiad_id = this.props.olympiadID;
+      var data = table;
+      data['type'] = this.props.type;
+      data['field'] = this.props.field;
+      data = JSON.stringify(data);
       table.olympiad_id = this.props.olympiadID;
       if (table.id) postTable({
         name: "task",
-        data: JSON.stringify(table),
+        data: data,
         method: "PUT",
         id: table.olympiadID
-      }).then(getTable({
-        name: "olympiad"
-      }));else postTable({
+      });else postTable({
         name: "task",
-        data: JSON.stringify(table),
+        data: data,
         method: "POST",
         put_id: table.id,
         id: table.olympiadID
-      }).then(getTable({
-        name: "olympiad"
-      }));
+      });
       this.hide();
     }
   }, {
@@ -57389,6 +57504,89 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_1__["connect"])(mapStateToProps, mapDispatchToProps)(TaskForm));
+
+/***/ }),
+
+/***/ "./resources/js/components/components/verifyEmail.js":
+/*!***********************************************************!*\
+  !*** ./resources/js/components/components/verifyEmail.js ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router */ "./node_modules/react-router/esm/react-router.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+var Verify =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(Verify, _Component);
+
+  function Verify(props) {
+    var _this;
+
+    _classCallCheck(this, Verify);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Verify).call(this, props));
+
+    _this.props.verifyEmail(_this.props.history.location.pathname);
+
+    _this.state = {
+      ok: false
+    };
+    return _this;
+  }
+
+  _createClass(Verify, [{
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+
+      return !this.state.ok ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        id: "main"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
+        style: {
+          padding: 15
+        }
+      }, "You were verified. Please login"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        onClick: function onClick() {
+          return _this2.setState({
+            ok: true
+          });
+        }
+      }, "Ok")) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router__WEBPACK_IMPORTED_MODULE_1__["Redirect"], {
+        to: "/login"
+      });
+    }
+  }]);
+
+  return Verify;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+/* harmony default export */ __webpack_exports__["default"] = (Verify);
 
 /***/ }),
 

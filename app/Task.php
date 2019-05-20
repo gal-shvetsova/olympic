@@ -29,6 +29,8 @@ class Task extends Model
 
     public static function addTask($newTask)
     {
+        unset($newTask['type']);
+        unset($newTask['field']);
         Task::insert($newTask);
     }
 
@@ -46,5 +48,10 @@ class Task extends Model
     {
         $task_del = Task::find($task);
         $task_del->delete();
+    }
+
+    public static function sort($id, $field, $type){
+        $task = Task::where('olympiad_id','=', $id);
+        return $task->orderBy($field, $type)->get();
     }
 }

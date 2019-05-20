@@ -26,14 +26,12 @@ class Student extends Model
 
     public static function addStudent($newStudent)
     {
-        $student['last_name'] = $newStudent['last_name'];
-        $student['user_role'] = $newStudent['user_role'];
         $user = new Request();
-        $user->name = $student['last_name'];
+        $user->name = $newStudent['last_name'];
         $user->email = $newStudent['email'];
         $user->password = Student::$default_password;
-        $user->flag = true;
-        Student::insert($student);
+        $user->role = $newStudent['user_role'];
+        $user->olympiad_id = -1;
         $register = new RegisterController();
         $register->register($user);
     }
@@ -44,9 +42,11 @@ class Student extends Model
         $put_student['last_name'] = $student['last_name'];
         $put_student['user_role'] = $student['user_role'];
         $put_student->save();
-        $put_user = $put_student->user;
-        $put_user['name'] = $put_student['last_name'];
-        $put_user->save();
+        $put_user = $put_student->user()->first();
+        $id = $put_user['id'];
+        $user = User::find($id);
+        $user['name'] = $put_student['last_name'];
+        $user->save();
     }
 
     public static function deleteStudent($student)
@@ -54,6 +54,12 @@ class Student extends Model
         $student_del = Student::find($student);
         $student_del->user()->delete($student);
         $student_del->delete();
+    }
+
+    public static function sort($field, $type){
+        $student = Student::withCount(['user as olympiads' => function ($query) {
+            $query->where('role', '=', 'participant');}]);
+        return $student->orderBy($field, $type)->get();
     }
 
 }

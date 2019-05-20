@@ -16,25 +16,10 @@ export function _registerUser(name, email, password) {
         })
         .then(json => {
             if (json.data.success) {
-                const {name, id, email, auth_token, role, olympiad_id} = json.data.data;
-                let userData = {
-                    name,
-                    id,
-                    email,
-                    auth_token,
-                    role,
-                    olympiad_id,
-                    timestamp: new Date().toString()
-                };
-                let appState = {
-                    isLoggedIn: true,
-                    user: userData
-                };
-                localStorage["appState"] = JSON.stringify(appState);
-                this.setState({
-                    isLoggedIn: appState.isLoggedIn,
-                    user: appState.user
-                });
+                    alert("Verificate");
+                    this.setState({
+                        user : "verificate"
+                    })
             } else {
                 alert(`Registration Failed!`);
             }
@@ -109,5 +94,24 @@ export function _deleteAccount() {
             else
                 alert("no");
         })
+}
+
+export function _verifyEmail($token){
+    let host = window.location.hostname;
+    axios
+        .get('http://' + host + '/api' + $token)
+        .then(response => {
+            return response;
+        })
+        .then(json => {
+            if (json.data.response === 'ok') {
+               alert("Verifieid");
+            } else {
+                alert(`Verification Failed!`);
+            }
+        })
+        .catch(error => {
+            alert("An Error Occured!" + error);
+        });
 }
 

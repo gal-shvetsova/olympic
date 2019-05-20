@@ -25,12 +25,15 @@ export class OlympiadEdit extends Component {
     }
 
     handleSubmit() {
-        const {table, postTable, getTable} = this.props;
-        const method = table.id ? "PUT" : "POST";
+        const {table, postTable} = this.props;
+        let data = table;
+        data['type'] = this.props.type;
+        data['field'] = this.props.field;
+        data = JSON.stringify(data);
         if (!table.id)
-            postTable({name: "olympiad", data : JSON.stringify(table), method : "POST"}).then(getTable({name: "olympiad"}));
+            postTable({name: "olympiad", data : data, method : "POST"});
         else
-            postTable({name: "olympiad", data : JSON.stringify(table), method : "PUT", id : table.id}).then(getTable({name: "olympiad"}));
+            postTable({name: "olympiad", data : data, method : "PUT", id : table.id});
         this.hide();
     }
 
@@ -69,8 +72,7 @@ const mapStateToProps = function (state) {
 const mapDispatchToProps = function (dispatch) {
     return bindActionCreators({
         getOlympiadEdit: actionCreators.getOlympiadEdit,
-        postTable: requestActionCreators.postTable,
-        deleteTable : requestActionCreators.deleteTable
+        postTable: requestActionCreators.postTable
     }, dispatch)
 }
 

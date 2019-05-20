@@ -11,6 +11,10 @@ export class TaskList extends Component {
     constructor(props) {
         super(props);
         const {getTable, olympiad_id} = this.props;
+        this.state = {
+            sortName : "id",
+            sortType : 'asc'
+        };
         getTable({name: "task", id: olympiad_id});
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
@@ -46,10 +50,10 @@ export class TaskList extends Component {
             <table border="1">
                 <tbody>
                 <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Hardness</th>
-                    <th>Time</th>
+                    <th onClick={() => this.handleSort("last_name")}>Name</th>
+                    <th onClick={() => this.handleSort("description")}>Description</th>
+                    <th onClick={() => this.handleSort("hardness")}>Hardness</th>
+                    <th onClick={() => this.handleSort("time")}>Time</th>
                     <th>Max score</th>
                 </tr>
                 {
@@ -67,10 +71,18 @@ export class TaskList extends Component {
         )
     }
 
+    handleSort(name) {
+        this.setState({
+            sortName : name,
+            sortType : this.state.sortType === 'asc' ? 'desc' : 'asc'
+        });
+        const type = this.state.sortType === 'asc' ? 'desc' : 'asc';
+        this.props.sortTable({name : "task", data : {type : type, field : name}});
+    }
 
     handleDelete(task) {
-        const {deleteTable, getTable} = this.props;
-        deleteTable({name: "task", data: task, id: task}).then(getTable({name : "olympiad"}));
+        const {deleteTable, } = this.props;
+        deleteTable({name: "task", id: task, type : this.state.sortType, field : this.state.sortName});
     }
 
     taskEdit(props, button) {
@@ -96,7 +108,7 @@ export class TaskList extends Component {
         };
     }
 
-    handleToOlym() {
+    handleToOlympiad() {
         this.props.history.push("/olympiad");
     }
 
@@ -127,13 +139,13 @@ export class TaskList extends Component {
                             </button>
 
                             <button className="back"
-                                    onClick={() => this.handleToOlym()}
+                                    onClick={() => this.handleToOlympiad()}
                                     hidden={!isRole(this.props.role, ["admin"]) && this.props.selectedTask < 0}
                             >to olympiads
                             </button>
                         </div>
                     </div>
-                    <TaskEdit getTable={this.props.getTable}/>
+                    <TaskEdit type={this.state.sortType} field={this.state.sortName} getTable={this.props.getTable}/>
                 </div> : "You don't have permissions"
         );
     }

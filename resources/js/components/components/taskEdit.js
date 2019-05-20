@@ -28,12 +28,17 @@ export class TaskEdit extends Component {
     }
 
     handleSubmit() {
-        const {table, postTable, getTable} = this.props;
+        const {table, postTable} = this.props;
+        table.olympiad_id = this.props.olympiadID;
+        let data = table;
+        data['type'] = this.props.type;
+        data['field'] = this.props.field;
+        data = JSON.stringify(data);
         table.olympiad_id = this.props.olympiadID;
         if (table.id)
-            postTable({name: "task", data : JSON.stringify(table), method : "PUT", id : table.olympiadID }).then(getTable({name: "olympiad"}));
+            postTable({name: "task", data : data, method : "PUT", id : table.olympiadID });
         else
-            postTable({name: "task", data : JSON.stringify(table), method : "POST", put_id : table.id, id : table.olympiadID }).then(getTable({name: "olympiad"}));
+            postTable({name: "task", data : data, method : "POST", put_id : table.id, id : table.olympiadID });
         this.hide();
     }
 

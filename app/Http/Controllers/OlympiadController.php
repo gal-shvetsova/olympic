@@ -29,7 +29,9 @@ class OlympiadController extends Controller
     {
         $content = $request->json()->all();
         Olympiad::addOlympiad($content);
-        return response(200);
+        $response = Olympiad::sort($content['field'], $content['type']);
+        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
+        return response($answer, 200);
     }
 
     /**
@@ -43,24 +45,39 @@ class OlympiadController extends Controller
     {
         $json = $request->json()->all();
         Olympiad::editOlympiad($json);
-        return response(200);
+        $response = Olympiad::sort($json['field'], $json['type']);
+        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
+        return response($answer, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  int $id
+     * @param int $field
+     * @param int $type
      * @return \Illuminate\Http\Response
      */
 
-    public function destroy($id)
+    public function destroy($id, $type, $field)
     {
         Olympiad::deleteOlympiad($id);
-        return response(200);
+        $response = Olympiad::sort($field, $type);
+        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
+        return response($answer, 200);
     }
 
     public function olympiad()
     {
         return view('index');
+    }
+
+    public function sort(Request $request)
+    {
+        $json = $request->json()->all();
+        $response = Olympiad::sort($json['field'], $json['type']);
+        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
+        return response($answer, 200);
+
     }
 }

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use function PHPSTORM_META\type;
 
 class Olympiad extends Model
 {
@@ -26,6 +27,9 @@ class Olympiad extends Model
 
     public static function addOlympiad($newOlympiad)
     {
+        unset($newOlympiad['type']);
+        unset($newOlympiad['field']);
+
         Olympiad::insert($newOlympiad);
     }
 

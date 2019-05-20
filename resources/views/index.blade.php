@@ -19,5 +19,5 @@
 
 <div id="root"></div>
 </body>
-<script src="../index.js"></script>
+<script src="/index.js"></script>
 </html>

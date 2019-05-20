@@ -18,7 +18,9 @@ class TaskController extends Controller
     {
         $content =$request->json()->all();
         Task::addTask($content);
-        return response(200);
+        $response = Task::sort($content['olympiad_id'],$content['field'], $content['type']);
+        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
+        return response($answer, 200);
     }
 
     /**
@@ -45,20 +47,35 @@ class TaskController extends Controller
     {
         $json =$request->json()->all();
         Task::editTask($json);
-        return response(200);
+        $response = Task::sort($json['olympiad_id'], $json['field'], $json['type']);
+        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
+        return response($answer, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
+     * @param int $field
+     * @param int $type
+     *
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroy($id, $type, $field)
     {
-        $json =$request->json()->all();
-        Task::deleteTask($json['id']);
-        return response(200);
+        Task::deleteTask($id);
+        $response = Task::sort($id, $field, $type);
+        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
+        return response($answer, 200);
+    }
+
+    public function sort(Request $request)
+    {
+        $json = $request->json()->all();
+        $response = Task::sort($json['olympiad_id'], $json['field'], $json['type']);
+        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
+        return response($answer, 200);
+
     }
 
     public function task(){

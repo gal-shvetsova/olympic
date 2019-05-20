@@ -80,6 +80,4 @@ export class Queue extends Component {
 
 }
 
-
-
 export default Queue

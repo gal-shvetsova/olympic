@@ -11,8 +11,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VerifyMail;
+
 
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -80,6 +82,12 @@ class RegisterController extends Controller
         ]);
     }
 
+    public function confirmEmail(Request $request, $token)
+    {
+        User::whereToken($token)->firstOrFail()->confirmEmail();
+        return response()->json("OK", 200);
+    }
+
     public function showRegistrationForm()
     {
         return view('.index');
@@ -103,6 +111,25 @@ class RegisterController extends Controller
             ]);
         }
         return $token;
+    }
+
+    public function verifyUser($token)
+    {
+        $user = User::where('token', $token)->first();
+            if(!$user->verified) {
+                $user['verified'] = 1;
+                $user->save();
+            }else{
+                return response()->json([
+                    'response' => 'ok',
+                    'message' => 'User already verified',
+                ]);
+            }
+
+        return response()->json([
+            'response' => 'ok',
+            'message' => 'Successfully verified',
+        ]);
     }
 
     public function register(Request $request)
@@ -159,8 +186,8 @@ class RegisterController extends Controller
                 }
 
             }
-
-            $response = ['success' => true, 'data' => ['name' => $user->name, 'id' => $user->student_id, 'email' => $request->email, 'auth_token' => $token, 'olympiad_id' => $user->olympiad_id, 'role' => $request->role]];
+            Mail::to($request->email)->send(new VerifyMail($user));
+            $response = ['success' => true, 'data' => ['name' => $user->name, 'id' => $user->student_id, 'email' => $request->email, 'auth_token' => $token, 'olympiad_id' => $user->olympiad_id, 'role' => 'unverified']];
         } else
             $response = ['success' => false, 'data' => 'Couldnt register user'];
         return response()->json($response, 201);

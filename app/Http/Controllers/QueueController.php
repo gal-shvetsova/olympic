@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Olympiad;
 use Illuminate\Http\Request;
 use App\Queue;
 

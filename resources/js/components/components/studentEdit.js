@@ -16,16 +16,20 @@ export class StudentEdit extends Component {
     }
 
     handleSubmit() {
-        const {table, postTable, getTable} = this.props;
+        const {table, postTable} = this.props;
+        let data = table;
+        data['type'] = this.props.type;
+        data['field'] = this.props.field;
+        data = JSON.stringify(data);
         if (!table.id)
-            postTable({name: "student", data: JSON.stringify(table), method: "POST"}).then(getTable({name: "student"}));
+            postTable({name: "student", data: data, method: "POST"});
         else
             postTable({
                 name: "student",
-                data: JSON.stringify(table),
+                data: data,
                 method: "PUT",
                 id: JSON.stringify(table.id)
-            }).then(getTable({name: "student"}));
+            });
         this.hide();
     }
 

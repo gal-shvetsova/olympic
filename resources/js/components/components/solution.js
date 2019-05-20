@@ -90,7 +90,6 @@ export class Solution extends Component {
                         <div>
                             <button className="solve"
                                     onClick={() => this.handleSolve()}
-                                    hidden={!show}
                             >solve
                             </button>
                         </div>

@@ -89,7 +89,7 @@ class LoginController extends Controller
                         'role' => $user->role
                     ]];
         } else
-            $response = ['success' => false, 'data' => 'Record doesnt exists'];
+            $response = ['success' => false, 'data' => 'Password or email is invalid'];
 
         return response()->json($response, 201);
     }

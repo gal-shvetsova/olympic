@@ -1,5 +1,4 @@
 import axios from 'axios';
-import $ from "jquery";
 
 export function _loginUser(email, password) {
     let formData = new FormData();
@@ -22,27 +21,24 @@ export function _loginUser(email, password) {
                     olympiad_id,
                     timestamp: new Date().toString()
                 };
+
                 let appState = {
                     isLoggedIn: true,
                     user: userData
                 };
+
                 localStorage["appState"] = JSON.stringify(appState);
+
                 this.setState({
                     isLoggedIn: appState.isLoggedIn,
                     user: appState.user
                 });
-            } else alert("Login Failed!");
-            $("#login-form button")
-                .removeAttr("disabled")
-                .html("Login");
-
-        })
-        .catch(error => {
-            alert(`An Error Occured! ${error}`);
-            $("#login-form button")
-                .removeAttr("disabled")
-                .html("Login");
+            }
+            else {
+                alert(json.data.data);
+            }
         });
+
 }
 
 export function _logoutUser() {

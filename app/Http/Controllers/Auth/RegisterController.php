@@ -115,9 +115,9 @@ class RegisterController extends Controller
 
     public function verifyUser($token)
     {
-        $user = User::where('token', $token)->first();
+        $user = User::where('token', $token)->get()->first();
             if(!$user->verified) {
-                $user['verified'] = 1;
+                $user->verified = 1;
                 $user->save();
             }else{
                 return response()->json([
@@ -184,10 +184,11 @@ class RegisterController extends Controller
                     $solution['score'] = 0;
                     $solution->save();
                 }
-
+                $response = ['success' => true, 'data' => ['name' => $user->name, 'id' => $user->student_id, 'email' => $request->email, 'auth_token' => $token, 'olympiad_id' => $user->olympiad_id, 'role' => 'participant']];
+            } else {
+                Mail::to($request->email)->send(new VerifyMail($user));
+                $response = ['success' => true, 'data' => ['name' => $user->name, 'id' => $user->student_id, 'email' => $request->email, 'auth_token' => $token, 'olympiad_id' => $user->olympiad_id, 'role' => 'guest']];
             }
-            Mail::to($request->email)->send(new VerifyMail($user));
-            $response = ['success' => true, 'data' => ['name' => $user->name, 'id' => $user->student_id, 'email' => $request->email, 'auth_token' => $token, 'olympiad_id' => $user->olympiad_id, 'role' => 'unverified']];
         } else
             $response = ['success' => false, 'data' => 'Couldnt register user'];
         return response()->json($response, 201);

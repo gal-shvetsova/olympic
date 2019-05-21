@@ -1,58 +1,103 @@
-    import React from "react";
-import { Link } from "react-router-dom";
+import React, {Component} from 'react';
+import {FormErrors} from './formErrors';
 
-const Register = ({ history, registerUser = f => f }) => {
-    let _email, _password, _name;
+class Register extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            email: '',
+            password: '',
+            name : ' ',
+            formErrors: {email: '', password : ''},
+            emailValid: false,
+            passwordValid: false,
+            formValid: false
+        }
+    }
 
-    const handleLogin = e => {
-        e.preventDefault();
-
-        registerUser(_name.value, _email.value, _password.value);
-        history.push("olympiad");
+    handleUserInput() {
+        return (e) => {
+            const name = e.target.name;
+            const value = e.target.value;
+            this.setState({[name]: value},
+                () => {
+                    this.validateField(name, value)
+                });
+        }
     };
-    return (
-        <div id="main">
-            <form id="login-form" action="" onSubmit={handleLogin} method="post">
-                <h3 style={{ padding: 15 }}>Register Form</h3>
-                <input
-                    ref={input => (_name = input)}
-                    autoComplete="off"
-                    id="name-input"
-                    name="email"
-                    type="text"
-                    className="center-block"
-                    placeholder="Name"
-                />
-                <input
-                    ref={input => (_email = input)}
-                    autoComplete="off"
-                    id="email-input"
-                    name="email"
-                    type="text"
-                    className="center-block"
-                    placeholder="email"
-                />
-                <input
-                    ref={input => (_password = input)}
-                    autoComplete="off"
-                    id="password-input"
-                    name="password"
-                    type="password"
-                    className="center-block"
-                    placeholder="password"
-                />
-                <button
-                    type="submit"
 
-                    className="landing-page-btn center-block text-center"
-                    id="email-login-btn"
-                    href="#facebook"
-                >
-                    Register
+    validateField(fieldName, value) {
+        let fieldValidationErrors = this.state.formErrors;
+        let emailValid = this.state.emailValid;
+        let passwordValid = this.state.passwordValid;
+        switch (fieldName) {
+            case 'email':
+                emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
+                fieldValidationErrors.email = emailValid ? '' : ' is invalid';
+                break;
+            case 'password':
+                passwordValid = value.length >= 6;
+                fieldValidationErrors.password = passwordValid ? '': ' is too short';
+                break;
+            default:
+                break;
+        }
+        this.setState({
+            formErrors: fieldValidationErrors,
+            emailValid: emailValid,
+            passwordValid : passwordValid
+        }, this.validateForm);
+    }
+
+    validateForm() {
+        this.setState({formValid: this.state.emailValid && this.state.passwordValid});
+    }
+
+    errorClass(error) {
+        return (error.length === 0 ? '' : 'has-error');
+    }
+
+    handleRegister() {
+        return (e) => {
+            e.preventDefault();
+            this.props.registerUser(this.state.name, this.state.email, this.state.password);
+        }
+    };
+
+    render() {
+        return (
+            <form className="form">
+                <h2>Register</h2>
+                <div className="panel panel-default">
+                    <FormErrors formErrors={this.state.formErrors}/>
+                </div>
+                <div className={`form-group`}>
+                    <label htmlFor="email">Name</label>
+                    <input type="email" required className="form-control" name="name"
+                           placeholder="Name"
+                           value={this.state.name}
+                           onChange={this.handleUserInput()}/>
+                </div>
+                <div className={`form-group ${this.errorClass(this.state.formErrors.email)}`}>
+                    <label htmlFor="email">Email address</label>
+                    <input type="email" required className="form-control" name="email"
+                           placeholder="Email"
+                           value={this.state.email}
+                           onChange={this.handleUserInput()}/>
+                </div>
+                <div className={`form-group ${this.errorClass(this.state.formErrors.email)}`}>
+                    <label htmlFor="password">Password</label>
+                    <input type="password" className="form-control" name="password"
+                           placeholder="Password"
+                           value={this.state.password}
+                           onChange={this.handleUserInput()}/>
+                </div>
+                <button type="submit" className="btn btn-primary" disabled={!this.state.formValid}
+                        onClick={this.handleRegister()}>Register
                 </button>
             </form>
-        </div>
-    );
-};
+        )
+    }
+}
 
 export default Register;

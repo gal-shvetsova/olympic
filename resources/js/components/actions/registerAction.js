@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export function _registerUser(name, email, password) {
+export function _registerUser(name, email, password, history) {
 
     let formData = new FormData();
     formData.append("password", password);
@@ -16,10 +16,7 @@ export function _registerUser(name, email, password) {
         })
         .then(json => {
             if (json.data.success) {
-                    alert("Verificate");
-                    this.setState({
-                        user : "verificate"
-                    })
+                alert('Success! Verification link sent to your email');
             } else {
                 alert(`Registration Failed!`);
             }
@@ -66,6 +63,7 @@ export function _registerParticipant(args = {password : "", login : "", olympiad
                     isLoggedIn: appState.isLoggedIn,
                     user: appState.user
                 });
+                alert('Success!');
             } else {
                 alert(`Registration Failed!`);
             }

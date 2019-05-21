@@ -1,45 +1,88 @@
-import React from "react";
+import React, {Component} from 'react';
+import {FormErrors} from './formErrors';
 
-const ResetPassword = ({ history, resetPassword, auth_token = f => f }) => {
-    let _new_password, _password;
-    const handleReset = e => {
-        e.preventDefault();
-        resetPassword(_new_password.value, _password.value, auth_token);
-        history.push("olympiad");
+class ResetPassword extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            oldPassword: '',
+            newPassword: '',
+            formErrors: {password: ''},
+            passwordValid: false,
+            formValid: false
+        }
+    }
+
+    handleUserInput() {
+        return (e) => {
+            const name = e.target.name;
+            const value = e.target.value;
+            this.setState({[name]: value},
+                () => {
+                    this.validateField(name, value)
+                });
+        }
     };
-    return (
-        <div id="main">
-            <form id="reset-password-form" action="" onSubmit={handleReset} method="post">
-                <h3 style={{ padding: 15 }}>Reset form</h3>
-                <input
-                    ref={input => (_password = input)}
-                    autoComplete="off"
-                    id="password-input"
-                    name="password"
-                    type="password"
-                    className="center-block"
-                    placeholder="old password"
-                />
-                <input
-                    ref={input => (_new_password = input)}
-                    autoComplete="off"
-                    id="new-password-input"
-                    name="new_password"
-                    type="password"
-                    className="center-block"
-                    placeholder="new password"
-                />
-                <button
-                    type="submit"
-                    className="landing-page-btn center-block text-center"
-                    id="email-login-btn"
-                    >
-                    Reset
+
+    validateField(fieldName, value) {
+        let fieldValidationErrors = this.state.formErrors;
+        let passwordValid = this.state.passwordValid;
+        switch (fieldName) {
+            case 'newPassword':
+                passwordValid = value.length >= 6;
+                fieldValidationErrors.password = passwordValid ? '': ' is too short';
+                break;
+            default:
+                break;
+        }
+        this.setState({
+            formErrors: fieldValidationErrors,
+            passwordValid: passwordValid,
+        }, this.validateForm);
+    }
+
+    validateForm() {
+        this.setState({formValid: this.state.passwordValid});
+    }
+
+    errorClass(error) {
+        return (error.length === 0 ? '' : 'has-error');
+    }
+
+    handleLogin() {
+        return (e) => {
+            e.preventDefault();
+            this.props.resetPassword(this.state.newPassword, this.state.oldPassword, this.props.email);
+        }
+    };
+
+    render() {
+        return (
+            <form className="form">
+                <h2>Sign up</h2>
+                <div className="panel panel-default">
+                    <FormErrors formErrors={this.state.formErrors}/>
+                </div>
+                <div className={`form-group ${this.errorClass(this.state.formErrors.password)}`}>
+                    <label htmlFor="oldPassword">Old password</label>
+                    <input type="password" required className="form-control" name="oldPassword"
+                           placeholder="Old password"
+                           value={this.state.oldPassword}
+                           onChange={this.handleUserInput()}/>
+                </div>
+                <div className={`form-group`}>
+                    <label htmlFor="password">New password</label>
+                    <input type="password" className="form-control" name="newPassword"
+                           placeholder="Password"
+                           value={this.state.newPassword}
+                           onChange={this.handleUserInput()}/>
+                </div>
+                <button type="submit" className="btn btn-primary" disabled={!this.state.formValid}
+                        onClick={this.handleLogin()}>Reset
                 </button>
             </form>
-        </div>
-    );
-};
-
+        )
+    }
+}
 
 export default ResetPassword;

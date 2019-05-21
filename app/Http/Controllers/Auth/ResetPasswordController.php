@@ -63,7 +63,7 @@ class ResetPasswordController extends Controller
 
     public function reset(Request $request)
     {
-        $user = User::where('auth_token', $request->auth_token)->get()->first();
+        $user = User::where('email', $request->email)->get()->first();
         if ($user && \Hash::check($request->password, $user->password)) {
             $user->password = \Hash::make($request->new_password);
             $user->save();

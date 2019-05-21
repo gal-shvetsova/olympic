@@ -44426,13 +44426,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 
-function _resetPassword(new_password, password, auth_token) {
+function _resetPassword(new_password, password, email) {
   var _this = this;
 
   var formData = new FormData();
   formData.append("password", password);
   formData.append("new_password", new_password);
-  formData.append("auth_token", auth_token);
+  formData.append("email", email);
   axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("api/password/reset", formData).then(function (response) {
     return response;
   }).then(function (json) {
@@ -44440,15 +44440,15 @@ function _resetPassword(new_password, password, auth_token) {
       var _json$data$data = json.data.data,
           name = _json$data$data.name,
           id = _json$data$data.id,
-          email = _json$data$data.email,
-          _auth_token = _json$data$data.auth_token,
+          _email = _json$data$data.email,
+          auth_token = _json$data$data.auth_token,
           role = _json$data$data.role,
           olympiad_id = _json$data$data.olympiad_id;
       var userData = {
         name: name,
         id: id,
-        email: email,
-        auth_token: _auth_token,
+        email: _email,
+        auth_token: auth_token,
         role: role,
         olympiad_id: olympiad_id,
         timestamp: new Date().toString()
@@ -45083,7 +45083,7 @@ function (_React$Component) {
         path: "/password",
         render: function render(props) {
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_resetPassword__WEBPACK_IMPORTED_MODULE_18__["default"], _extends({}, props, {
-            auth_token: _this2.state.user.auth_token,
+            email: _this2.state.user.email,
             resetPassword: _actions_resetPasswordAction__WEBPACK_IMPORTED_MODULE_7__["_resetPassword"].bind(_this2)
           }));
         }
@@ -45860,61 +45860,154 @@ function (_Component) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _formErrors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./formErrors */ "./resources/js/components/components/formErrors.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 
-var ResetPassword = function ResetPassword(_ref) {
-  var history = _ref.history,
-      resetPassword = _ref.resetPassword,
-      _ref$auth_token = _ref.auth_token,
-      auth_token = _ref$auth_token === void 0 ? function (f) {
-    return f;
-  } : _ref$auth_token;
 
-  var _new_password, _password;
 
-  var handleReset = function handleReset(e) {
-    e.preventDefault();
-    resetPassword(_new_password.value, _password.value, auth_token);
-    history.push("olympiad");
-  };
+var ResetPassword =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(ResetPassword, _Component);
 
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    id: "main"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
-    id: "reset-password-form",
-    action: "",
-    onSubmit: handleReset,
-    method: "post"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
-    style: {
-      padding: 15
+  function ResetPassword(props) {
+    var _this;
+
+    _classCallCheck(this, ResetPassword);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(ResetPassword).call(this, props));
+    _this.state = {
+      oldPassword: '',
+      newPassword: '',
+      formErrors: {
+        password: ''
+      },
+      passwordValid: false,
+      formValid: false
+    };
+    return _this;
+  }
+
+  _createClass(ResetPassword, [{
+    key: "handleUserInput",
+    value: function handleUserInput() {
+      var _this2 = this;
+
+      return function (e) {
+        var name = e.target.name;
+        var value = e.target.value;
+
+        _this2.setState(_defineProperty({}, name, value), function () {
+          _this2.validateField(name, value);
+        });
+      };
     }
-  }, "Reset form"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-    ref: function ref(input) {
-      return _password = input;
-    },
-    autoComplete: "off",
-    id: "password-input",
-    name: "password",
-    type: "password",
-    className: "center-block",
-    placeholder: "old password"
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-    ref: function ref(input) {
-      return _new_password = input;
-    },
-    autoComplete: "off",
-    id: "new-password-input",
-    name: "new_password",
-    type: "password",
-    className: "center-block",
-    placeholder: "new password"
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-    type: "submit",
-    className: "landing-page-btn center-block text-center",
-    id: "email-login-btn"
-  }, "Reset")));
-};
+  }, {
+    key: "validateField",
+    value: function validateField(fieldName, value) {
+      var fieldValidationErrors = this.state.formErrors;
+      var passwordValid = this.state.passwordValid;
+
+      switch (fieldName) {
+        case 'newPassword':
+          passwordValid = value.length >= 6;
+          fieldValidationErrors.password = passwordValid ? '' : ' is too short';
+          break;
+
+        default:
+          break;
+      }
+
+      this.setState({
+        formErrors: fieldValidationErrors,
+        passwordValid: passwordValid
+      }, this.validateForm);
+    }
+  }, {
+    key: "validateForm",
+    value: function validateForm() {
+      this.setState({
+        formValid: this.state.passwordValid
+      });
+    }
+  }, {
+    key: "errorClass",
+    value: function errorClass(error) {
+      return error.length === 0 ? '' : 'has-error';
+    }
+  }, {
+    key: "handleLogin",
+    value: function handleLogin() {
+      var _this3 = this;
+
+      return function (e) {
+        e.preventDefault();
+
+        _this3.props.resetPassword(_this3.state.newPassword, _this3.state.oldPassword, _this3.props.email);
+      };
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+        className: "form"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, "Sign up"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "panel panel-default"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_formErrors__WEBPACK_IMPORTED_MODULE_1__["FormErrors"], {
+        formErrors: this.state.formErrors
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group ".concat(this.errorClass(this.state.formErrors.password))
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "oldPassword"
+      }, "Old password"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "email",
+        required: true,
+        className: "form-control",
+        name: "oldPassword",
+        placeholder: "Old password",
+        value: this.state.oldPassword,
+        onChange: this.handleUserInput()
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "password"
+      }, "New password"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "password",
+        className: "form-control",
+        name: "newPassword",
+        placeholder: "Password",
+        value: this.state.newPassword,
+        onChange: this.handleUserInput()
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "submit",
+        className: "btn btn-primary",
+        disabled: !this.state.formValid,
+        onClick: this.handleLogin()
+      }, "Reset"));
+    }
+  }]);
+
+  return ResetPassword;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
 /* harmony default export */ __webpack_exports__["default"] = (ResetPassword);
 

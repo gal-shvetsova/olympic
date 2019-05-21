@@ -1,11 +1,11 @@
 import axios from "axios";
 
-export function _resetPassword(new_password, password, auth_token) {
+export function _resetPassword(new_password, password, email) {
 
     let formData = new FormData();
     formData.append("password", password);
     formData.append("new_password", new_password);
-    formData.append("auth_token", auth_token);
+    formData.append("email", email);
     axios
         .post("api/password/reset", formData)
         .then(response => {
@@ -32,6 +32,7 @@ export function _resetPassword(new_password, password, auth_token) {
                     isLoggedIn: appState.isLoggedIn,
                     user: appState.user
                 });
+                alert('Success');
             } else {
                 alert(`Reseting Failed!`);
             }

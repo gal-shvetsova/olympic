@@ -146,7 +146,7 @@ class App extends React.Component {
                         <Route
                             path="/password"
                             render={props => (
-                                <ResetPassword {...props} auth_token={this.state.user.auth_token}
+                                <ResetPassword {...props} email={this.state.user.email}
                                                resetPassword={_resetPassword.bind(this)}/>)}
                         />
                     }

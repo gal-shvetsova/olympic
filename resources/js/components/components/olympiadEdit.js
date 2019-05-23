@@ -6,22 +6,19 @@ import * as requestActionCreators from '../actions/requestActions';
 
 export class OlympiadEdit extends Component {
 
-    handleChange(field) {
-        const {table, getOlympiadEdit} = this.props;
-
-        return (event) => {
+    handleChange() {
+        return (e) => {
+            e.preventDefault();
+            const name = e.target.name;
+            const value = e.target.value;
             let today = new Date();
-            let date = new Date(event.target.value.replace(/(\d+)-(\d+)-(\d+)/, '$2/$3/$1'));
-            if (field == "hardness" && (event.target.value  > 10 || event.target.value < 0))
+            let date = new Date(value.replace(/(\d+)-(\d+)-(\d+)/, '$2/$3/$1'));
+            if (name === "hardness" && (value > 10 || value < 0))
                 return;
-
-            if (field == "deadline" && (date < today || date > today.setMonth(today.getMonth() +  1)))
+            if (name === "deadline" && (date < today || date > today.setMonth(today.getMonth() + 1)))
                 return;
-                const change = {};
-                change[field] = event.target.value;
-                getOlympiadEdit(Object.assign({}, table, change), true);
-
-        };
+            this.props.getOlympiadEdit(Object.assign({}, this.props.table, {[name]: value}), true)
+        }
     }
 
     handleSubmit() {
@@ -31,9 +28,9 @@ export class OlympiadEdit extends Component {
         data['field'] = this.props.field;
         data = JSON.stringify(data);
         if (!table.id)
-            postTable({name: "olympiad", data : data, method : "POST"});
+            postTable({name: "olympiad", data: data, method: "POST"});
         else
-            postTable({name: "olympiad", data : data, method : "PUT", id : table.id});
+            postTable({name: "olympiad", data: data, method: "PUT", id: table.id});
         this.hide();
     }
 
@@ -46,15 +43,30 @@ export class OlympiadEdit extends Component {
         return (
             this.props.show ?
                 <div className="olympiadEdit">
-                    <p>Name</p>
-                    <input type="text" value={table.name || ""} onChange={this.handleChange("name")}/>
-                    <p>Hardness</p>
-                    <input type="number" min = "1" max = "10" value={table.hardness || ""} onChange={this.handleChange("hardness")}/>
-                    <p>Deadline</p>
-                    <input type="date" value={table.deadline || ""} onChange={this.handleChange("deadline")}/>
-                    <p/>
-                    <button type="text" className="ok" onClick={this.handleSubmit.bind(this)}>ok</button>
-                    <button className="cancel" onClick={this.hide.bind(this)}>cancel</button>
+                    <form className="form">
+                        <div className={`form-group`}>
+                            <label htmlFor="name">Name</label>
+                            <input type="text" required className="form-control" name="name"
+                                   value={table.name || ""}
+                                   onChange={this.handleChange()}/>
+                        </div>
+                        <div className={`form-group`}>
+                            <label htmlFor="hardness">Hardness</label>
+                            <input type="number" className="form-control" name="hardness"
+                                   value={table.hardness || ""}
+                                   onChange={this.handleChange()}/>
+                        </div>
+                        <div className={`form-group`}>
+                            <label htmlFor="deadline">Deadline</label>
+                            <input type="date" className="form-control" name="deadline"
+                                   value={table.deadline || ""}
+                                   onChange={this.handleChange()}/>
+                        </div>
+                        <button type="button" className="btn btn-primary" disabled={!(table.name && table.hardness && table.deadline)}
+                                onClick={this.handleSubmit.bind(this)}>Ok
+                        </button>
+                        <button type="button" className="btn btn-primary" onClick={this.hide.bind(this)}>Cancel</button>
+                    </form>
                 </div>
                 : "");
     }

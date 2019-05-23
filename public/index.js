@@ -44463,6 +44463,8 @@ function _resetPassword(new_password, password, email) {
         isLoggedIn: appState.isLoggedIn,
         user: appState.user
       });
+
+      alert('Success');
     } else {
       alert("Reseting Failed!");
     }
@@ -45314,7 +45316,7 @@ function (_Component) {
       if (!event.path.includes(olympiadEdit) && !event.path.includes(join)) {
         if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
           this.props.selectOlympiad(-1);
-          this.props.getOlympiadEdit({}, false); //TODO sort when add/edit
+          this.props.getOlympiadEdit({}, false);
         }
       }
     }
@@ -45411,6 +45413,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _actions_requestActions__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../actions/requestActions */ "./resources/js/components/actions/requestActions.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -45445,26 +45449,27 @@ function (_Component) {
 
   _createClass(OlympiadEdit, [{
     key: "handleChange",
-    value: function handleChange(field) {
-      var _this$props = this.props,
-          table = _this$props.table,
-          getOlympiadEdit = _this$props.getOlympiadEdit;
-      return function (event) {
+    value: function handleChange() {
+      var _this = this;
+
+      return function (e) {
+        e.preventDefault();
+        var name = e.target.name;
+        var value = e.target.value;
         var today = new Date();
-        var date = new Date(event.target.value.replace(/(\d+)-(\d+)-(\d+)/, '$2/$3/$1'));
-        if (field == "hardness" && (event.target.value > 10 || event.target.value < 0)) return;
-        if (field == "deadline" && (date < today || date > today.setMonth(today.getMonth() + 1))) return;
-        var change = {};
-        change[field] = event.target.value;
-        getOlympiadEdit(Object.assign({}, table, change), true);
+        var date = new Date(value.replace(/(\d+)-(\d+)-(\d+)/, '$2/$3/$1'));
+        if (name === "hardness" && (value > 10 || value < 0)) return;
+        if (name === "deadline" && (date < today || date > today.setMonth(today.getMonth() + 1))) return;
+
+        _this.props.getOlympiadEdit(Object.assign({}, _this.props.table, _defineProperty({}, name, value)), true);
       };
     }
   }, {
     key: "handleSubmit",
     value: function handleSubmit() {
-      var _this$props2 = this.props,
-          table = _this$props2.table,
-          postTable = _this$props2.postTable;
+      var _this$props = this.props,
+          table = _this$props.table,
+          postTable = _this$props.postTable;
       var data = table;
       data['type'] = this.props.type;
       data['field'] = this.props.field;
@@ -45492,28 +45497,49 @@ function (_Component) {
       var table = this.props.table;
       return this.props.show ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "olympiadEdit"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+        className: "form"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "name"
+      }, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "text",
+        required: true,
+        className: "form-control",
+        name: "name",
         value: table.name || "",
-        onChange: this.handleChange("name")
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Hardness"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        onChange: this.handleChange()
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "hardness"
+      }, "Hardness"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "number",
-        min: "1",
-        max: "10",
+        className: "form-control",
+        name: "hardness",
         value: table.hardness || "",
-        onChange: this.handleChange("hardness")
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Deadline"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        onChange: this.handleChange()
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "deadline"
+      }, "Deadline"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "date",
+        className: "form-control",
+        name: "deadline",
         value: table.deadline || "",
-        onChange: this.handleChange("deadline")
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        type: "text",
-        className: "ok",
+        onChange: this.handleChange()
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "btn btn-primary",
+        disabled: !(table.name && table.hardness && table.deadline),
         onClick: this.handleSubmit.bind(this)
-      }, "ok"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "cancel",
+      }, "Ok"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "btn btn-primary",
         onClick: this.hide.bind(this)
-      }, "cancel")) : "";
+      }, "Cancel"))) : "";
     }
   }]);
 
@@ -45979,7 +46005,7 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         htmlFor: "oldPassword"
       }, "Old password"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-        type: "email",
+        type: "password",
         required: true,
         className: "form-control",
         name: "oldPassword",
@@ -46460,6 +46486,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _actions_requestActions__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../actions/requestActions */ "./resources/js/components/actions/requestActions.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -46494,15 +46522,16 @@ function (_Component) {
 
   _createClass(StudentEdit, [{
     key: "handleChange",
-    value: function handleChange(field) {
+    value: function handleChange() {
       var _this$props = this.props,
           table = _this$props.table,
           action = _this$props.action,
           getStudentEdit = _this$props.getStudentEdit;
-      return function (event) {
-        var change = {};
-        change[field] = event.target.value;
-        getStudentEdit(Object.assign({}, table, change), action, true);
+      return function (e) {
+        e.preventDefault();
+        var name = e.target.name;
+        var value = e.target.value;
+        getStudentEdit(Object.assign({}, table, _defineProperty({}, name, value)), action, true);
       };
     }
   }, {
@@ -46531,39 +46560,63 @@ function (_Component) {
     key: "hide",
     value: function hide() {
       this.props.getStudentEdit({}, "", false);
-    } //TODO if empty not send
-
+    }
   }, {
     key: "render",
     value: function render() {
       var table = this.props.table;
       return this.props.show ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "studentEdit"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Last name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+        className: "form"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "last_name"
+      }, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "text",
+        required: true,
+        className: "form-control",
+        name: "last_name",
         value: table.last_name || "",
-        onChange: this.handleChange("last_name")
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Role"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
+        onChange: this.handleChange()
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        hidden: this.props.action != "add"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "email"
+      }, "Email"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "email",
+        required: true,
+        className: "form-control",
+        name: "email",
+        value: table.email || "",
+        onChange: this.handleChange()
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "user_role"
+      }, "Role"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
+        name: "user_role",
         value: table.user_role || "",
-        onChange: this.handleChange("user_role")
+        onChange: this.handleChange()
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+        value: ""
+      }, "-"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
         value: "admin"
       }, "admin"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
         value: "student"
-      }, "student")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        hidden: this.props.action != "add"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "E-mail"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-        type: "text",
-        value: table.email || "",
-        onChange: this.handleChange("email")
-      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        type: "text",
-        className: "ok",
+      }, "student"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "btn btn-primary",
+        disabled: !(table.last_name && table.user_role && (!table.email || table.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i))),
         onClick: this.handleSubmit.bind(this)
-      }, "ok"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "cancel",
+      }, "Ok"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "btn btn-primary",
         onClick: this.hide.bind(this)
-      }, "cancel")) : "";
+      }, "Cancel"))) : "";
     }
   }]);
 
@@ -46881,9 +46934,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _actions___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/ */ "./resources/js/components/actions/index.js");
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
 /* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/index.js");
-/* harmony import */ var _olympiad__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./olympiad */ "./resources/js/components/components/olympiad.js");
-/* harmony import */ var _actions_requestActions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../actions/requestActions */ "./resources/js/components/actions/requestActions.js");
+/* harmony import */ var _actions_requestActions__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../actions/requestActions */ "./resources/js/components/actions/requestActions.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -46906,63 +46960,73 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-
 var TaskEdit =
 /*#__PURE__*/
 function (_Component) {
   _inherits(TaskEdit, _Component);
 
-  function TaskEdit() {
+  function TaskEdit(props) {
+    var _this;
+
     _classCallCheck(this, TaskEdit);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(TaskEdit).apply(this, arguments));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(TaskEdit).call(this, props));
+    _this.state = {
+      name: '',
+      description: '',
+      hardness: '',
+      max_score: '',
+      time: '',
+      formValid: false
+    };
+    return _this;
   }
 
   _createClass(TaskEdit, [{
     key: "handleChange",
-    value: function handleChange(field) {
-      var _this = this;
+    value: function handleChange() {
+      var _this2 = this;
 
-      var _this$props = this.props,
-          table = _this$props.table,
-          getTaskEdit = _this$props.getTaskEdit;
       return function (event) {
-        var change = {};
-        if (field == "hardness" && (event.target.value > 10 || event.target.value < 0)) return;
-        if (field == "max_score" && (event.target.value > 100 || event.target.value < 0)) return;
+        event.preventDefault();
+        var name = event.target.name;
+        var value = event.target.value;
+        if (name === "hardness" && (value > 10 || value < 0)) return;
+        if (name === "max_score" && (value > 100 || value < 0)) return;
 
-        if (field == "minutes") {
-          change["time"] = document.getElementById("hours").value + ":" + event.target.value;
-        } else if (field == "hours") {
-          change["time"] = event.target.value + ":" + document.getElementById("minutes").value;
-        } else change[field] = event.target.value;
+        if (name === "minutes") {
+          value = document.getElementById("hours").value + ":" + value;
+        } else if (name === "hours") {
+          value = value + ":" + document.getElementById("minutes").value;
+        }
 
-        getTaskEdit(Object.assign({}, table, change), _this.props.olympiadID, true);
+        if (name === "minutes" || name === "hours") name = "time";
+
+        _this2.props.getTaskEdit(Object.assign({}, _this2.props.table, _defineProperty({}, name, value)), _this2.props.olympiadID, true);
       };
     }
   }, {
     key: "handleSubmit",
     value: function handleSubmit() {
-      var _this$props2 = this.props,
-          table = _this$props2.table,
-          postTable = _this$props2.postTable;
+      var _this$props = this.props,
+          table = _this$props.table,
+          postTable = _this$props.postTable;
       table.olympiad_id = this.props.olympiadID;
       var data = table;
       data['type'] = this.props.type;
       data['field'] = this.props.field;
       data = JSON.stringify(data);
-      table.olympiad_id = this.props.olympiadID;
       if (table.id) postTable({
         name: "task",
         data: data,
         method: "PUT",
-        id: table.olympiadID
+        id: this.props.olympiadID
       });else postTable({
         name: "task",
         data: data,
         method: "POST",
         put_id: table.id,
-        id: table.olympiadID
+        id: this.props.olympiadID
       });
       this.hide();
     }
@@ -46977,43 +47041,81 @@ function (_Component) {
       var table = this.props.table;
       return this.props.show ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "taskEdit"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+        className: "form"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "name"
+      }, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "text",
+        required: true,
+        className: "form-control",
+        name: "name",
         value: table.name || "",
         onChange: this.handleChange("name")
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Description"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "description"
+      }, "Description"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "text",
+        className: "form-control",
+        name: "description",
         value: table.description || "",
-        onChange: this.handleChange("description")
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Hardness"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        onChange: this.handleChange()
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "hardness"
+      }, "Hardness"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "number",
+        className: "form-control",
+        name: "hardness",
         value: table.hardness || "",
-        onChange: this.handleChange("hardness")
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Time"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        onChange: this.handleChange()
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "max_score"
+      }, "Max score"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "number",
+        className: "form-control",
+        name: "max_score",
+        value: table.max_score || "",
+        onChange: this.handleChange()
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "time"
+      }, "Time"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "range",
+        className: "form-control",
         id: "hours",
+        name: "hours",
         min: "0",
         max: "6",
-        value: table.time != undefined ? table.time.split(":")[0] : 0,
-        onChange: this.handleChange("hours")
+        value: table.time ? table.time.split(":")[0] : 0,
+        onChange: this.handleChange()
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "range",
+        className: "form-control",
         id: "minutes",
+        name: "minutes",
         min: "0",
         max: "59",
-        value: table.time != undefined ? table.time.split(":")[1] : 0,
-        onChange: this.handleChange("minutes")
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Max score"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-        type: "number",
-        value: table.max_score || "",
-        onChange: this.handleChange("max_score")
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "ok",
+        value: table.time ? table.time.split(":")[1] : 0,
+        onChange: this.handleChange()
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "btn btn-primary",
+        disabled: !(table.name && table.description && table.hardness && table.max_score && table.time),
         onClick: this.handleSubmit.bind(this)
-      }, "ok"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        className: "cancel",
+      }, "Ok"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "btn btn-primary",
         onClick: this.hide.bind(this)
-      }, "cancel")) : "";
+      }, "Cancel"))) : "";
     }
   }]);
 
@@ -47031,8 +47133,8 @@ var mapStateToProps = function mapStateToProps(state) {
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return Object(redux__WEBPACK_IMPORTED_MODULE_3__["bindActionCreators"])({
     getTaskEdit: _actions___WEBPACK_IMPORTED_MODULE_1__["getTaskEdit"],
-    postTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_5__["postTable"],
-    deleteTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_5__["deleteTable"]
+    postTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_4__["postTable"],
+    deleteTable: _actions_requestActions__WEBPACK_IMPORTED_MODULE_4__["deleteTable"]
   }, dispatch);
 };
 

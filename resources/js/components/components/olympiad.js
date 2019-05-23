@@ -104,7 +104,7 @@ export class OlympiadList extends Component {
         if (!event.path.includes(olympiadEdit) && !event.path.includes(join)) {
             if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
                 this.props.selectOlympiad(-1);
-                this.props.getOlympiadEdit({}, false);  //TODO sort when add/edit
+                this.props.getOlympiadEdit({}, false);
             }
         }
     }
@@ -171,7 +171,7 @@ export class OlympiadList extends Component {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        table: state.olympiadStore.table,
+        table : state.olympiadStore.table,
         selectedOlympiad: state.olympiadStore.selectedOlympiad,
         ownProps
     }

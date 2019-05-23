@@ -2,29 +2,41 @@ import React, {Component} from 'react';
 import * as actionCreators from '../actions/';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import olympiad from "./olympiad";
 import * as requestActionCreators from '../actions/requestActions';
 
 export class TaskEdit extends Component {
 
-    handleChange(field) {
-        const {table, getTaskEdit} = this.props;
+    constructor(props) {
+        super(props);
+        this.state = {
+            name : '',
+            description : '',
+            hardness: '',
+            max_score: '',
+            time: '',
+            formValid: false
+        }
+    }
+
+    handleChange() {
         return (event) => {
-            const change = {};
-            if (field == "hardness" && (event.target.value > 10 || event.target.value < 0))
+            event.preventDefault();
+            let name = event.target.name;
+            let value = event.target.value;
+            if (name === "hardness" && (value > 10 || value < 0))
                 return;
-            if (field == "max_score"  && (event.target.value > 100 || event.target.value < 0))
+            if (name === "max_score"  && (value > 100 || value  < 0))
                 return;
-            if (field == "minutes") {
-                change["time"] = document.getElementById("hours").value + ":" + event.target.value;
+            if (name === "minutes") {
+                value = document.getElementById("hours").value + ":" + value;
             }
-            else if (field == "hours") {
-                change["time"] = event.target.value + ":" + document.getElementById("minutes").value;
+            else if (name === "hours") {
+                value = value + ":" + document.getElementById("minutes").value;
             }
-            else
-                change[field] = event.target.value;
-            getTaskEdit(Object.assign({}, table, change), this.props.olympiadID, true);
-        };
+
+            if (name === "minutes" || name === "hours") name = "time";
+            this.props.getTaskEdit(Object.assign({}, this.props.table, {[name]: value}), this.props.olympiadID, true);
+        }
     }
 
     handleSubmit() {
@@ -34,11 +46,10 @@ export class TaskEdit extends Component {
         data['type'] = this.props.type;
         data['field'] = this.props.field;
         data = JSON.stringify(data);
-        table.olympiad_id = this.props.olympiadID;
         if (table.id)
-            postTable({name: "task", data : data, method : "PUT", id : table.olympiadID });
+            postTable({name: "task", data : data, method : "PUT", id : this.props.olympiadID });
         else
-            postTable({name: "task", data : data, method : "POST", put_id : table.id, id : table.olympiadID });
+            postTable({name: "task", data : data, method : "POST", put_id : table.id, id : this.props.olympiadID });
         this.hide();
     }
 
@@ -50,22 +61,43 @@ export class TaskEdit extends Component {
         const table = this.props.table;
         return (
             this.props.show ? (
-                    <div className="taskEdit">
-                        <p>Name</p>
-                        <input type="text" value={table.name || ""} onChange={this.handleChange("name")}/>
-                        <p>Description</p>
-                        <input type="text" value={table.description || ""} onChange={this.handleChange("description")}/>
-                        <p>Hardness</p>
-                        <input type="number" value={table.hardness || ""} onChange={this.handleChange("hardness")}/>
-                        <p>Time</p>
-                        <input type="range" id="hours" min = "0" max = "6" value= { table.time != undefined ? table.time.split(":")[0] : 0} onChange={this.handleChange("hours")}/>
-                        <input type="range" id="minutes" min = "0" max = "59" value={ table.time != undefined?  table.time.split(":")[1] : 0} onChange={this.handleChange("minutes")}/>
-                        <p/>
-                        <p>Max score</p>
-                        <input type="number" value={table.max_score || ""} onChange={this.handleChange("max_score")}/>
-                        <button className="ok" onClick={this.handleSubmit.bind(this)}>ok</button>
-                        <button className="cancel" onClick={this.hide.bind(this)}>cancel</button>
-                    </div>)
+                <div className="taskEdit">
+                    <form className="form">
+                        <div className={`form-group`}>
+                            <label htmlFor="name">Name</label>
+                            <input type="text" required className="form-control" name="name"
+                                   value={table.name || ""}
+                                   onChange={this.handleChange("name")}/>
+                        </div>
+                        <div className={`form-group`}>
+                            <label htmlFor="description">Description</label>
+                            <input type="text" className="form-control" name="description"
+                                   value={table.description || ""}
+                                   onChange={this.handleChange()}/>
+                        </div>
+                        <div className={`form-group`}>
+                            <label htmlFor="hardness">Hardness</label>
+                            <input type="number" className="form-control" name="hardness"
+                                   value={table.hardness || ""}
+                                   onChange={this.handleChange()}/>
+                        </div>
+                        <div className={`form-group`}>
+                            <label htmlFor="max_score">Max score</label>
+                            <input type="number" className="form-control" name="max_score"
+                                   value={table.max_score || ""}
+                                   onChange={this.handleChange()}/>
+                        </div>
+                        <div className={`form-group`}>
+                            <label htmlFor="time">Time</label>
+                            <input type="range" className="form-control" id ="hours" name="hours" min ="0" max="6" value= {table.time ? table.time.split(":")[0] : 0} onChange={this.handleChange()}/>
+                            <input type="range" className="form-control" id="minutes" name="minutes" min="0" max="59" value={ table.time ? table.time.split(":")[1] : 0 } onChange={this.handleChange()}/>
+                        </div>
+                        <button type="button" className="btn btn-primary" disabled={!(table.name && table.description && table.hardness && table.max_score && table.time)}
+                                onClick={this.handleSubmit.bind(this)}>Ok
+                        </button>
+                        <button type="button" className="btn btn-primary" onClick={this.hide.bind(this)}>Cancel</button>
+                    </form>
+                </div>)
                 : "");
     }
 }

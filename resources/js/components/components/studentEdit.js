@@ -6,12 +6,13 @@ import * as requestActionCreators from "../actions/requestActions";
 
 export class StudentEdit extends Component {
 
-    handleChange(field) {
+    handleChange() {
         const {table, action, getStudentEdit} = this.props;
-        return (event) => {
-            const change = {};
-            change[field] = event.target.value;
-            getStudentEdit(Object.assign({}, table, change), action, true);
+        return (e) => {
+            e.preventDefault();
+            const name = e.target.name;
+            const value = e.target.value;
+            getStudentEdit(Object.assign({}, table, {[name] : value}), action, true);
         };
     }
 
@@ -36,25 +37,43 @@ export class StudentEdit extends Component {
     hide() {
         this.props.getStudentEdit({}, "", false);
     }
-//TODO if empty not send
+
     render() {
         const table = this.props.table;
-        return this.props.show ?
-            <div className="studentEdit">
-                <p>Last name</p>
-                <input type="text" value={table.last_name || ""} onChange={this.handleChange("last_name")}/>
-                <p>Role</p>
-                <select value={table.user_role || ""} onChange={this.handleChange("user_role")}>
-                    <option value="admin">admin</option>
-                    <option value="student">student</option>
-                </select>
-                <div hidden={this.props.action != "add"}>
-                    <p>E-mail</p>
-                    <input type="text" value={table.email || ""} onChange={this.handleChange("email")}/>
+        return (
+            this.props.show ?
+                <div className="studentEdit">
+                    <form className="form">
+                        <div className={`form-group`}>
+                            <label htmlFor="last_name">Name</label>
+                            <input type="text" required className="form-control" name="last_name"
+                                   value={table.last_name || ""}
+                                   onChange={this.handleChange()}/>
+                        </div>
+                        <div hidden={this.props.action != "add"}>
+
+                        <div className={`form-group`}>
+                            <label htmlFor="email">Email</label>
+                            <input type="email" required className="form-control" name="email"
+                                   value={table.email || ""}
+                                   onChange={this.handleChange()}/>
+                        </div>
+                        </div>
+                        <div className={`form-group`}>
+                            <label htmlFor="user_role">Role</label>
+                        <select name ="user_role" value={table.user_role || ""} onChange={this.handleChange()}>
+                            <option value="">-</option>
+                            <option value="admin">admin</option>
+                            <option value="student">student</option>
+                        </select>
+                        </div>
+                        <button type="button" className="btn btn-primary" disabled={!(table.last_name && table.user_role && (!table.email || table.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)))}
+                                onClick={this.handleSubmit.bind(this)}>Ok
+                        </button>
+                        <button type="button" className="btn btn-primary" onClick={this.hide.bind(this)}>Cancel</button>
+                    </form>
                 </div>
-                <button type="text" className="ok" onClick={this.handleSubmit.bind(this)}>ok</button>
-                <button className="cancel" onClick={this.hide.bind(this)}>cancel</button>
-            </div> : "";
+                : "");
     }
 
 }

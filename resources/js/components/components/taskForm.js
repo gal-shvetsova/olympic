@@ -11,7 +11,7 @@ export class TaskForm extends Component {
 
     constructor(props) {
         super(props);
-        const {getTable, postTable } = this.props;
+        const {getTable } = this.props;
         this.state =
             {
                 solutionID : this.props.location.pathname.split('/')[2],
@@ -70,9 +70,6 @@ export class TaskForm extends Component {
                 <textarea className="solution" value={this.state.task.solution || ""} onChange={this.handleChange()}>
                         </textarea>
                 <button className="ok" onClick={this.handleSubmit.bind(this)}>ok</button>
-                <button className="back"
-                        onClick={() => this.props.history.push("/queue/" + this.props.id)}>back
-                </button>
             </div>);
     }
 }

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {FormErrors} from './formErrors';
+import {Link} from "react-router-dom";
 
 class Login extends Component {
     constructor(props) {
@@ -83,6 +84,7 @@ class Login extends Component {
                 <button type="submit" className="btn btn-primary" disabled={!this.state.formValid}
                         onClick={this.handleLogin()}>Sign up
                 </button>
+                <Link to="/password/reset">Forgot password?</Link>
             </form>
         )
     }

@@ -1,6 +1,8 @@
 import React from "react";
 import {Link, Route, Switch, withRouter} from "react-router-dom";
 import Login from "./login";
+import ForgotPassword from "./forgotPassword"
+import NewPassword from "./newPassword"
 import Register from "./register";
 import Queue from "./queue"
 import {_loginUser, _logoutUser} from "../actions/loginActions";
@@ -20,6 +22,7 @@ import ResetPassword from "./resetPassword";
 import Solution from "./solution";
 import Verify from "./verifyEmail";
 import {_verifyEmail} from "../actions/registerAction";
+import _forgotPassword from '../actions/forgotPasswordAction'
 
 
 class App extends React.Component {
@@ -33,9 +36,6 @@ class App extends React.Component {
 
     };
 
-    componentWillUpdate() {
-
-    }
 
     componentDidMount() {
         let state = localStorage["appState"];
@@ -56,7 +56,7 @@ class App extends React.Component {
 
         return (
 
-            <Switch>
+
                 <div id="main">
                     {
                         isRole(this.state.user.role, ["admin"]) &&
@@ -85,6 +85,7 @@ class App extends React.Component {
                         path="/register/confirm/:token/"
                         render={props => (<Verify {...props} verifyEmail={_verifyEmail.bind(this)}/>)}
                     />
+
                     {
                         this.props.history.location.pathname === '/register' &&
                         <Route
@@ -93,6 +94,17 @@ class App extends React.Component {
                                 <Register {...props} registerUser={registerActionCreators._registerUser.bind(this)}/>)}
                         />
                     }
+
+                    <Route
+                        path="/password/reset"
+                        render={props => (<ForgotPassword {...props} forgotPassword={_forgotPassword.bind(this)}/>)}
+                    />
+
+                    <Route
+                        path="/password/reset/:token"
+                        render={(props) => (<NewPassword {...props} email = {this.props.user.email}/>)}
+                    />
+
 
                     <Route
                         path="/join"
@@ -123,6 +135,7 @@ class App extends React.Component {
                         render={props => (
                             <Solution student_id={this.state.user.id} role={this.state.user.role} {...props}/>)}
                     />
+
 
                     <Route
                         path="/solution/:id/edit"
@@ -176,7 +189,7 @@ class App extends React.Component {
                         </Link>
                     }
                 </div>
-            </Switch>
+
         );
     }
 }

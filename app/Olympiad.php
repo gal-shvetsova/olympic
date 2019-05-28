@@ -56,4 +56,11 @@ class Olympiad extends Model
         return $olympiads->orderBy($field, $type)->get();
     }
 
+    public static function filter($hardness, $participants, $deadline){
+        $olympiads = Olympiad::withCount('users as participants');
+        return $olympiads
+            ->where('hardness', '<=', $hardness[1])
+            ->where('hardness', '>=', $hardness[0])->get();
+    }
+
 }

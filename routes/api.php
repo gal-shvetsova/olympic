@@ -53,3 +53,6 @@ Route::group(['middleware' => 'api-header'], function () {
 
     Route::auth();
 });
+
+
+Route::post('olympiad/filter', 'OlympiadController@filter');

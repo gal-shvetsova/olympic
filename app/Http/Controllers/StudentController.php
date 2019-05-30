@@ -78,10 +78,10 @@ class StudentController extends Controller
 
     }
 
-    public function filter(Request $request)
+    public function sortAndFilter(Request $request)
     {
         $json = $request->json()->all();
-        $response = Student::filter($json['olympiads'], $json['role']);
+        $response = Student::sortAndFilter($json['olympiads'], $json['role'], $json['field'], $json['type']);
         $answer = '{' . '"' . "table" . '"' . ':' . json_encode($response) . '}';
         return response($answer, 200);
     }

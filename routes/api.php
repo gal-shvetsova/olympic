@@ -21,10 +21,6 @@ Route::resource('/solution', 'SolutionController');
 
 Route::resource('/queue', 'QueueController');
 
-
-Route::post('student/sort', 'StudentController@sort');
-
-
 Route::delete('olympiad/{id}/{type}/{field}', 'OlympiadController@destroy');
 
 Route::delete('student/{id}/{type}/{field}', 'StudentController@destroy');
@@ -57,5 +53,5 @@ Route::group(['middleware' => 'api-header'], function () {
 
 Route::post('olympiad/filter', 'OlympiadController@sortAndFilter');
 Route::post('task/filter', 'TaskController@sortAndFilter');
-Route::post('student/filter', 'StudentController@filter');
+Route::post('student/filter', 'StudentController@sortAndFilter');
 

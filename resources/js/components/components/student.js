@@ -66,7 +66,7 @@ export class StudentList extends Component {
             sortType : this.state.sortType === 'asc' ? 'desc' : 'asc'
         });
         const type = this.state.sortType === 'asc' ? 'desc' : 'asc';
-        this.props.sortTable({name : "student", data : {type : type, field : name}});
+        this.props.filterTable({name: "student", data: {field : name, type : type, role: this.state.role, olympiads: this.state.olympiads}});
     }
 
     handleDelete(student) {
@@ -75,6 +75,7 @@ export class StudentList extends Component {
     }
 
     studentEdit(props, button) {
+        this.handleReset();
         props.getStudentEdit({}, "", false);
         if (button !== "edit" || props.selectedStudent !== -1) {
             const student = props.table.find(v => v.id === props.selectedStudent) || {};
@@ -114,6 +115,22 @@ export class StudentList extends Component {
     handleFilter() {
         this.props.filterTable({name: "student", data: {olympiads: this.state.olympiads, role : this.state.role}});
     }
+
+    handleReset(){
+        this.setState(  {
+            role: 'all',
+            olympiads: [
+                0,
+                10  //todo close registration if already 10
+            ],
+        });
+        this.props.filterTable({name: "student", data: {field : this.state.sortName, type : this.state.sortType, role: 'all', olympiads: [0, 10]}});
+    }
+
+    handleFilterSort() {
+        this.props.filterTable({name: "student", data: {field : this.state.sortName, type : this.state.sortType, role: this.state.role, olympiads: this.state.olympiads}});
+    }
+
 
     render() {
         return (
@@ -166,7 +183,8 @@ export class StudentList extends Component {
                                 <Option value="Student">Student</Option>
                             </Select>
                         </Form.Item>
-                        <Button type="primary" onClick={this.handleFilter.bind(this)}>Ok</Button>
+                        <Button type="primary" onClick={this.handleFilterSort.bind(this)}>Ok</Button>
+                        <Button type="primary" onClick={this.handleReset.bind(this)}>Reset</Button>
                     </Form>
                 </div>
                 : "You don't have permission to be here"

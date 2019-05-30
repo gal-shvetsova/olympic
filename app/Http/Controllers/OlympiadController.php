@@ -85,7 +85,7 @@ class OlympiadController extends Controller
     {
         $json = $request->json()->all();
         $response = Olympiad::filter($json['hardness'], $json['participants'], $json['deadline']);
-        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
+        $answer = '{' . '"' . "table" . '"' . ':' . json_encode($response) . '}';
         return response($answer, 200);
     }
 }

@@ -69,19 +69,10 @@ class TaskController extends Controller
         return response($answer, 200);
     }
 
-    public function sort(Request $request)
+    public function sortAndFilter(Request $request)
     {
         $json = $request->json()->all();
-        $response = Task::sort($json['olympiad_id'], $json['field'], $json['type']);
-        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
-        return response($answer, 200);
-
-    }
-
-    public function filter(Request $request)
-    {
-        $json = $request->json()->all();
-        $response = Task::filter($json['olympiad_id'], $json['hardness'], $json['time'], $json['max_score']);
+        $response = Task::sortAndFilter($json['olympiad_id'], $json['hardness'], $json['time'], $json['max_score'], $json['field'], $json['type']);
         $answer = '{' . '"' . "table" . '"' . ':' . json_encode($response) . '}';
         return response($answer, 200);
     }

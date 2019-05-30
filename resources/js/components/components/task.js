@@ -83,7 +83,8 @@ export class TaskList extends Component {
             sortType : this.state.sortType === 'asc' ? 'desc' : 'asc'
         });
         const type = this.state.sortType === 'asc' ? 'desc' : 'asc';
-        this.props.sortTable({name : "task", data : {type : type, field : name, olympiad_id : this.props.olympiad_id}});
+        this.props.filterTable({name: "task", data: {field : name, type : type, hardness: this.state.hardness, time: this.state.time, max_score : this.state.max_score,
+                olympiad_id : this.props.olympiad_id}});
     }
 
     handleDelete(task) {
@@ -91,8 +92,25 @@ export class TaskList extends Component {
         deleteTable({name: "task", id: task, type : this.state.sortType, field : this.state.sortName});
     }
 
+    handleReset(){
+        this.setState(  {
+
+            hardness: [1, 10],
+            time: [0, 7],
+            max_score: [0, 100]
+        });
+        this.props.filterTable({name: "task", data: {field : this.state.sortName, type : this.state.sortType, hardness: [1,10], time: [0, 7], max_score : [0, 100],
+                olympiad_id : this.props.olympiad_id}});
+    }
+
+    handleFilterSort() {
+        this.props.filterTable({name: "task", data: {field : this.state.sortName, type : this.state.sortType,
+                hardness: this.state.hardness, time: this.state.time, max_score : this.state.max_score, olympiad_id : this.props.olympiad_id}});
+    }
+
+
     taskEdit(props, button) {
-        alert(props.olympiad_id);
+        this.handleReset();
         props.getTaskEdit({}, props.olympiad_id, false);
         if (button != "edit" || props.selectedTask != undefined) {
             const table = props.table.find(v => v.id === props.selectedTask) || {};
@@ -119,7 +137,8 @@ export class TaskList extends Component {
     }
 
     handleFilter() {
-        this.props.filterTable({name: "task", data: {hardness: this.state.hardness, time : this.state.time, max_score: this.state.max_score, olympiad_id : this.props.olympiad_id}});
+        this.props.filterTable({name: "task", data: {hardness: this.state.hardness,
+                time : this.state.time, max_score: this.state.max_score, olympiad_id : this.props.olympiad_id, }});
     }
 
 
@@ -160,8 +179,8 @@ export class TaskList extends Component {
                     <Form>
                         <Form.Item
                             label="Hardness">
-                            <Slider range defaultValue={[0, 100]}
-                                    min={0}
+                            <Slider range defaultValue={[1, 10]}
+                                    min={1}
                                     max={10}
                                     style={{width: 150}}
                                     value={this.state.hardness}
@@ -194,7 +213,8 @@ export class TaskList extends Component {
 
                                     })}/>
                         </Form.Item>
-                        <Button type="primary" onClick={this.handleFilter.bind(this)}>Ok</Button>
+                        <Button type="primary" onClick={this.handleFilterSort.bind(this)}>Ok</Button>
+                        <Button type="primary" onClick={this.handleReset.bind(this)}>Reset</Button>
                     </Form>
                 </div> : "You don't have permissions"
         );

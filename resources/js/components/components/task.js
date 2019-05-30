@@ -6,6 +6,8 @@ import TaskEdit from './taskEdit';
 import * as requestActionCreators from '../actions/requestActions';
 import {isRole} from "../actions/roleActions";
 import * as sortAction from "../actions/sortAction";
+import {Button, Form, Select, Slider} from "antd";
+import * as filterAction from "../actions/filterAction";
 
 export class TaskList extends Component {
 
@@ -15,6 +17,9 @@ export class TaskList extends Component {
         this.state = {
             sortName : "id",
             sortType : 'asc',
+            hardness: [1, 10],
+            time: [0, 7],
+            max_score: [0, 100]
         };
         getTable({name: "task", id: olympiad_id});
         this.setWrapperRef = this.setWrapperRef.bind(this);
@@ -113,6 +118,11 @@ export class TaskList extends Component {
         this.props.history.push("/olympiad");
     }
 
+    handleFilter() {
+        this.props.filterTable({name: "task", data: {hardness: this.state.hardness, time : this.state.time, max_score: this.state.max_score, olympiad_id : this.props.olympiad_id}});
+    }
+
+
     render() {
         return (isRole(this.props.role, ["admin", "participant"]) ?
                 <div className="Task" ref={this.setWrapperRef}>
@@ -147,6 +157,45 @@ export class TaskList extends Component {
                         </div>
                     </div>
                     <TaskEdit type={this.state.sortType} field={this.state.sortName} getTable={this.props.getTable}/>
+                    <Form>
+                        <Form.Item
+                            label="Hardness">
+                            <Slider range defaultValue={[0, 100]}
+                                    min={0}
+                                    max={10}
+                                    style={{width: 150}}
+                                    value={this.state.hardness}
+                                    onChange={(value) => this.setState({
+                                        ["hardness"]: value
+
+                                    })}/>
+                        </Form.Item>
+                        <Form.Item
+                            label="Time">
+                            <Slider range defaultValue={[0, 7]}
+                                    min={0}
+                                    max={7}
+                                    style={{width: 150}}
+                                    value={this.state.time}
+                                    onChange={(value) => this.setState({
+                                        ["time"]: value
+
+                                    })}/>
+                        </Form.Item>
+                        <Form.Item
+                            label="Max score">
+                            <Slider range defaultValue={[0, 100]}
+                                    min={0}
+                                    max={100}
+                                    style={{width: 150}}
+                                    value={this.state.max_score}
+                                    onChange={(value) => this.setState({
+                                        ["max_score"]: value
+
+                                    })}/>
+                        </Form.Item>
+                        <Button type="primary" onClick={this.handleFilter.bind(this)}>Ok</Button>
+                    </Form>
                 </div> : "You don't have permissions"
         );
     }
@@ -167,6 +216,7 @@ const mapDispatchToProps = function (dispatch) {
         getTable: requestActionCreators.getTable,
         selectTask: actionCreators.selectTask,
         sortTable : sortAction.sortTable,
+        filterTable: filterAction.filterTable,
     }, dispatch)
 };
 

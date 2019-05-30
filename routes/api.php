@@ -59,3 +59,4 @@ Route::group(['middleware' => 'api-header'], function () {
 
 Route::post('olympiad/filter', 'OlympiadController@filter');
 Route::post('student/filter', 'StudentController@filter');
+Route::post('task/filter', 'TaskController@filter');

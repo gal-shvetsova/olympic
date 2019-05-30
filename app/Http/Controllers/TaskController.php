@@ -78,7 +78,16 @@ class TaskController extends Controller
 
     }
 
+    public function filter(Request $request)
+    {
+        $json = $request->json()->all();
+        $response = Task::filter($json['olympiad_id'], $json['hardness'], $json['time'], $json['max_score']);
+        $answer = '{' . '"' . "table" . '"' . ':' . json_encode($response) . '}';
+        return response($answer, 200);
+    }
+
     public function task(){
         return view('index');
     }
+
 }

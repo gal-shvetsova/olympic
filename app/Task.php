@@ -54,4 +54,15 @@ class Task extends Model
         $task = Task::where('olympiad_id','=', $id);
         return $task->orderBy($field, $type)->get();
     }
+
+    public static function filter($id, $hardness, $time, $max_score)
+    {
+        $task = Task::where('olympiad_id','=', $id)
+            ->whereBetween('hardness', $hardness)
+            ->whereBetween('max_score', $max_score);
+        $from = '0'.$time[0].':00:00';
+        $to = '0'.$time[1].':00:00';
+        $task->whereBetween('time', [$from, $to]);
+        return $task->get();
+    }
 }

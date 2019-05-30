@@ -25,6 +25,8 @@ Route::post('olympiad/sort', 'OlympiadController@sort');
 
 Route::post('student/sort', 'StudentController@sort');
 
+Route::post('task/sort', 'TaskController@sort');
+
 Route::delete('olympiad/{id}/{type}/{field}', 'OlympiadController@destroy');
 
 Route::delete('student/{id}/{type}/{field}', 'StudentController@destroy');

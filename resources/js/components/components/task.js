@@ -5,6 +5,7 @@ import {bindActionCreators} from 'redux';
 import TaskEdit from './taskEdit';
 import * as requestActionCreators from '../actions/requestActions';
 import {isRole} from "../actions/roleActions";
+import * as sortAction from "../actions/sortAction";
 
 export class TaskList extends Component {
 
@@ -13,7 +14,7 @@ export class TaskList extends Component {
         const {getTable, olympiad_id} = this.props;
         this.state = {
             sortName : "id",
-            sortType : 'asc'
+            sortType : 'asc',
         };
         getTable({name: "task", id: olympiad_id});
         this.setWrapperRef = this.setWrapperRef.bind(this);
@@ -77,7 +78,7 @@ export class TaskList extends Component {
             sortType : this.state.sortType === 'asc' ? 'desc' : 'asc'
         });
         const type = this.state.sortType === 'asc' ? 'desc' : 'asc';
-        this.props.sortTable({name : "task", data : {type : type, field : name}});
+        this.props.sortTable({name : "task", data : {type : type, field : name, olympiad_id : this.props.olympiad_id}});
     }
 
     handleDelete(task) {
@@ -156,6 +157,7 @@ const mapStateToProps = function (state) {
     return {
         table: state.taskStore.table,
         selectedTask: state.taskStore.selectedTask,
+        olympiad_id : state.taskStore.olympiadID
     }
 };
 
@@ -164,6 +166,7 @@ const mapDispatchToProps = function (dispatch) {
         getTaskEdit: actionCreators.getTaskEdit,
         getTable: requestActionCreators.getTable,
         selectTask: actionCreators.selectTask,
+        sortTable : sortAction.sortTable,
     }, dispatch)
 };
 

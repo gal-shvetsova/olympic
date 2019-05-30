@@ -78,6 +78,14 @@ class StudentController extends Controller
 
     }
 
+    public function filter(Request $request)
+    {
+        $json = $request->json()->all();
+        $response = Student::filter($json['olympiads'], $json['role']);
+        $answer = '{' . '"' . "table" . '"' . ':' . json_encode($response) . '}';
+        return response($answer, 200);
+    }
+
     public function student()
     {
         return view('index');

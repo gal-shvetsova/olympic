@@ -6,7 +6,9 @@ import StudentEdit from './studentEdit';
 import * as requestActionCreators from '../actions/requestActions';
 import {isRole} from "../actions/roleActions";
 import * as sortAction from '../actions/sortAction'
-
+import {Button, Form, Select, Slider} from "antd";
+import * as filterAction from "../actions/filterAction";
+const {Option} = Select;
 export class StudentList extends Component {
 
     constructor(props) {
@@ -14,7 +16,12 @@ export class StudentList extends Component {
         this.props.getTable({name: "student"});
         this.state = {
             sortName : "id",
-            sortType : 'asc'
+            sortType : 'asc',
+            role: 'all',
+            olympiads: [
+                0,
+                10  //todo close registration if already 10
+            ],
         };
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
@@ -104,6 +111,10 @@ export class StudentList extends Component {
         }
     }
 
+    handleFilter() {
+        this.props.filterTable({name: "student", data: {olympiads: this.state.olympiads, role : this.state.role}});
+    }
+
     render() {
         return (
             isRole(this.props.role, ["admin"]) ?
@@ -130,7 +141,35 @@ export class StudentList extends Component {
                     <div>
                         <StudentEdit type={this.state.sortType} field={this.state.sortName} getTable={this.props.getTable}/>
                     </div>
-                </div> : "You don't have permission to be here"
+                    <Form>
+                        <Form.Item
+                            label="Olympiads">
+                            <Slider range defaultValue={[0, 100]}
+                                    min={0}
+                                    max={10}
+                                    style={{width: 150}}
+                                    value={this.state.olympiads}
+                                    onChange={(value) => this.setState({
+                                        ["olympiads"]: value
+
+                                    })}/>
+                        </Form.Item>
+                        <Form.Item>
+                            <Select defaultValue="all"
+                                    style={{width: 120}}
+                                    value={this.state.role}
+                                    onChange={(value) => this.setState({
+                                        ["role"]: value
+                                    })}>
+                                <Option value="all">All</Option>
+                                <Option value="admin">Admin</Option>
+                                <Option value="Student">Student</Option>
+                            </Select>
+                        </Form.Item>
+                        <Button type="primary" onClick={this.handleFilter.bind(this)}>Ok</Button>
+                    </Form>
+                </div>
+                : "You don't have permission to be here"
         );
     }
 }
@@ -149,7 +188,8 @@ const mapDispatchToProps = function (dispatch) {
         getTable: requestActionCreators.getTable,
         selectStudent: actionCreators.selectStudent,
         deleteTable: requestActionCreators.deleteTable,
-        sortTable : sortAction.sortTable
+        sortTable : sortAction.sortTable,
+        filterTable: filterAction.filterTable,
     }, dispatch)
 };
 

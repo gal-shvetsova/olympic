@@ -62,4 +62,20 @@ class Student extends Model
         return $student->orderBy($field, $type)->get();
     }
 
+    public static function filter($olympiads, $role)
+    {
+        $student = Student::withCount(['user as olympiads' => function ($query) {
+            $query->where('role', '=', 'participant');}]);
+        if ($role !== 'all')
+            $student->where('user_role', '=', $role);
+
+        $student = $student->get();
+        $filtered = array();
+        for ($i = 0; $i < count($student); $i++){
+            if ($student[$i]['olympiads'] <= $olympiads[1] && $student[$i]['olympiads'] >= $olympiads[0])
+                $filtered[] = $student[$i];
+        }
+        return $filtered;
+    }
+
 }

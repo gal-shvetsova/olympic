@@ -72,20 +72,12 @@ class OlympiadController extends Controller
         return view('index');
     }
 
-    public function sort(Request $request)
+    public function sortAndFilter(Request $request)
     {
         $json = $request->json()->all();
-        $response = Olympiad::sort($json['field'], $json['type']);
-        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
-        return response($answer, 200);
-
-    }
-
-    public function filter(Request $request)
-    {
-        $json = $request->json()->all();
-        $response = Olympiad::filter($json['hardness'], $json['participants'], $json['deadline']);
+        $response = Olympiad::sortAndFilter($json['hardness'], $json['participants'], $json['deadline'],  $json['field'], $json['type']);
         $answer = '{' . '"' . "table" . '"' . ':' . json_encode($response) . '}';
         return response($answer, 200);
     }
+
 }

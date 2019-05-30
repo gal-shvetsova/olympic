@@ -72,12 +72,13 @@ export class OlympiadList extends Component {
     }
 
     handleSort(name) {
+        console.log("here");
         this.setState({
             sortName: name,
             sortType: this.state.sortType === 'asc' ? 'desc' : 'asc'
         });
         const type = this.state.sortType === 'asc' ? 'desc' : 'asc';
-        this.props.sortTable({name: "olympiad", data: {type: type, field: name}});
+        this.props.filterTable({name: "olympiad", data: {field : name, type : type, hardness: this.state.hardness, participants: this.state.participants, deadline : this.state.deadline}});
     }
 
     handleDelete(olympiad) {
@@ -85,8 +86,18 @@ export class OlympiadList extends Component {
         deleteTable({name: "olympiad", id: olympiad, type: this.state.sortType, field: this.state.sortName});
     }
 
+    handleReset(){
+        this.setState(  {
+
+            hardness: [1, 10],
+            participants: [0, 100],
+            deadline: "all"
+        });
+        this.props.filterTable({name: "olympiad", data: {field : this.state.sortName, type : this.state.sortType, hardness: [1,10], participants: [0, 100], deadline : 'all'}});
+    }
+
     olympiadEdit(props, button) {
-        props.getOlympiadEdit({}, false);
+        this.handleReset();
         if (button != "edit" || props.selectedOlympiad != -1) {
             const olympiad = props.table.find(v => v.id === props.selectedOlympiad) || {};
             props.getOlympiadEdit(olympiad, true);
@@ -127,8 +138,8 @@ export class OlympiadList extends Component {
         this.props.history.push("task/" + id);
     }
 
-    handleFilter() {
-        this.props.filterTable({name: "olympiad", data: {hardness: this.state.hardness, participants: this.state.participants, deadline : this.state.deadline}});
+    handleFilterSort() {
+        this.props.filterTable({name: "olympiad", data: {field : this.state.sortName, type : this.state.sortType, hardness: this.state.hardness, participants: this.state.participants, deadline : this.state.deadline}});
     }
 
     render() {
@@ -222,7 +233,8 @@ export class OlympiadList extends Component {
                                 <Option value="all">All</Option>
                             </Select>
                         </Form.Item>
-                        <Button type="primary" onClick={this.handleFilter.bind(this)}>Ok</Button>
+                        <Button type="primary" onClick={this.handleFilterSort.bind(this)}>Ok</Button>
+                        <Button type="primary" onClick={this.handleReset.bind(this)}>Reset</Button>
                     </Form>
                     <OlympiadEdit type={this.state.sortType} field={this.state.sortName}
                                   getTable={this.props.getTable}/>

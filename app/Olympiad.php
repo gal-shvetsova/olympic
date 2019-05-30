@@ -2,9 +2,7 @@
 
 namespace App;
 
-use function foo\func;
 use Illuminate\Database\Eloquent\Model;
-use function PHPSTORM_META\type;
 
 class Olympiad extends Model
 {
@@ -52,13 +50,8 @@ class Olympiad extends Model
         $olympiad_del->delete();
     }
 
-    public static function sort($field, $type)
-    {
-        $olympiads = Olympiad::withCount('users as participants');
-        return $olympiads->orderBy($field, $type)->get();
-    }
 
-    public static function filter($hardness, $participants, $deadline)
+    public static function sortAndFilter($hardness, $participants, $deadline, $field, $type)
     {
         $olympiads = Olympiad::withCount('users as participants')
             ->where('hardness', '<=', $hardness[1])
@@ -83,7 +76,7 @@ class Olympiad extends Model
             default:
                 break;
         }
-
+        $olympiads->orderBy($field, $type);
         $olympiads = $olympiads->get();
         $filtered = array();
         for ($i = 0; $i < count($olympiads); $i++){

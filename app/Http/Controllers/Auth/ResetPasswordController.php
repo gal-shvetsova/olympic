@@ -76,4 +76,8 @@ class ResetPasswordController extends Controller
             $response = ['success' => false, 'data' => 'Couldnt reset password'];
         return response()->json($response, 200);
     }
+
+    public function showResetForm(){
+        return view('index');
+    }
 }

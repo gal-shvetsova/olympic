@@ -73,7 +73,7 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $user = User::where('email', $request->email)->get()->first();
-        if (!$user->verified) {
+        if ($user->role !== "participant" && !$user->verified) {
             $response = ['success' => false, 'data' => 'You are not verified, please check your mail'];
             return response()->json($response, 200);
         }

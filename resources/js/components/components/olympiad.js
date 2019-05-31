@@ -98,14 +98,14 @@ export class OlympiadList extends Component {
 
     olympiadEdit(props, button) {
         this.handleReset();
-        if (button != "edit" || props.selectedOlympiad != -1) {
+        if (button !== "edit" || props.selectedOlympiad !== -1) {
             const olympiad = props.table.find(v => v.id === props.selectedOlympiad) || {};
             props.getOlympiadEdit(olympiad, true);
         }
-        if (button == "add") {
+        if (button === "add") {
             props.getOlympiadEdit({}, true);
         }
-        if (button == "delete") {
+        if (button === "delete") {
             this.handleDelete(props.selectedOlympiad);
             props.getOlympiadEdit({}, false);
         }

@@ -30,6 +30,10 @@ class Solution extends Model
     }
 
     public static function getById($id){
+        $solution = Solution::find($id);
+        $solution['status'] = 'solving';
+        $solution['start'] = (new \DateTime("NOW"))->format('Y-m-d H:i:s');
+        $solution->save();
         return Solution::where('solutions.id', '=', $id)->join('tasks', 'tasks.id', '=', 'solutions.task_id')->
         select('name', 'description', 'hardness', 'time', 'start', 'status', 'max_score', 'score', 'solutions.id')->get();
     }

@@ -56,11 +56,6 @@ class Student extends Model
         $student_del->delete();
     }
 
-    public static function sort($field, $type){
-        $student = Student::withCount(['user as olympiads' => function ($query) {
-            $query->where('role', '=', 'participant');}]);
-        return $student->orderBy($field, $type)->get();
-    }
 
     public static function sortAndFilter($olympiads, $role, $field, $type)
     {

@@ -136,7 +136,6 @@ class App extends React.Component {
                             <Solution student_id={this.state.user.id} role={this.state.user.role} {...props}/>)}
                     />
 
-
                     <Route
                         path="/solution/:id/edit"
                         render={props => (<TaskForm id={this.state.user.id} {...props}/>)}

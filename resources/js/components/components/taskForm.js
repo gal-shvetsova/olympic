@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import * as solvingActions from  '../actions/solvingActions'
 import * as requestActionCreators from "../actions/requestActions";
 import solution from "./solution";
-
+import Timer from "./timer"
 //TODO not to show when time is gone
 
 export class TaskForm extends Component {
@@ -29,13 +29,11 @@ export class TaskForm extends Component {
 
     componentDidMount() {
         if (this.state.task.status !== "solving") {
-            console.log(JSON.stringify(this.state.task));
             const newTask = this.state.task;
             const date = new Date();
             newTask.start = date.toString();
             newTask.status = "solving";
             this.setState({task : newTask});
-            console.log(JSON.stringify(this.state.task));
             this.props.postTable({
                 name: "solution",
                 method: "PUT",
@@ -69,6 +67,7 @@ export class TaskForm extends Component {
             <div className="taskFrom">
                 <textarea className="solution" value={this.state.task.solution || ""} onChange={this.handleChange()}>
                         </textarea>
+                <Timer start = {new Date(Date.now())} time = {this.props.table[0]['time']} onEnd={this.handleSubmit.bind(this)}/>
                 <button className="ok" onClick={this.handleSubmit.bind(this)}>ok</button>
             </div>);
     }
@@ -77,6 +76,7 @@ export class TaskForm extends Component {
 const mapStateToProps = function (state) {
     return {
         table: state.solutionStore.table,
+        selectedTask : state.solutionStore.selectedTask
     }
 };
 

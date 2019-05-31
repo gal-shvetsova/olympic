@@ -12,6 +12,7 @@ export class Solution extends Component {
     constructor(props) {
         super(props);
         const {getTable, student_id} = this.props;
+        this.state = { hide : 1};
         getTable({name: "solution", id: student_id});
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
@@ -54,13 +55,14 @@ export class Solution extends Component {
                     <th>Max score</th>
                 </tr>
                 {
+                    table &&
                     table.map((task) => (<tr key={task.id} className={task.id === selectedTask ? "selected" : ""}
                                              onClick={this.taskSelected(task.id, selectTaskToSolve)}>
                         <td className="name"> {task.name} </td>
                         <td className="description"> {task.description} </td>
                         <td className="hardness"> {task.hardness} </td>
                         <td className="time"> {task.time} </td>
-                        <td className="your_score"> {task.score} </td>
+                        <td className="your_score"> {task.score < 0 ? task.status : task.score} </td>
                         <td className="max_score"> {task.max_score} </td>
                     </tr>))
                 }
@@ -75,23 +77,33 @@ export class Solution extends Component {
         };
     }
 
+    hidden () {
+        const {table, selectedTask} = this.props;
+        if (selectedTask < 0) return 1;
+        if (!table) return 1;
+        const element = table.find(x => x.id == selectedTask);
+        if (element['status'] !== 'not started') return 1;
+        return 0;
+    }
+
     handleSolve() {
         this.props.history.push("/solution/" + this.props.selectedTask + "/edit");
     }
 
     render() {
-        let show = this.props.table[this.props.selectedTask] < 0 && this.props.selectedTask < 0;
-        console.log(show);
         return (isRole(this.props.role, ["participant"]) ?
                 <div className="Solution" ref={this.setWrapperRef}>
                     <h4>Tasks</h4>
                     <div className="solutionList">
                         {this.createTaskList()}
                         <div>
-                            <button className="solve"
-                                    onClick={() => this.handleSolve()}
-                            >solve
-                            </button>
+                            {
+                                !this.hidden() &&
+                                <button className="solve"
+                                        onClick={() => this.handleSolve()}
+                                >solve
+                                </button>
+                            }
                         </div>
                     </div>
                 </div> : "You don't have permissions"

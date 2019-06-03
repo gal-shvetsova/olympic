@@ -81,13 +81,14 @@ export class Solution extends Component {
         const {table, selectedTask} = this.props;
         if (selectedTask < 0) return 1;
         if (!table) return 1;
-        const element = table.find(x => x.id == selectedTask);
+        const element = table.find(x => x.id === selectedTask);
         if (element['status'] !== 'not started') return 1;
         return 0;
     }
 
     handleSolve() {
-        this.props.history.push("/solution/" + this.props.selectedTask + "/edit");
+        const {selectedTask} = this.props;
+        this.props.history.push("/solution/" + selectedTask + "/edit");
     }
 
     render() {

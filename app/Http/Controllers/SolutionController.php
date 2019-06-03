@@ -61,7 +61,7 @@ class SolutionController extends Controller
     public function edit($id)
     {
         $response = Solution::getById($id);
-        $answer = '{' . '"' ."table". '"' . ':' .$response . '}';
+        $answer = '{' . '"' ."table". '"' . ':' .$response . '}';  //todo id misunderstanding
         return response($answer, 200);
     }
 

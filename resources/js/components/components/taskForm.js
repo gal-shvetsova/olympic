@@ -63,11 +63,13 @@ export class TaskForm extends Component {
 
 
     render() {
+        const {table, selectedTask} = this.props;
+        const time = table.find(x => x.id === selectedTask)['time'];
         return (
             <div className="taskFrom">
                 <textarea className="solution" value={this.state.task.solution || ""} onChange={this.handleChange()}>
                         </textarea>
-                <Timer start = {new Date(Date.now())} time = {this.props.table[0]['time']} onEnd={this.handleSubmit.bind(this)}/>
+                <Timer start = {new Date(Date.now())} time = {time} onEnd={this.handleSubmit.bind(this)}/>
                 <button className="ok" onClick={this.handleSubmit.bind(this)}>ok</button>
             </div>);
     }

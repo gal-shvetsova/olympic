@@ -6,7 +6,6 @@ export class Timer extends Component {
         let time = this.props.time.split(":");
         let h = time[0];
         let m = time[1];
-        console.log(this.props.time);
         let end = new Date(this.props.start.getTime());
         end.setHours( end.getHours() + parseInt(h), end.getMinutes() + parseInt(m));
         this.state = ({
@@ -33,7 +32,6 @@ export class Timer extends Component {
     }
 
     startTimer() {
-        console.log('here');
         let now = new Date(Date.now());
         let diff = this.state.end.getTime() - now;
         if (diff === 0){

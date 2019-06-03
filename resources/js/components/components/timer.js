@@ -34,7 +34,8 @@ export class Timer extends Component {
     startTimer() {
         let now = new Date(Date.now());
         let diff = this.state.end.getTime() - now;
-        if (diff === 0){
+        console.log(diff);
+        if (diff <= 0){
             alert('Time is over');
             clearTimeout(this.state.id);
             this.props.onEnd();

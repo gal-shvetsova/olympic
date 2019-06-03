@@ -64,7 +64,7 @@ export class TaskForm extends Component {
 
     render() {
         const {table, selectedTask} = this.props;
-        const time = table.find(x => x.id === selectedTask)['time'];
+        const time = table ? table.find(x => x.id === selectedTask)['time'] : 0;
         return (
             <div className="taskFrom">
                 <textarea className="solution" value={this.state.task.solution || ""} onChange={this.handleChange()}>

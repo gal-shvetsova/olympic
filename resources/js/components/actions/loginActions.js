@@ -46,6 +46,5 @@ export function _logoutUser() {
         }
     };
     localStorage["appState"] = JSON.stringify(appState);
-    this.props.setUserInfo(false, {role : "guest"});
     this.setState(appState);
 }

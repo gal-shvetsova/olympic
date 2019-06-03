@@ -1,6 +1,5 @@
 const mysql = require('mysql');
 
-// Подключаемся к mysql
 const db = mysql.createConnection({
     host: '127.0.0.1',
     user: 'homestead',
@@ -24,7 +23,6 @@ io.on('connection', (client) => {
     });
 
 });
-
 
 const port = 8000;
 io.listen(port);

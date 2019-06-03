@@ -28,6 +28,7 @@ export class Solution extends Component {
 
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.handleClickOutside);
+        this.props.selectTaskToSolve(-1);
     }
 
     setWrapperRef(node) {

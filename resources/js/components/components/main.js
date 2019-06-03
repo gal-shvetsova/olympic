@@ -23,9 +23,6 @@ import Solution from "./solution";
 import Verify from "./verifyEmail";
 import {_verifyEmail} from "../actions/registerAction";
 import _forgotPassword from '../actions/forgotPasswordAction'
-import * as actionCreators from "../actions/index"
-import * as requestActionCreators from "../actions/requestActions";
-
 
 class App extends React.Component {
     constructor(props) {
@@ -56,7 +53,7 @@ class App extends React.Component {
         }
 
         return (
-    this.state.user.id ? (
+    this.state.user ? (
             <div id="main">
                 {
                     isRole(this.state.user.role, ["admin"]) &&
@@ -197,8 +194,6 @@ class App extends React.Component {
 const mapStateToProps = (state, ownProps) => {
     return {
         olympiad_id: state.olympiadStore.selectedOlympiad,
-        user : state.appStore.user,
-        isLoggedIn : state.appStore.isLoggedIn,
         ownProps
     }
 };

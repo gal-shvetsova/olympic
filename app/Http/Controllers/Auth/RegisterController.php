@@ -116,15 +116,15 @@ class RegisterController extends Controller
     public function verifyUser($token)
     {
         $user = User::where('token', $token)->get()->first();
-            if(!$user->verified) {
-                $user->verified = 1;
-                $user->save();
-            }else{
-                return response()->json([
-                    'response' => 'ok',
-                    'message' => 'User already verified',
-                ]);
-            }
+        if (!$user->verified) {
+            $user->verified = 1;
+            $user->save();
+        } else {
+            return response()->json([
+                'response' => 'ok',
+                'message' => 'User already verified',
+            ]);
+        }
 
         return response()->json([
             'response' => 'ok',
@@ -132,7 +132,40 @@ class RegisterController extends Controller
         ]);
     }
 
-    public function register(Request $request)
+    private function registerUser(Request $request)
+    {
+        $student = new Student();
+        $student['last_name'] = $request->name;
+        $student['user_role'] = $request->role;
+        $student->save();
+        $student_id = $student['id'];
+        $payload = [
+            'password' => \Hash::make($request->password),
+            'email' => $request->email,
+            'name' => $request->name,
+            'auth_token' => '',
+            'olympiad_id' => $request->olympiad_id,
+            'role' => $request->role,
+            'student_id' => $student_id
+        ];
+        $user = new User($payload);
+        if ($user->save()) {
+
+            $token = self::getToken($request->email, $request->password);
+
+            if (!is_string($token)) return response()->json(['success' => false, 'data' => 'Token generation failed', 'err' => $token], 201);
+
+            $user = User::where('email', $request->email)->get()->first();
+            $user->auth_token = $token;
+            $user->save();
+            Mail::to($request->email)->send(new VerifyMail($user));
+            $response = ['success' => true, 'data' => ['name' => $user->name, 'id' => $user->student_id, 'email' => $request->email, 'auth_token' => $token, 'olympiad_id' => $user->olympiad_id, 'role' => 'guest']];
+        } else
+            $response = ['success' => false, 'data' => 'Couldnt register user'];
+        return response()->json($response, 201);
+    }
+
+    private function registerParticipant(Request $request)
     {
         $student_id = $request->student_id;
 
@@ -141,14 +174,6 @@ class RegisterController extends Controller
                 $response = ['success' => false, 'data' => 'You already joined this olympiad'];
                 return response()->json($response, 201);
             }
-        }
-
-        if ($request->role !== "participant") {
-            $student = new Student();
-            $student['last_name'] = $request->name;
-            $student['user_role'] = $request->role;
-            $student->save();
-            $student_id = $student['id'];
         }
 
         $payload = [
@@ -173,24 +198,27 @@ class RegisterController extends Controller
             $user->auth_token = $token;
             $user->save();
 
-            if  ($request->role === "participant") {
-                foreach (Olympiad::find($request->olympiad_id)->tasks()->get() as $task) {
-                    $solution = new Solution();
-                    $solution['start'] =  date("Y-m-d H:i:s", mktime(0, 0, 0, 0, 0, 0000));
-                    $solution['student_id'] = $user->id;
-                    $solution['olympiad_id'] = $request->olympiad_id;
-                    $solution['task_id'] = $task['id'];
-                    $solution['status'] = "not started";
-                    $solution['score'] = 0;
-                    $solution->save();
-                }
-                $response = ['success' => true, 'data' => ['name' => $user->name, 'id' => $user->student_id, 'email' => $request->email, 'auth_token' => $token, 'olympiad_id' => $user->olympiad_id, 'role' => 'participant']];
-            } else {
-                Mail::to($request->email)->send(new VerifyMail($user));
-                $response = ['success' => true, 'data' => ['name' => $user->name, 'id' => $user->student_id, 'email' => $request->email, 'auth_token' => $token, 'olympiad_id' => $user->olympiad_id, 'role' => 'guest']];
+            foreach (Olympiad::find($request->olympiad_id)->tasks()->get() as $task) {
+                $solution = new Solution();
+                $solution['start'] = date("Y-m-d H:i:s", mktime(0, 0, 0, 0, 0, 0000));
+                $solution['student_id'] = $request->student_id;
+                $solution['olympiad_id'] = $request->olympiad_id;
+                $solution['task_id'] = $task['id'];
+                $solution['status'] = "not started";
+                $solution['score'] = -1;
+                $solution->save();
             }
+            $response = ['success' => true, 'data' => ['name' => $user->name, 'id' => $user->student_id, 'email' => $request->email, 'auth_token' => $token, 'olympiad_id' => $user->olympiad_id, 'role' => 'participant']];
         } else
             $response = ['success' => false, 'data' => 'Couldnt register user'];
         return response()->json($response, 201);
+    }
+
+    public function register(Request $request)
+    {
+        if ($request->role === 'participant')
+            return $this->registerParticipant($request);
+        else
+            return $this->registerUser($request);
     }
 }

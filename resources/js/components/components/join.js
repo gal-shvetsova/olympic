@@ -27,7 +27,7 @@ const Join = ({history, registerParticipant, olympiad_id, student_id = f => f}) 
     const handleJoin = e => {
         e.preventDefault();
         registerParticipant({
-            login: _login.value,
+            login: _login.value + '@olympic.test',
             password: _password.value,
             olympiad_id: olympiad_id,
             role: "participant",

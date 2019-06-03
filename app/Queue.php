@@ -46,10 +46,10 @@ class Queue extends Model
         } while ($put['progress'] + $progress > 100);
         $put['progress'] += $progress;
         $put->save();
-        if ($put['progress'] === 100){
+        if ($put['progress'] >= 100){
             $max_score = Task::find($task_id)['max_score'];
             $score = rand(0, $max_score);
-            $solution =Solution::find($solution_id);
+            $solution = Solution::find($solution_id);
             if ($solution['score'] < 0)
                 $solution['score'] = $score;
             $solution->save();

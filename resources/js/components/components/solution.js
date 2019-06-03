@@ -11,15 +11,15 @@ export class Solution extends Component {
 
     constructor(props) {
         super(props);
-        const {getTable, student_id} = this.props;
+        const {getTable, id} = this.props;
         this.state = { hide : 1};
-        getTable({name: "solution", id: student_id});
+        getTable({name: "solution", id: id});
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
     }
 
     componentWillMount() {
-        this.props.getTable({name: "solution", id: this.props.student_id});
+        this.props.getTable({name: "solution", id: this.props.id});
     }
 
     componentDidMount() {

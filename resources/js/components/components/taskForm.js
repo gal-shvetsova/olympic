@@ -5,6 +5,10 @@ import * as solvingActions from  '../actions/solvingActions'
 import * as requestActionCreators from "../actions/requestActions";
 import solution from "./solution";
 import Timer from "./timer"
+import { Input } from 'antd';
+import { Typography, Divider } from 'antd';
+const { TextArea } = Input;
+const { Title, Paragraph, Text } = Typography;
 //TODO not to show when time is gone
 
 export class TaskForm extends Component {
@@ -22,7 +26,7 @@ export class TaskForm extends Component {
 
     componentWillMount() {
         this.props.getTable({name: "solution", id: this.state.solutionID + '/edit'});
-        const task = this.props.table[0];
+        const task = this.props.table.find(x => x.id === this.props.selectedTask);
         task.solution = "";
         this.setState({task : task});
     }
@@ -67,8 +71,11 @@ export class TaskForm extends Component {
         const time = table ? table.find(x => x.id === selectedTask)['time'] : 0;
         return (
             <div className="taskFrom">
-                <textarea className="solution" value={this.state.task.solution || ""} onChange={this.handleChange()}>
-                        </textarea>
+                <Typography>
+                    <Title>{this.state.task.name}</Title>
+                <Text>{this.state.task.description}</Text>
+                </Typography>
+                <TextArea style={{ width: '20%' }} rows ={4} className="solution" value={this.state.task.solution || ""} onChange={this.handleChange()}/>
                 <Timer start = {new Date(Date.now())} time = {time} onEnd={this.handleSubmit.bind(this)}/>
                 <button className="ok" onClick={this.handleSubmit.bind(this)}>ok</button>
             </div>);

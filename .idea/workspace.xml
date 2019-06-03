@@ -3,9 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="f2af424c-0c0c-4c44-9846-b3e093d0ce84" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SolutionController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SolutionController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/js/components/actions/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/actions/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/js/components/actions/loginActions.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/actions/loginActions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/js/components/components/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/components/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/js/components/components/solution.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/components/solution.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/js/components/components/taskForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/components/taskForm.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/js/components/components/timer.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/components/timer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/js/components/reducers/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/reducers/index.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -94,10 +98,44 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/js/components/components/taskForm.js">
+        <entry file="file://$PROJECT_DIR$/resources/js/components/components/olympiad.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="627">
-              <caret line="82" column="2" lean-forward="true" selection-start-line="82" selection-start-column="2" selection-end-line="82" selection-end-column="2" />
+            <state relative-caret-position="2269">
+              <caret line="257" column="34" lean-forward="true" selection-start-line="257" selection-start-column="34" selection-end-line="257" selection-end-column="34" />
+              <folding>
+                <element signature="e#0#39#0" expanded="true" />
+                <element signature="n#!!block;n#handleDelete#0;n#OlympiadList#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/js/components/actions/loginActions.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="465">
+              <caret line="31" column="19" selection-start-line="31" selection-start-column="19" selection-end-line="31" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/js/components/components/main.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="648">
+              <caret line="191" column="8" selection-start-line="191" selection-start-column="8" selection-end-line="191" selection-end-column="8" />
+              <folding>
+                <element signature="e#0#26#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/resources/js/components/components/solution.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="15" column="48" selection-start-line="15" selection-start-column="48" selection-end-line="15" selection-end-column="48" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
               </folding>
@@ -106,31 +144,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Solution.php">
+        <entry file="file://$PROJECT_DIR$/resources/js/components/actions/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="462">
-              <caret line="37" column="41" lean-forward="true" selection-start-line="37" selection-start-column="41" selection-end-line="37" selection-end-column="41" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/resources/js/components/components/timer.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="36" column="26" selection-start-line="36" selection-start-column="26" selection-end-line="36" selection-end-column="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/js/components/reducers/index.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="253">
-              <caret line="80" column="53" selection-start-line="80" selection-start-column="53" selection-end-line="80" selection-end-column="53" />
-              <folding>
-                <element signature="e#0#38#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="116">
+              <caret line="105" lean-forward="true" selection-start-line="105" selection-end-line="105" />
             </state>
           </provider>
         </entry>
@@ -147,9 +164,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>join</find>
-      <find>props</find>
-      <find>stude</find>
       <find>pa</find>
       <find>redi</find>
       <find>his</find>
@@ -177,6 +191,9 @@
       <find>console</find>
       <find>consol</find>
       <find>hist</find>
+      <find>ge</find>
+      <find>logout</find>
+      <find>stu</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -194,13 +211,10 @@
         <option value="$PROJECT_DIR$/app/Http/Controllers/Auth/RegisterController.php" />
         <option value="$PROJECT_DIR$/resources/js/components/components/formErrors.js" />
         <option value="$PROJECT_DIR$/public/css/style.css" />
-        <option value="$PROJECT_DIR$/resources/js/components/actions/loginActions.js" />
         <option value="$PROJECT_DIR$/resources/js/components/components/register.js" />
         <option value="$PROJECT_DIR$/resources/js/components/actions/registerAction.js" />
         <option value="$PROJECT_DIR$/resources/js/components/actions/resetPasswordAction.js" />
         <option value="$PROJECT_DIR$/resources/js/components/components/resetPassword.js" />
-        <option value="$PROJECT_DIR$/resources/js/components/actions/index.js" />
-        <option value="$PROJECT_DIR$/resources/js/components/reducers/index.js" />
         <option value="$PROJECT_DIR$/resources/js/components/components/olympiadEdit.js" />
         <option value="$PROJECT_DIR$/resources/js/components/components/studentEdit.js" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Auth/LoginController.php" />
@@ -212,7 +226,6 @@
         <option value="$PROJECT_DIR$/app/Http/Controllers/Auth/MyForgotPassword.php" />
         <option value="$PROJECT_DIR$/resources/js/components/components/taskEdit.js" />
         <option value="$PROJECT_DIR$/resources/js/components/index.js" />
-        <option value="$PROJECT_DIR$/resources/js/components/components/login.js" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Auth/ResetPasswordController.php" />
         <option value="$PROJECT_DIR$/resources/js/components/components/forgotPassword.js" />
         <option value="$PROJECT_DIR$/resources/js/components/actions/forgotPasswordAction.js" />
@@ -229,13 +242,17 @@
         <option value="$PROJECT_DIR$/app/Student.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/StudentController.php" />
         <option value="$PROJECT_DIR$/resources/js/components/components/olympiad.js" />
-        <option value="$PROJECT_DIR$/resources/js/components/components/main.js" />
-        <option value="$PROJECT_DIR$/resources/js/components/components/solution.js" />
         <option value="$PROJECT_DIR$/app/Solution.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/SolutionController.php" />
         <option value="$APPLICATION_CONFIG_DIR$/consoles/.datagrid/cell" />
-        <option value="$PROJECT_DIR$/resources/js/components/components/taskForm.js" />
         <option value="$PROJECT_DIR$/resources/js/components/components/timer.js" />
+        <option value="$PROJECT_DIR$/resources/js/components/components/taskForm.js" />
+        <option value="$PROJECT_DIR$/resources/js/components/reducers/index.js" />
+        <option value="$PROJECT_DIR$/resources/js/components/actions/index.js" />
+        <option value="$PROJECT_DIR$/resources/js/components/actions/loginActions.js" />
+        <option value="$PROJECT_DIR$/resources/js/components/components/login.js" />
+        <option value="$PROJECT_DIR$/resources/js/components/components/main.js" />
+        <option value="$PROJECT_DIR$/resources/js/components/components/solution.js" />
       </list>
     </option>
   </component>
@@ -516,7 +533,7 @@
       <workItem from="1557373656487" duration="10296000" />
       <workItem from="1557387006472" duration="4000" />
       <workItem from="1557387039278" duration="31124000" />
-      <workItem from="1557995481765" duration="92807000" />
+      <workItem from="1557995481765" duration="97600000" />
     </task>
     <task id="LOCAL-00001" summary="sending verification link and making verification by it">
       <created>1558349750377</created>
@@ -623,11 +640,18 @@
       <option name="project" value="LOCAL" />
       <updated>1559536513073</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="fixed bug with negative time">
+      <created>1559537367755</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1559537367755</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="506510000" />
+    <option name="totallyTimeSpent" value="511303000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -640,13 +664,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.87112564" visible="true" weight="0.20475927" />
       <window_info id="Structure" order="1" sideWeight="0.12887439" side_tool="true" weight="0.28002214" />
       <window_info id="Favorites" order="2" sideWeight="0.5010799" side_tool="true" weight="0.2883232" />
       <window_info anchor="bottom" id="Messages" order="0" weight="0.32937366" />
       <window_info anchor="bottom" id="Message" order="1" />
-      <window_info anchor="bottom" id="Find" order="2" weight="0.32937366" />
+      <window_info anchor="bottom" id="Find" order="2" weight="0.032397408" />
       <window_info anchor="bottom" id="Run" order="3" weight="0.32937366" />
       <window_info anchor="bottom" id="Debug" order="4" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
@@ -657,11 +682,11 @@
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.32937366" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.18594356" side_tool="true" weight="0.28185746" />
       <window_info anchor="bottom" id="Database Console" order="12" weight="0.32937366" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="13" sideWeight="0.81405646" visible="true" weight="0.18574513" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="13" sideWeight="0.81405646" visible="true" weight="0.082073435" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Database" order="3" visible="true" weight="0.23519646" />
+      <window_info anchor="right" id="Database" order="3" visible="true" weight="0.22357498" />
     </layout>
     <layout-to-restore>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.87112564" visible="true" weight="0.20475927" />
@@ -705,28 +730,10 @@
     <MESSAGE value="made filter and sort working together in students page" />
     <MESSAGE value="made timer on taskFrom page" />
     <MESSAGE value="fixed bug with time in taskForm" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed bug with time in taskForm" />
+    <MESSAGE value="fixed bug with negative time" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed bug with negative time" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/resources/js/components/components/register.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/components/studentEdit.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="81" column="42" selection-start-line="81" selection-start-column="42" selection-end-line="81" selection-end-column="42" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-270" />
@@ -793,16 +800,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/components/login.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="660">
-          <caret line="44" column="30" selection-start-line="41" selection-start-column="7" selection-end-line="44" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="das://190986f6-aec8-45ef-89d6-8a49c6bbb5d2/schema/homestead/table/olympiads">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
@@ -836,16 +833,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
           <caret line="17" column="32" selection-start-line="17" selection-start-column="32" selection-end-line="17" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/components/olympiadEdit.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="9" column="16" selection-start-line="9" selection-start-column="16" selection-end-line="9" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -956,37 +943,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/components/olympiad.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="735">
-          <caret line="89" column="25" lean-forward="true" selection-start-line="89" selection-start-column="25" selection-end-line="89" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-            <element signature="n#!!block;n#handleDelete#0;n#OlympiadList#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/components/taskEdit.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-975">
-          <caret line="5" selection-start-line="5" selection-end-line="5" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/components/task.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-303">
-          <caret line="181" column="58" selection-start-line="181" selection-start-column="58" selection-end-line="181" selection-end-column="58" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/Olympiad.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="278">
@@ -994,33 +950,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/components/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="132" column="20" selection-start-line="132" selection-start-column="20" selection-end-line="132" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/js/components/actions/queueActions.js">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/actions/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1305" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/reducers/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="80" column="53" selection-start-line="80" selection-start-column="53" selection-end-line="80" selection-end-column="53" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/js/components/components/queue.js">
       <provider selected="true" editor-type-id="text-editor">
@@ -1067,20 +998,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/timer.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="525">
+          <caret line="35" column="50" selection-start-line="35" selection-start-column="50" selection-end-line="35" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/Solution.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="462">
           <caret line="37" column="41" lean-forward="true" selection-start-line="37" selection-start-column="41" selection-end-line="37" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/components/solution.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="89" column="27" selection-start-line="89" selection-start-column="27" selection-end-line="89" selection-end-column="27" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1091,20 +1019,117 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/components/taskForm.js">
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/register.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="627">
-          <caret line="82" column="2" lean-forward="true" selection-start-line="82" selection-start-column="2" selection-end-line="82" selection-end-column="2" />
+        <state relative-caret-position="-900">
           <folding>
             <element signature="e#0#39#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/components/timer.js">
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/taskEdit.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="36" column="26" selection-start-line="36" selection-start-column="26" selection-end-line="36" selection-end-column="26" />
+        <state relative-caret-position="15">
+          <caret line="5" selection-start-line="5" selection-end-line="5" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/task.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="181" column="58" selection-start-line="181" selection-start-column="58" selection-end-line="181" selection-end-column="58" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/taskForm.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="784">
+          <caret line="91" selection-start-line="91" selection-end-line="97" selection-end-column="2" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/olympiadEdit.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="364">
+          <caret line="30" column="70" lean-forward="true" selection-start-line="30" selection-start-column="22" selection-end-line="30" selection-end-column="70" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/actions/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="116">
+          <caret line="105" lean-forward="true" selection-start-line="105" selection-end-line="105" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/olympiad.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2269">
+          <caret line="257" column="34" lean-forward="true" selection-start-line="257" selection-start-column="34" selection-end-line="257" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+            <element signature="n#!!block;n#handleDelete#0;n#OlympiadList#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/login.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="58" column="69" selection-start-line="58" selection-start-column="69" selection-end-line="58" selection-end-column="69" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/actions/loginActions.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="31" column="19" selection-start-line="31" selection-start-column="19" selection-end-line="31" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/reducers/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="68" lean-forward="true" selection-start-line="68" selection-end-line="68" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="648">
+          <caret line="191" column="8" selection-start-line="191" selection-start-column="8" selection-end-line="191" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/solution.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="15" column="48" selection-start-line="15" selection-start-column="48" selection-end-line="15" selection-end-column="48" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

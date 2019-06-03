@@ -67,7 +67,12 @@ const olympiadEditStore = (state = {table: {}, show: false}, action) => {
     }
 };
 
-const appStore = (state = {isLoggedIn : false, user : {}}) => {
+const appStore = (state = {isLoggedIn : false, user : {}}, action) => {
+    console.log(action.user);
+    switch (action.type) {
+        case 'SET_USER_INFO':
+            return {...state, isLoggedIn: action.isLoggedIn, user : action.user}
+    }
     return {...state};
 };
 

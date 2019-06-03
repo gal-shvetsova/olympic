@@ -14,7 +14,7 @@ import StudentList from "./student";
 import TaskList from "./task";
 import TaskForm from "./taskForm"
 import Join from "./join";
-import {applyMiddleware, createStore} from "redux";
+import {applyMiddleware, bindActionCreators, createStore} from "redux";
 import {connect} from "react-redux";
 import {composeWithDevTools} from "redux-devtools-extension";
 import thunk from "redux-thunk";
@@ -23,17 +23,18 @@ import Solution from "./solution";
 import Verify from "./verifyEmail";
 import {_verifyEmail} from "../actions/registerAction";
 import _forgotPassword from '../actions/forgotPasswordAction'
+import * as actionCreators from "../actions/index"
+import * as requestActionCreators from "../actions/requestActions";
 
 
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.state =
-            {
-                isLoggedIn: false,
-                user: {role: "guest", id: -1}
-            };
-
+        let state = localStorage["appState"];
+        if (state) {
+            let AppState = JSON.parse(state);
+            this.state = {isLoggedIn: AppState.isLoggedIn, user: AppState.user};
+        }
     };
 
 
@@ -55,26 +56,26 @@ class App extends React.Component {
         }
 
         return (
+    this.state.user.id ? (
+            <div id="main">
+                {
+                    isRole(this.state.user.role, ["admin"]) &&
+                    <Link to="/student">Student</Link>
+                }
+                {
+                    !isRole(this.state.user.role, ["participant"]) &&
+                    <Link to="/olympiad">Olympiad </Link>
+                }
 
-
-                <div id="main">
-                    {
-                        isRole(this.state.user.role, ["admin"]) &&
-                        <Link to="/student">Student</Link>
-                    }
-                    {
-                        !isRole(this.state.user.role, ["participant"]) &&
-                        <Link to="/olympiad">Olympiad </Link>
-                    }
-
-                    {
-                        isRole(this.state.user.role, ["participant"]) &&
-                        <Link to={"/queue/" + this.state.user.id}>Queue</Link>
-                    }
-                    {
-                        isRole(this.state.user.role, ["participant"]) &&
-                        <Link to={"/solution/" + this.state.user.id}>Your tasks</Link>
-                    }
+                {
+                    isRole(this.state.user.role, ["participant"]) &&
+                    <Link to={"/queue/" + this.state.user.id}>Queue</Link>
+                }
+                {
+                    isRole(this.state.user.role, ["participant"]) &&
+                    <Link to={"/solution/" + this.state.user.id}>Your tasks</Link>
+                }
+                <Switch>
 
                     <Route
                         path="/login"
@@ -102,7 +103,7 @@ class App extends React.Component {
 
                     <Route
                         path="/password/reset/:token"
-                        render={(props) => (<NewPassword {...props} email = {this.props.user.email}/>)}
+                        render={(props) => (<NewPassword {...props} email={this.props.user.email}/>)}
                     />
 
 
@@ -131,64 +132,64 @@ class App extends React.Component {
                     />
 
                     <Route
-                        path="/solution/:id/"
-                        render={props => (
-                            <Solution student_id={this.state.user.id} role={this.state.user.role} {...props}/>)}
+                        path="/solution/:id/edit"
+                        render={props => (<TaskForm id={this.state.user.id} {...props}/>)}
                     />
 
                     <Route
-                        path="/solution/:id/edit"
-                        render={props => (<TaskForm id={this.state.user.id} {...props}/>)}
+                        path="/solution/:id/"
+                        render={props => (
+                            <Solution id={this.state.user.id} role={this.state.user.role} {...props}/>)}
                     />
 
                     <Route
                         path="/queue/:id/"
                         render={props => (<Queue id={this.state.user.id} role={this.state.user.role}{...props}/>)}
                     />
+                </Switch>
 
+                {
+                    isRole(this.state.user.role, ["admin", "participant", "student"]) &&
+                    <button onClick={_logoutUser.bind(this)}>Logout</button>
 
-                    {
-                        isRole(this.state.user.role, ["admin", "participant", "student"]) &&
-                        <button onClick={_logoutUser.bind(this)}>Logout</button>
+                }
 
-                    }
+                {
+                    isRole(this.state.user.role, ["participant", "student", "admin"]) &&
+                    <Route
+                        path="/password"
+                        render={props => (
+                            <ResetPassword {...props} email={this.state.user.email}
+                                           resetPassword={_resetPassword.bind(this)}/>)}
+                    />
+                }
 
-                    {
-                        isRole(this.state.user.role, ["participant", "student", "admin"]) &&
-                        <Route
-                            path="/password"
-                            render={props => (
-                                <ResetPassword {...props} email={this.state.user.email}
-                                               resetPassword={_resetPassword.bind(this)}/>)}
-                        />
-                    }
+                {
+                    isRole(this.state.user.role, ["participant", "student", "admin"]) &&
+                    <button onClick={() => this.props.history.replace("password")}>Reset password</button>
+                }
 
-                    {
-                        isRole(this.state.user.role, ["participant", "student", "admin"]) &&
-                        <button onClick={() => this.props.history.replace("password")}>Reset password</button>
-                    }
+                {
+                    isRole(this.state.user.role, ["student"]) &&
+                    <button onClick={registerActionCreators._deleteAccount.bind(this)}>Delete account</button>
+                }
 
-                    {
-                        isRole(this.state.user.role, ["student"]) &&
-                        <button onClick={registerActionCreators._deleteAccount.bind(this)}>Delete account</button>
-                    }
-
-                    {
-                        isRole(this.state.user.role, ["guest"]) &&
-                        this.props.location.pathname !== "/register" &&
-                        <Link to="/register">
-                            Register
-                        </Link>
-                    }
-                    {
-                        isRole(this.state.user.role, ["guest"]) &&
-                        this.props.location.pathname !== "/login" &&
-                        <Link to="/login">
-                            Login
-                        </Link>
-                    }
-                </div>
-
+                {
+                    isRole(this.state.user.role, ["guest"]) &&
+                    this.props.location.pathname !== "/register" &&
+                    <Link to="/register">
+                        Register
+                    </Link>
+                }
+                {
+                    isRole(this.state.user.role, ["guest"]) &&
+                    this.props.location.pathname !== "/login" &&
+                    <Link to="/login">
+                        Login
+                    </Link>
+                }
+            </div>
+    ):""
         );
     }
 }
@@ -196,9 +197,12 @@ class App extends React.Component {
 const mapStateToProps = (state, ownProps) => {
     return {
         olympiad_id: state.olympiadStore.selectedOlympiad,
+        user : state.appStore.user,
+        isLoggedIn : state.appStore.isLoggedIn,
         ownProps
     }
 };
+
 const AppContainer = withRouter((props) => (
     <App {...props} store={createStore(composeWithDevTools(applyMiddleware(thunk)))}/>));
 

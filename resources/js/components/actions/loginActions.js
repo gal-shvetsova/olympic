@@ -10,15 +10,12 @@ export function _loginUser(email, password) {
         })
         .then(json => {
             if (json.data.success) {
-                const {name, id, email, auth_token, role, olympiad_id} = json.data.data;
+                const {id, role, olympiad_id} = json.data.data;
 
                 let userData = {
-                    name,
-                    id,
-                    email,
-                    auth_token,
-                    role,
-                    olympiad_id,
+                    id : id,
+                    role : role,
+                    olympiad_id : olympiad_id,
                     timestamp: new Date().toString()
                 };
 
@@ -49,5 +46,6 @@ export function _logoutUser() {
         }
     };
     localStorage["appState"] = JSON.stringify(appState);
+    this.props.setUserInfo(false, {role : "guest"});
     this.setState(appState);
 }

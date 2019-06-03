@@ -153,3 +153,11 @@ export function queueFailure(data) {
     }
 }
 
+export function setUserInfo(isLoggedIn, user) {
+    return {
+        type : 'SET_USER_INFO',
+        isLoggedIn,
+        user
+    }
+}
+

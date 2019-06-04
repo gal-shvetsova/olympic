@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import {Link} from "react-router-dom";
 
 function hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
@@ -72,7 +73,7 @@ class Login extends Component {
                     <Button type="primary" disabled={this.state.email === '' || this.state.password === ''} onClick={this.handleLogin()} className="login-form-button">
                         Log in
                     </Button>
-                    Or <a href="">register now!</a>
+                    Or <Link to='/register'>register now!</Link>
                 </Form.Item>
             </Form>
         );

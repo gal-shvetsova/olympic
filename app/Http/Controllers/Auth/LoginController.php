@@ -73,6 +73,10 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $user = User::where('email', $request->email)->get()->first();
+        if (!$user) {
+            $response = ['success' => false, 'data' => 'Password or email is invalid'];
+            return response()->json($response, 200);
+        }
         if ($user->role !== "participant" && !$user->verified) {
             $response = ['success' => false, 'data' => 'You are not verified, please check your mail'];
             return response()->json($response, 200);

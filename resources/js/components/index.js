@@ -14,9 +14,7 @@ ReactDOM.render(
 
     <Provider store={createStore(reducers, composeWithDevTools(applyMiddleware(thunk)))}>
         <Router>
-            <div>
                 <AppContainer/>
-            </div>
         </Router>
     </Provider>
     , document.getElementById('root'));

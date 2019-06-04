@@ -28,8 +28,23 @@ h4 {
     display: none;
 }
 
-
+.Main {
+    position: relative;
+}
 .form {
-    width: 500px;
-    margin: auto;
+    padding: 0px 50px;
+    width: 50%;
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    top : 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+
+.login-form-forgot {
+    float: right;
+}
+.login-form-button {
+    width: 100%;
 }

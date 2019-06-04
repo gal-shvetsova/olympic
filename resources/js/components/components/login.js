@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
-import {FormErrors} from './formErrors';
-import {Link} from "react-router-dom";
+import { Form, Icon, Input, Button, Checkbox } from 'antd';
+
+function hasErrors(fieldsError) {
+    return Object.keys(fieldsError).some(field => fieldsError[field]);
+}
 
 class Login extends Component {
     constructor(props) {
@@ -8,9 +11,6 @@ class Login extends Component {
         this.state = {
             email: '',
             password: '',
-            formErrors: {email: ''},
-            emailValid: false,
-            formValid: false
         }
     }
 
@@ -18,40 +18,9 @@ class Login extends Component {
         return (e) => {
             const name = e.target.name;
             const value = e.target.value;
-            this.setState({[name]: value},
-                () => {
-                    this.validateField(name, value)
-                });
+            this.setState({[name]: value});
         }
     };
-
-    validateField(fieldName, value) {
-        let fieldValidationErrors = this.state.formErrors;
-        let emailValid = this.state.emailValid;
-
-        switch (fieldName) {
-            case 'email':
-                emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
-                fieldValidationErrors.email = emailValid ? '' : ' is invalid';
-                break;
-            case 'password':
-                break;
-            default:
-                break;
-        }
-        this.setState({
-            formErrors: fieldValidationErrors,
-            emailValid: emailValid,
-        }, this.validateForm);
-    }
-
-    validateForm() {
-        this.setState({formValid: this.state.emailValid});
-    }
-
-    errorClass(error) {
-        return (error.length === 0 ? '' : 'has-error');
-    }
 
     handleLogin() {
         return (e) => {
@@ -61,33 +30,53 @@ class Login extends Component {
     };
 
     render() {
+        const { getFieldDecorator } = this.props.form;
         return (
-            <form className="form">
-                <h2>Sign up</h2>
-                <div className="panel panel-default">
-                    <FormErrors formErrors={this.state.formErrors}/>
-                </div>
-                <div className={`form-group ${this.errorClass(this.state.formErrors.email)}`}>
-                    <label htmlFor="email">Email address</label>
-                    <input type="email" required className="form-control" name="email"
-                           placeholder="Email"
-                           value={this.state.email}
-                           onChange={this.handleUserInput()}/>
-                </div>
-                <div className={`form-group`}>
-                    <label htmlFor="password">Password</label>
-                    <input type="password" className="form-control" name="password"
-                           placeholder="Password"
-                           value={this.state.password}
-                           onChange={this.handleUserInput()}/>
-                </div>
-                <button type="submit" className="btn btn-primary" disabled={!this.state.formValid}
-                        onClick={this.handleLogin()}>Sign up
-                </button>
-                <Link to="/password/reset">Forgot password?</Link>
-            </form>
-        )
-    }
-}
+            <Form className="form">
+                <Form.Item>
+                    {getFieldDecorator('username', {
+                        rules: [{ required: true, message: 'Please input your email!' }],
+                    })(
+                        <Input
+                            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            placeholder="Email"
+                            name = 'email'
+                            onChange={this.handleUserInput().bind(this)}
+                        />,
+                    )}
+                </Form.Item>
+                <Form.Item>
+                    {getFieldDecorator('password', {
+                        rules: [{ required: true, message: 'Please input your Password!' }],
+                    })(
+                        <Input
+                            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            type="password"
+                            placeholder="Password"
+                            name='password'
+                            onChange={this.handleUserInput().bind(this)}
+                        />,
+                    )}
+                </Form.Item>
+                <Form.Item>
+                    {getFieldDecorator('remember', {
+                        valuePropName: 'checked',
+                        initialValue: true,
+                    })(<Checkbox>Remember me</Checkbox>)}
+                    <a className="login-form-forgot" href="">
+                        Forgot password
+                    </a>
 
-export default Login;
+                    <Button type="primary" disabled={this.state.email === '' || this.state.password === ''} onClick={this.handleLogin()} className="login-form-button">
+                        Log in
+                    </Button>
+                    Or <a href="">register now!</a>
+                </Form.Item>
+            </Form>
+        );
+    }
+
+
+}
+const LoginForm = Form.create({ name: 'login' })(Login);
+export default LoginForm;

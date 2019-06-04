@@ -7,6 +7,7 @@ import Register from "./register";
 import Queue from "./queue"
 import {_loginUser, _logoutUser} from "../actions/loginActions";
 import * as registerActionCreators from "../actions/registerAction";
+import {_verifyEmail} from "../actions/registerAction";
 import {_resetPassword} from "../actions/resetPasswordAction"
 import {isRole} from "../actions/roleActions";
 import OlympiadList from "./olympiad";
@@ -14,15 +15,24 @@ import StudentList from "./student";
 import TaskList from "./task";
 import TaskForm from "./taskForm"
 import Join from "./join";
-import {applyMiddleware, bindActionCreators, createStore} from "redux";
+import {applyMiddleware, createStore} from "redux";
 import {connect} from "react-redux";
 import {composeWithDevTools} from "redux-devtools-extension";
 import thunk from "redux-thunk";
 import ResetPassword from "./resetPassword";
 import Solution from "./solution";
 import Verify from "./verifyEmail";
-import {_verifyEmail} from "../actions/registerAction";
 import _forgotPassword from '../actions/forgotPasswordAction'
+import {Layout, Menu, message} from 'antd';
+
+const {SubMenu} = Menu;
+const {Header, Content, Sider} = Layout;
+
+message.config({
+    top: 100,
+    duration: 4,
+    maxCount: 3,
+});
 
 class App extends React.Component {
     constructor(props) {
@@ -30,7 +40,7 @@ class App extends React.Component {
         let state = localStorage["appState"];
         if (state) {
             let AppState = JSON.parse(state);
-            this.state = {isLoggedIn: AppState.isLoggedIn, user: AppState.user};
+            this.state = {isLoggedIn: AppState.isLoggedIn, user: AppState.user, error: {message: '', type: ''}};
         }
     };
 
@@ -39,7 +49,15 @@ class App extends React.Component {
         let state = localStorage["appState"];
         if (state) {
             let AppState = JSON.parse(state);
-            this.setState({isLoggedIn: AppState.isLoggedIn, user: AppState.user});
+            this.setState({isLoggedIn: AppState.isLoggedIn, user: AppState.user, error: {message: '', type: ''}});
+        }
+    }
+
+    onClose() {
+        return (e) => {
+            this.setState({error: {message: '', type: ''}});
+            e.preventDefault();
+            console.log(e);
         }
     }
 
@@ -53,140 +71,137 @@ class App extends React.Component {
         }
 
         return (
-    this.state.user ? (
-            <div id="main">
-                {
-                    isRole(this.state.user.role, ["admin"]) &&
-                    <Link to="/student">Student</Link>
-                }
-                {
-                    !isRole(this.state.user.role, ["participant"]) &&
-                    <Link to="/olympiad">Olympiad </Link>
-                }
+            this.state.user ? (
+                <Layout>
+                    <Header className="header">
+                        <div className="logo"/>
+                        <Menu
+                            theme="dark"
+                            mode="horizontal"
+                            defaultSelectedKeys={['2']}
+                            style={{lineHeight: '64px'}}
+                        >
+                            {
+                                isRole(this.state.user.role, ["admin"]) &&
+                                <Menu.Item><Link to="/student">Student</Link></Menu.Item>
+                            }
+                            {
+                                isRole(this.state.user.role, ["admin", "guest"]) &&
+                                <Menu.Item><Link to="/olympiad">Olympiad</Link></Menu.Item>
+                            }
+                            {
+                                isRole(this.state.user.role, ["participant"]) &&
+                                <Menu.Item><Link to={"/queue/" + this.state.user.id}>Queue</Link></Menu.Item>
+                            }
+                            {
+                                isRole(this.state.user.role, ["participant"]) &&
+                                <Menu.Item><Link to={"/solution/" + this.state.user.id}>Your tasks</Link></Menu.Item>
+                            }
+                        </Menu>
+                    </Header>
+                    <Content style={{padding: '0 50px'}}>
+                        <Switch>
 
-                {
-                    isRole(this.state.user.role, ["participant"]) &&
-                    <Link to={"/queue/" + this.state.user.id}>Queue</Link>
-                }
-                {
-                    isRole(this.state.user.role, ["participant"]) &&
-                    <Link to={"/solution/" + this.state.user.id}>Your tasks</Link>
-                }
-                <Switch>
+                            <Route
+                                path="/login"
+                                render={props => (<Login {...props} loginUser={_loginUser.bind(this)}/>)}
+                            />
 
-                    <Route
-                        path="/login"
-                        render={props => (<Login {...props} loginUser={_loginUser.bind(this)}/>)}
-                    />
+                            <Route
+                                path="/register/confirm/:token/"
+                                render={props => (<Verify {...props} verifyEmail={_verifyEmail.bind(this)}/>)}
+                            />
 
-                    <Route
-                        path="/register/confirm/:token/"
-                        render={props => (<Verify {...props} verifyEmail={_verifyEmail.bind(this)}/>)}
-                    />
+                            <Route
+                                path="/register/"
+                                render={props => (
+                                    <Register {...props}
+                                              registerUser={registerActionCreators._registerUser.bind(this)}/>)}
+                            />
 
-                    {
-                        this.props.history.location.pathname === '/register' &&
-                        <Route
-                            path="/register/"
-                            render={props => (
-                                <Register {...props} registerUser={registerActionCreators._registerUser.bind(this)}/>)}
-                        />
-                    }
+                            <Route
+                                path="/password/reset"
+                                render={props => (
+                                    <ForgotPassword {...props} forgotPassword={_forgotPassword.bind(this)}/>)}
+                            />
 
-                    <Route
-                        path="/password/reset"
-                        render={props => (<ForgotPassword {...props} forgotPassword={_forgotPassword.bind(this)}/>)}
-                    />
-
-                    <Route
-                        path="/password/reset/:token"
-                        render={(props) => (<NewPassword {...props} email={this.props.user.email}/>)}
-                    />
+                            <Route
+                                path="/password/reset/:token"
+                                render={(props) => (<NewPassword {...props} email={this.props.user.email}/>)}
+                            />
 
 
-                    <Route
-                        path="/join"
-                        render={props => (<Join {...props}
-                                                olympiad_id={this.props.olympiad_id}
-                                                student_id={this.state.user.id}
-                                                registerParticipant={registerActionCreators._registerParticipant.bind(this)}/>)}
-                    />
+                            <Route
+                                path="/join"
+                                render={props => (<Join {...props}
+                                                        olympiad_id={this.props.olympiad_id}
+                                                        student_id={this.state.user.id}
+                                                        registerParticipant={registerActionCreators._registerParticipant.bind(this)}/>)}
+                            />
 
-                    <Route
-                        path="/olympiad"
-                        render={props => <OlympiadList {...props}
-                                                       role={this.state.user.role}/>}
-                    />
+                            <Route
+                                path="/olympiad"
+                                render={props => <OlympiadList {...props}
+                                                               role={this.state.user.role}/>}
+                            />
 
-                    <Route
-                        path="/student"
-                        render={() => <StudentList role={this.state.user.role}/>}
-                    />
-                    <Route
-                        path="/task/:id"
-                        render={(props) => <TaskList {...props} olympiad_id={this.props.olympiad_id}
-                                                     role={this.state.user.role}/>}
-                    />
+                            <Route
+                                path="/student"
+                                render={() => <StudentList role={this.state.user.role}/>}
+                            />
+                            <Route
+                                path="/task/:id"
+                                render={(props) => <TaskList {...props} olympiad_id={this.props.olympiad_id}
+                                                             role={this.state.user.role}/>}
+                            />
 
-                    <Route
-                        path="/solution/:id/edit"
-                        render={props => (<TaskForm id={this.state.user.id} {...props}/>)}
-                    />
+                            <Route
+                                path="/solution/:id/edit"
+                                render={props => (<TaskForm id={this.state.user.id} {...props}/>)}
+                            />
 
-                    <Route
-                        path="/solution/:id/"
-                        render={props => (
-                            <Solution id={this.state.user.id} role={this.state.user.role} {...props}/>)}
-                    />
+                            <Route
+                                path="/solution/:id/"
+                                render={props => (
+                                    <Solution id={this.state.user.id} role={this.state.user.role} {...props}/>)}
+                            />
 
-                    <Route
-                        path="/queue/:id/"
-                        render={props => (<Queue id={this.state.user.id} role={this.state.user.role}{...props}/>)}
-                    />
-                </Switch>
+                            <Route
+                                path="/queue/:id/"
+                                render={props => (
+                                    <Queue id={this.state.user.id} role={this.state.user.role}{...props}/>)}
+                            />
+                        </Switch>
 
-                {
-                    isRole(this.state.user.role, ["admin", "participant", "student"]) &&
-                    <button onClick={_logoutUser.bind(this)}>Logout</button>
+                        {
+                            isRole(this.state.user.role, ["admin", "participant", "student"]) &&
+                            <button onClick={_logoutUser.bind(this)}>Logout</button>
 
-                }
+                        }
 
-                {
-                    isRole(this.state.user.role, ["participant", "student", "admin"]) &&
-                    <Route
-                        path="/password"
-                        render={props => (
-                            <ResetPassword {...props} email={this.state.user.email}
-                                           resetPassword={_resetPassword.bind(this)}/>)}
-                    />
-                }
+                        {
+                            isRole(this.state.user.role, ["participant", "student", "admin"]) &&
+                            <Route
+                                path="/password"
+                                render={props => (
+                                    <ResetPassword {...props} email={this.state.user.email}
+                                                   resetPassword={_resetPassword.bind(this)}/>)}
+                            />
+                        }
 
-                {
-                    isRole(this.state.user.role, ["participant", "student", "admin"]) &&
-                    <button onClick={() => this.props.history.replace("password")}>Reset password</button>
-                }
+                        {
+                            isRole(this.state.user.role, ["participant", "student", "admin"]) &&
+                            <button onClick={() => this.props.history.replace("password")}>Reset password</button>
+                        }
 
-                {
-                    isRole(this.state.user.role, ["student"]) &&
-                    <button onClick={registerActionCreators._deleteAccount.bind(this)}>Delete account</button>
-                }
+                        {
+                            isRole(this.state.user.role, ["student"]) &&
+                            <button onClick={registerActionCreators._deleteAccount.bind(this)}>Delete account</button>
+                        }
 
-                {
-                    isRole(this.state.user.role, ["guest"]) &&
-                    this.props.location.pathname !== "/register" &&
-                    <Link to="/register">
-                        Register
-                    </Link>
-                }
-                {
-                    isRole(this.state.user.role, ["guest"]) &&
-                    this.props.location.pathname !== "/login" &&
-                    <Link to="/login">
-                        Login
-                    </Link>
-                }
-            </div>
-    ):""
+                    </Content>
+                </Layout>
+            ) : ""
         );
     }
 }

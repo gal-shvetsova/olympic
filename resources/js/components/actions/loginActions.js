@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {message} from "antd";
 
 export function _loginUser(email, password) {
     let formData = new FormData();
@@ -32,7 +33,14 @@ export function _loginUser(email, password) {
                 });
             }
             else {
-                alert(json.data.data);
+             //   this.setState({
+               //     error: {
+                //        message: json.data.data,
+                 //       type: 'error'
+                 //   }
+               // });
+                message.error(json.data.data);
+
             }
         });
 

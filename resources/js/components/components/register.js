@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {FormErrors} from './formErrors';
 
 class Register extends Component {
     constructor(props) {
@@ -69,7 +68,6 @@ class Register extends Component {
             <form className="form">
                 <h2>Register</h2>
                 <div className="panel panel-default">
-                    <FormErrors formErrors={this.state.formErrors}/>
                 </div>
                 <div className={`form-group`}>
                     <label htmlFor="email">Name</label>

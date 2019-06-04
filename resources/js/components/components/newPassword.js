@@ -1,6 +1,4 @@
 import React, {Component} from 'react';
-import {FormErrors} from './formErrors';
-import _newPassword from "./newPassword"
 
 class NewPassword extends Component {
     constructor(props) {
@@ -46,7 +44,6 @@ class NewPassword extends Component {
     handleLogin() {
         return (e) => {
             e.preventDefault();
-        //   _newPassword(this.props.email, this.state.password);
         }
     };
 
@@ -54,9 +51,6 @@ class NewPassword extends Component {
         return (
             <form className="form">
                 <h2>Sign up</h2>
-                <div className="panel panel-default">
-                    <FormErrors formErrors={this.state.formErrors}/>
-                </div>
                 <div className={`form-group`}>
                     <label htmlFor="password">New password</label>
                     <input type="password" className="form-control" name="password"

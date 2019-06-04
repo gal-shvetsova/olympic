@@ -11,6 +11,7 @@ class Login extends Component {
         this.state = {
             email: '',
             password: '',
+            remember : true
         }
     }
 
@@ -18,14 +19,15 @@ class Login extends Component {
         return (e) => {
             const name = e.target.name;
             const value = e.target.value;
-            this.setState({[name]: value});
+            value ?
+            this.setState({[name]: value}) : this.setState({remember : e.target.checked})
         }
     };
 
     handleLogin() {
         return (e) => {
             e.preventDefault();
-           this.props.loginUser(this.state.email, this.state.password);
+           this.props.loginUser(this.state.email, this.state.password, this.state.remember);
         }
     };
 
@@ -62,7 +64,7 @@ class Login extends Component {
                     {getFieldDecorator('remember', {
                         valuePropName: 'checked',
                         initialValue: true,
-                    })(<Checkbox>Remember me</Checkbox>)}
+                    })(<Checkbox onChange={this.handleUserInput().bind(this)} name='remember'>Remember me</Checkbox>)}
                     <a className="login-form-forgot" href="">
                         Forgot password
                     </a>

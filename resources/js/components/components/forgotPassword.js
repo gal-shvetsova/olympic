@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {FormErrors} from './formErrors';
 
 
 class ForgotPassword extends Component {
@@ -50,7 +49,6 @@ class ForgotPassword extends Component {
             <form className="form">
                 <h2>Sign up</h2>
                 <div className="panel panel-default">
-                    <FormErrors formErrors={this.state.formErrors}/>
                 </div>
                 <div className={`form-group ${this.errorClass(this.state.formErrors.email)}`}>
                     <label htmlFor="email">Email address</label>

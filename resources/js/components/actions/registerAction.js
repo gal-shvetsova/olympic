@@ -1,11 +1,12 @@
 import axios from 'axios';
+import {message} from "antd";
 
 export function _registerUser(name, email, password, history) {
 
     let formData = new FormData();
     formData.append("password", password);
     formData.append("email", email);
-    formData.append("name", name)
+    formData.append("name", name);
     formData.append("olympiad_id", -1);
     formData.append("role", "student");
     formData.append("student_id", -1);
@@ -16,13 +17,14 @@ export function _registerUser(name, email, password, history) {
         })
         .then(json => {
             if (json.data.success) {
-                alert('Success! Verification link sent to your email');
+                message.success('Success! Verification link has been sent to your email');
+                history.replace('/login');
             } else {
-                alert(`Registration Failed!`);
+                message.error(json.data.data);
             }
         })
         .catch(error => {
-            alert("An Error Occured!" + error);
+            message.error("An Error Occured!" + error);
         });
 }
 

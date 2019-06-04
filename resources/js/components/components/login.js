@@ -2,10 +2,6 @@ import React, {Component} from 'react';
 import { Form, Icon, Input, Button, Checkbox } from 'antd';
 import {Link} from "react-router-dom";
 
-function hasErrors(fieldsError) {
-    return Object.keys(fieldsError).some(field => fieldsError[field]);
-}
-
 class Login extends Component {
     constructor(props) {
         super(props);
@@ -38,10 +34,14 @@ class Login extends Component {
             <Form className="form">
                 <Form.Item>
                     {getFieldDecorator('username', {
-                        rules: [{ required: true, message: 'Please input your email!' }],
+                        rules: [{ required: true, message: 'Please input your email!'},
+                            {
+                                type: 'email',
+                                message: 'The input is not valid E-mail!',
+                            }],
                     })(
                         <Input
-                            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />}
                             placeholder="Email"
                             name = 'email'
                             onChange={this.handleUserInput().bind(this)}

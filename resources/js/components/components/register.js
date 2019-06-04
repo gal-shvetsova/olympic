@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import { Form, Icon, Input, Button, message } from 'antd';
+import {Link} from "react-router-dom";
 
 class Register extends Component {
     constructor(props) {
@@ -7,10 +9,6 @@ class Register extends Component {
             email: '',
             password: '',
             name : ' ',
-            formErrors: {email: '', password : ''},
-            emailValid: false,
-            passwordValid: false,
-            formValid: false
         }
     }
 
@@ -18,84 +16,81 @@ class Register extends Component {
         return (e) => {
             const name = e.target.name;
             const value = e.target.value;
-            this.setState({[name]: value},
-                () => {
-                    this.validateField(name, value)
-                });
+            this.setState({[name]: value});
         }
     };
-
-    validateField(fieldName, value) {
-        let fieldValidationErrors = this.state.formErrors;
-        let emailValid = this.state.emailValid;
-        let passwordValid = this.state.passwordValid;
-        switch (fieldName) {
-            case 'email':
-                emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
-                fieldValidationErrors.email = emailValid ? '' : ' is invalid';
-                break;
-            case 'password':
-                passwordValid = value.length >= 6;
-                fieldValidationErrors.password = passwordValid ? '': ' is too short';
-                break;
-            default:
-                break;
-        }
-        this.setState({
-            formErrors: fieldValidationErrors,
-            emailValid: emailValid,
-            passwordValid : passwordValid
-        }, this.validateForm);
-    }
-
-    validateForm() {
-        this.setState({formValid: this.state.emailValid && this.state.passwordValid});
-    }
-
-    errorClass(error) {
-        return (error.length === 0 ? '' : 'has-error');
-    }
 
     handleRegister() {
         return (e) => {
             e.preventDefault();
-            this.props.registerUser(this.state.name, this.state.email, this.state.password);
+            message.info('Wait a sec');
+            this.props.registerUser(this.state.name, this.state.email, this.state.password, this.props.history);
+            this.setState( {
+                email: '',
+                password: '',
+                name : ' ',
+            });
+            this.props.form.setFieldsValue({
+                email: '',
+                password: '',
+                name : ' ',
+            });
         }
     };
 
     render() {
+        const { getFieldDecorator } = this.props.form;
         return (
-            <form className="form">
-                <h2>Register</h2>
-                <div className="panel panel-default">
-                </div>
-                <div className={`form-group`}>
-                    <label htmlFor="email">Name</label>
-                    <input type="email" required className="form-control" name="name"
-                           placeholder="Name"
-                           value={this.state.name}
-                           onChange={this.handleUserInput()}/>
-                </div>
-                <div className={`form-group ${this.errorClass(this.state.formErrors.email)}`}>
-                    <label htmlFor="email">Email address</label>
-                    <input type="email" required className="form-control" name="email"
-                           placeholder="Email"
-                           value={this.state.email}
-                           onChange={this.handleUserInput()}/>
-                </div>
-                <div className={`form-group ${this.errorClass(this.state.formErrors.email)}`}>
-                    <label htmlFor="password">Password</label>
-                    <input type="password" className="form-control" name="password"
-                           placeholder="Password"
-                           value={this.state.password}
-                           onChange={this.handleUserInput()}/>
-                </div>
-                <button type="submit" className="btn btn-primary" disabled={!this.state.formValid}
-                        onClick={this.handleRegister()}>Register
-                </button>
-            </form>
-        )
+            <Form className="form">
+                <Form.Item>
+                    {getFieldDecorator('name', {
+                        rules: [{ required: true, message: 'Please input your name!' }],
+                    })(
+                        <Input
+                            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            placeholder="Name"
+                            name = 'name'
+                            onChange={this.handleUserInput().bind(this)}
+                        />,
+                    )}
+                </Form.Item>
+                <Form.Item>
+                    {getFieldDecorator('email', {
+                        rules: [{ required: true, message: 'Please input your email!' },{
+                            type: 'email',
+                            message: 'The input is not valid E-mail!',
+                        },],
+                    })(
+                        <Input
+                            prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            placeholder="Email"
+                            name = 'email'
+                            onChange={this.handleUserInput().bind(this)}
+                        />,
+                    )}
+                </Form.Item>
+                <Form.Item>
+                    {
+                        getFieldDecorator('password', {
+                        rules: [{ required: true, message: 'Please input your Password!' }],
+                    })
+                    (
+                        <Input
+                            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            type="password"
+                            placeholder="Password"
+                            name='password'
+                            onChange={this.handleUserInput().bind(this)}
+                        />,
+                    )}
+                </Form.Item>
+                    <Button type="primary" disabled={this.state.email === '' || this.state.password === '' || this.state.name === ''} onClick={this.handleRegister()} className="register-form-button">
+                        Register
+                    </Button>
+                    Or <Link to='/login'>log in</Link> now!
+            </Form>
+        );
     }
 }
-
-export default Register;
+const RegisterForm = Form.create({ name: 'register' })(Register);
+export default RegisterForm;

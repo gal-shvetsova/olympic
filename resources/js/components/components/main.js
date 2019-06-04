@@ -31,7 +31,7 @@ const {Header, Content, Sider} = Layout;
 message.config({
     top: 100,
     duration: 4,
-    maxCount: 3,
+    maxCount: 1,
 });
 
 class App extends React.Component {

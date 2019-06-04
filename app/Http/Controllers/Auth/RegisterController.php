@@ -134,6 +134,10 @@ class RegisterController extends Controller
 
     private function registerUser(Request $request)
     {
+        if (User::where('email', $request->email)->get()->first()){
+            return response()->json(['success' => false, 'data' => 'User with this email already exist'], 200);
+        }
+
         $student = new Student();
         $student['last_name'] = $request->name;
         $student['user_role'] = $request->role;

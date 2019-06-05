@@ -188,17 +188,16 @@ class App extends React.Component {
                                     render={props => (
                                         <Queue id={this.state.user.id} role={this.state.user.role}{...props}/>)}
                                 />
+                                {
+                                    isRole(this.state.user.role, ["participant", "student", "admin"]) &&
+                                    <Route
+                                        path="/password"
+                                        render={props => (
+                                            <ResetPassword {...props} email={this.state.user.email}
+                                                           resetPassword={_resetPassword.bind(this)}/>)}
+                                    />
+                                }
                             </Switch>
-
-                            {
-                                isRole(this.state.user.role, ["participant", "student", "admin"]) &&
-                                <Route
-                                    path="/password"
-                                    render={props => (
-                                        <ResetPassword {...props} email={this.state.user.email}
-                                                       resetPassword={_resetPassword.bind(this)}/>)}
-                                />
-                            }
                         </Content>
                     </Layout>
                 </Layout>

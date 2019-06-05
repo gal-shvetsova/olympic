@@ -1,4 +1,5 @@
 import axios from "axios";
+import {message} from 'antd'
 
 export function _resetPassword(new_password, password, email) {
 
@@ -13,12 +14,10 @@ export function _resetPassword(new_password, password, email) {
         })
         .then(json => {
             if (json.data.success) {
-                const {name, id, email, auth_token, role, olympiad_id} = json.data.data;
+                const {name, id, email, role, olympiad_id} = json.data.data;
                 let userData = {
-                    name,
                     id,
                     email,
-                    auth_token,
                     role,
                     olympiad_id,
                     timestamp: new Date().toString()
@@ -32,12 +31,12 @@ export function _resetPassword(new_password, password, email) {
                     isLoggedIn: appState.isLoggedIn,
                     user: appState.user
                 });
-                alert('Success');
+                message.success('Success!')
             } else {
-                alert(`Reseting Failed!`);
+                message.error(json.data.data);
             }
         })
         .catch(error => {
-            alert("An Error Occured!" + error);
+            message.error("An Error Occured!" + error);
         });
 }

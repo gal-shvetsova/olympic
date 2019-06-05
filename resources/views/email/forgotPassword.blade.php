@@ -5,10 +5,10 @@
     <title>Reset password</title>
 </head>
 <body>
-<h1>Your link to reset password</h1>
+<h1>Your new password</h1>
 
 <p>
-    Перейдите <a href='{{ url("password/reset/{$user->token}") }}'>по ссылке </a>чтобы завершить регистрацию!
+    Your new password is {{ $password }}. You can change it after logging in.
 </p>
 </body>
 </html>

@@ -2,13 +2,13 @@ import React from "react";
 import {Link, Route, Switch, withRouter} from "react-router-dom";
 import Login from "./login";
 import ForgotPassword from "./forgotPassword"
-import NewPassword from "./newPassword"
 import Register from "./register";
 import Queue from "./queue"
 import {_loginUser, _logoutUser} from "../actions/loginActions";
 import * as registerActionCreators from "../actions/registerAction";
 import {_verifyEmail} from "../actions/registerAction";
 import {_resetPassword} from "../actions/resetPasswordAction"
+import {_forgotPassword} from "../actions/forgotPasswordAction"
 import {isRole} from "../actions/roleActions";
 import OlympiadList from "./olympiad";
 import StudentList from "./student";
@@ -22,7 +22,6 @@ import thunk from "redux-thunk";
 import ResetPassword from "./resetPassword";
 import Solution from "./solution";
 import Verify from "./verifyEmail";
-import _forgotPassword from '../actions/forgotPasswordAction'
 import {Layout, Menu, message} from 'antd';
 
 const {SubMenu} = Menu;
@@ -124,12 +123,6 @@ class App extends React.Component {
                                 render={props => (
                                     <ForgotPassword {...props} forgotPassword={_forgotPassword.bind(this)}/>)}
                             />
-
-                            <Route
-                                path="/password/reset/:token"
-                                render={(props) => (<NewPassword {...props} email={this.props.user.email}/>)}
-                            />
-
 
                             <Route
                                 path="/join"

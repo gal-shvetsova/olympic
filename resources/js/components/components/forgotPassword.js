@@ -1,14 +1,11 @@
 import React, {Component} from 'react';
-
+import {Button, Form, Icon, Input} from "antd";
 
 class ForgotPassword extends Component {
     constructor(props) {
         super(props);
         this.state = {
             email: '',
-            formErrors: {email: ''},
-            emailValid: false,
-            formValid: false
         }
     }
 
@@ -16,53 +13,46 @@ class ForgotPassword extends Component {
         return (e) => {
             const name = e.target.name;
             const value = e.target.value;
-            this.setState({[name]: value},
-                () => {
-                    this.validateField(name, value)
-                });
+            this.setState({[name]: value});
         }
     };
 
-    validateField(fieldName, value) {
-        let fieldValidationErrors = this.state.formErrors;
-        let emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
-        this.setState({
-            formErrors: fieldValidationErrors,
-            emailValid: emailValid,
-        }, this.validateForm);
-    }
-
-    validateForm() {
-        this.setState({formValid: this.state.emailValid});
-    }
-
-    errorClass(error) {
-        return (error.length === 0 ? '' : 'has-error');
-    }
-
-    handleSend(){
-        this.props.forgotPassword(this.state.email);
+    handleSend() {
+        return (e) => {
+            e.preventDefault();
+            this.props.forgotPassword(this.state.email);
+        }
     }
 
     render() {
+        const {getFieldDecorator} = this.props.form;
         return (
-            <form className="form">
-                <h2>Sign up</h2>
-                <div className="panel panel-default">
-                </div>
-                <div className={`form-group ${this.errorClass(this.state.formErrors.email)}`}>
-                    <label htmlFor="email">Email address</label>
-                    <input type="email" required className="form-control" name="email"
-                           placeholder="Email"
-                           value={this.state.email}
-                           onChange={this.handleUserInput()}/>
-                </div>
-                <button type="submit" className="btn btn-primary" disabled={!this.state.formValid}
-                        onClick={this.handleSend.bind(this)}>Ok
-                </button>
-            </form>
-        )
+            <Form className="form">
+                <Form.Item>
+                    {getFieldDecorator('email', {
+                        rules: [{required: true, message: 'Please input your email!'},
+                            {
+                                type: 'email',
+                                message: 'The input is not valid E-mail!',
+                            }],
+                    })(
+                        <Input
+                            prefix={<Icon type="mail" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                            placeholder="Email"
+                            name='email'
+                            onChange={this.handleUserInput().bind(this)}
+                        />,
+                    )}
+                </Form.Item>
+                <Button type="primary" disabled={this.state.email === ''} onClick={this.handleSend()}
+                        className="login-form-button">
+                    Ok
+                </Button>
+            </Form>
+        );
     }
+
 }
 
-export default ForgotPassword;
+const ForgotPasswordForm = Form.create({ name: 'register' })(ForgotPassword);
+export default ForgotPasswordForm;

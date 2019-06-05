@@ -41,22 +41,15 @@ class ForgotPasswordController extends Controller
 
     public function sendResetLinkEmail(Request $request){
         $user = User::where('email', $request->email)->get()->first();
+        $password = str_random(30);
+        $user->password = \Hash::make($password);
+        $user->save();
         if (!$user){
             $response = ['success' => false, 'data' => 'Can not found user with this email'];
         } else {
-            Mail::to($request->email)->send(new ForgotPassword($user));
+            Mail::to($request->email)->send(new ForgotPassword($password));
             $response = ['success' => true, 'data' => 'Ok'];
         }
         return response($response, 200);
-    }
-
-    protected function sendResetLinkResponse(Request $request, $response)
-    {
-        return response($response, 200);
-    }
-
-    protected function sendResetLinkFailedResponse(Request $request, $response)
-    {
-        return response($response, 205);
     }
 }

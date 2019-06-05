@@ -21,7 +21,8 @@ class Student extends Model
     public static function getAllStudents()
     {
         return Student::withCount(['user as olympiads' => function ($query) {
-            $query->where('role', '=', 'participant');}])->get();
+            $query->where('role', '=', 'participant');
+        }])->get();
     }
 
     public static function addStudent($newStudent)
@@ -52,21 +53,24 @@ class Student extends Model
     public static function deleteStudent($student)
     {
         $student_del = Student::find($student);
-        $student_del->user()->delete($student);
-        $student_del->delete();
+        if ($student_del) {
+            $student_del->user()->delete($student);
+            $student_del->delete();
+        }
     }
 
 
     public static function sortAndFilter($olympiads, $role, $field, $type)
     {
         $student = Student::withCount(['user as olympiads' => function ($query) {
-            $query->where('role', '=', 'participant');}]);
+            $query->where('role', '=', 'participant');
+        }]);
         if ($role !== 'all')
             $student->where('user_role', '=', $role);
 
         $student = $student->orderBy($field, $type)->get();
         $filtered = array();
-        for ($i = 0; $i < count($student); $i++){
+        for ($i = 0; $i < count($student); $i++) {
             if ($student[$i]['olympiads'] <= $olympiads[1] && $student[$i]['olympiads'] >= $olympiads[0])
                 $filtered[] = $student[$i];
         }

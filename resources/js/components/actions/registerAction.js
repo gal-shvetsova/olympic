@@ -81,7 +81,7 @@ export function _deleteAccount() {
         .then (json => {
             console.log(json);
             if (json.data === 200) {
-                alert("Success");
+                message.success("Success");
                 let appState = {
                     isLoggedIn: false,
                     user: {
@@ -90,16 +90,17 @@ export function _deleteAccount() {
                 };
                 localStorage["appState"] = JSON.stringify(appState);
                 this.setState(appState);
+                this.props.history.replace('/register');
             }
             else
-                alert("no");
+                message.error("Something went wrong");
         })
 }
 
-export function _verifyEmail($token){
+export function _verifyEmail(token){
     let host = window.location.hostname;
     axios
-        .get('http://' + host + '/api' + $token)
+        .get('http://' + host + '/api' + token)
         .then(response => {
             return response;
         })

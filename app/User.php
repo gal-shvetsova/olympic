@@ -75,6 +75,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public static function deleteUser($id)
     {
-        User::find($id)->delete();
+        $user = User::find($id);
+        if ($user) $user->delete();
     }
 }

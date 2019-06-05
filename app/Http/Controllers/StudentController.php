@@ -60,13 +60,17 @@ class StudentController extends Controller
      * @param int $field
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id, $type, $field)
+    public function destroy($id, $type = null, $field = null)
     {
+        $id = User::find($id)['student_id'];
         if (Student::find($id)['user_role'] != "admin")
             Student::deleteStudent($id);
-        $response = Student::sort($field, $type);
-        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
-        return response($answer, 200);
+        if ($type) {
+            $response = Student::sort($field, $type);
+            $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
+            return response($answer, 200);
+        }
+        return response( 200);
     }
 
     public function sort(Request $request)

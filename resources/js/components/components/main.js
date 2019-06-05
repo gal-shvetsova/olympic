@@ -22,7 +22,8 @@ import thunk from "redux-thunk";
 import ResetPassword from "./resetPassword";
 import Solution from "./solution";
 import Verify from "./verifyEmail";
-import {Layout, Menu, message} from 'antd';
+import {Layout, Menu, message, Modal} from 'antd';
+import {_deleteAccount} from "../actions/registerAction";
 
 const {SubMenu} = Menu;
 const {Header, Content, Sider, Icon} = Layout;
@@ -39,7 +40,7 @@ class App extends React.Component {
         let state = localStorage["appState"];
         if (state) {
             let AppState = JSON.parse(state);
-            this.state = {isLoggedIn: AppState.isLoggedIn, user: AppState.user, error: {message: '', type: ''}};
+            this.state = {isLoggedIn: AppState.isLoggedIn, user: AppState.user};
         }
     };
 
@@ -49,14 +50,6 @@ class App extends React.Component {
         if (state) {
             let AppState = JSON.parse(state);
             this.setState({isLoggedIn: AppState.isLoggedIn, user: AppState.user, error: {message: '', type: ''}});
-        }
-    }
-
-    onClose() {
-        return (e) => {
-            this.setState({error: {message: '', type: ''}});
-            e.preventDefault();
-            console.log(e);
         }
     }
 
@@ -95,7 +88,7 @@ class App extends React.Component {
                                 }
                                 {
                                     isRole(this.state.user.role, ["admin", "student", "participant"]) &&
-                                    <Menu.Item key="delete">Delete account</Menu.Item>
+                                    <Menu.Item key="delete" onClick={_deleteAccount.bind(this)}>Delete account</Menu.Item>
                                 }
                                 {
                                     isRole(this.state.user.role, ["admin", "student", "participant"]) &&
@@ -188,6 +181,7 @@ class App extends React.Component {
                                     render={props => (
                                         <Queue id={this.state.user.id} role={this.state.user.role}{...props}/>)}
                                 />
+
                                 {
                                     isRole(this.state.user.role, ["participant", "student", "admin"]) &&
                                     <Route

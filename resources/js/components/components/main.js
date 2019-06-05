@@ -25,7 +25,7 @@ import Verify from "./verifyEmail";
 import {Layout, Menu, message} from 'antd';
 
 const {SubMenu} = Menu;
-const {Header, Content, Sider} = Layout;
+const {Header, Content, Sider, Icon} = Layout;
 
 message.config({
     top: 100,
@@ -80,6 +80,29 @@ class App extends React.Component {
                             defaultSelectedKeys={['2']}
                             style={{lineHeight: '64px'}}
                         >
+                            <SubMenu key="sub1" title="Account">
+                                {
+                                    isRole(this.state.user.role, ["guest"]) &&
+                                    <Menu.Item key="login"><Link to={'login'}>Login</Link></Menu.Item>
+                                }
+                                {
+                                    isRole(this.state.user.role, ["guest"]) &&
+                                    <Menu.Item key="register"><Link to={'/register'}>Register</Link></Menu.Item>
+                                }
+                                {
+                                    isRole(this.state.user.role, ["admin", "student", "participant"]) &&
+                                    <Menu.Item key="reset"><Link to={'/password'}>Reset password</Link></Menu.Item>
+                                }
+                                {
+                                    isRole(this.state.user.role, ["admin", "student", "participant"]) &&
+                                    <Menu.Item key="delete">Delete account</Menu.Item>
+                                }
+                                {
+                                    isRole(this.state.user.role, ["admin", "student", "participant"]) &&
+                                    <Menu.Item key="logout" onClick={_logoutUser.bind(this)}>Logout</Menu.Item>
+                                }
+
+                            </SubMenu>
                             {
                                 isRole(this.state.user.role, ["admin"]) &&
                                 <Menu.Item><Link to="/student">Student</Link></Menu.Item>
@@ -98,101 +121,86 @@ class App extends React.Component {
                             }
                         </Menu>
                     </Header>
-                    <Content style={{padding: '0 50px'}}>
-                        <Switch>
+                    <Layout>
+                        <Content style={{padding: '0 50px'}}>
+                            <Switch>
 
-                            <Route
-                                path="/login"
-                                render={props => (<Login {...props} loginUser={_loginUser.bind(this)}/>)}
-                            />
+                                <Route
+                                    path="/login"
+                                    render={props => (<Login {...props} loginUser={_loginUser.bind(this)}/>)}
+                                />
 
-                            <Route
-                                path="/register/confirm/:token/"
-                                render={props => (<Verify {...props} verifyEmail={_verifyEmail.bind(this)}/>)}
-                            />
+                                <Route
+                                    path="/register/confirm/:token/"
+                                    render={props => (<Verify {...props} verifyEmail={_verifyEmail.bind(this)}/>)}
+                                />
 
-                            <Route
-                                path="/register/"
-                                render={props => (
-                                    <Register {...props}
-                                              registerUser={registerActionCreators._registerUser.bind(this)}/>)}
-                            />
+                                <Route
+                                    path="/register/"
+                                    render={props => (
+                                        <Register {...props}
+                                                  registerUser={registerActionCreators._registerUser.bind(this)}/>)}
+                                />
 
-                            <Route
-                                path="/password/reset"
-                                render={props => (
-                                    <ForgotPassword {...props} forgotPassword={_forgotPassword.bind(this)}/>)}
-                            />
+                                <Route
+                                    path="/password/reset"
+                                    render={props => (
+                                        <ForgotPassword {...props} forgotPassword={_forgotPassword.bind(this)}/>)}
+                                />
 
-                            <Route
-                                path="/join"
-                                render={props => (<Join {...props}
-                                                        olympiad_id={this.props.olympiad_id}
-                                                        student_id={this.state.user.id}
-                                                        registerParticipant={registerActionCreators._registerParticipant.bind(this)}/>)}
-                            />
+                                <Route
+                                    path="/join"
+                                    render={props => (<Join {...props}
+                                                            olympiad_id={this.props.olympiad_id}
+                                                            student_id={this.state.user.id}
+                                                            registerParticipant={registerActionCreators._registerParticipant.bind(this)}/>)}
+                                />
 
-                            <Route
-                                path="/olympiad"
-                                render={props => <OlympiadList {...props}
-                                                               role={this.state.user.role}/>}
-                            />
+                                <Route
+                                    path="/olympiad"
+                                    render={props => <OlympiadList {...props}
+                                                                   role={this.state.user.role}/>}
+                                />
 
-                            <Route
-                                path="/student"
-                                render={() => <StudentList role={this.state.user.role}/>}
-                            />
-                            <Route
-                                path="/task/:id"
-                                render={(props) => <TaskList {...props} olympiad_id={this.props.olympiad_id}
-                                                             role={this.state.user.role}/>}
-                            />
+                                <Route
+                                    path="/student"
+                                    render={() => <StudentList role={this.state.user.role}/>}
+                                />
+                                <Route
+                                    path="/task/:id"
+                                    render={(props) => <TaskList {...props} olympiad_id={this.props.olympiad_id}
+                                                                 role={this.state.user.role}/>}
+                                />
 
-                            <Route
-                                path="/solution/:id/edit"
-                                render={props => (<TaskForm id={this.state.user.id} {...props}/>)}
-                            />
+                                <Route
+                                    path="/solution/:id/edit"
+                                    render={props => (<TaskForm id={this.state.user.id} {...props}/>)}
+                                />
 
-                            <Route
-                                path="/solution/:id/"
-                                render={props => (
-                                    <Solution id={this.state.user.id} role={this.state.user.role} {...props}/>)}
-                            />
+                                <Route
+                                    path="/solution/:id/"
+                                    render={props => (
+                                        <Solution id={this.state.user.id} role={this.state.user.role} {...props}/>)}
+                                />
 
-                            <Route
-                                path="/queue/:id/"
-                                render={props => (
-                                    <Queue id={this.state.user.id} role={this.state.user.role}{...props}/>)}
-                            />
-                        </Switch>
+                                <Route
+                                    path="/queue/:id/"
+                                    render={props => (
+                                        <Queue id={this.state.user.id} role={this.state.user.role}{...props}/>)}
+                                />
+                            </Switch>
 
-                        {
-                            isRole(this.state.user.role, ["admin", "participant", "student"]) &&
-                            <button onClick={_logoutUser.bind(this)}>Logout</button>
-
-                        }
-
-                        {
-                            isRole(this.state.user.role, ["participant", "student", "admin"]) &&
-                            <Route
-                                path="/password"
-                                render={props => (
-                                    <ResetPassword {...props} email={this.state.user.email}
-                                                   resetPassword={_resetPassword.bind(this)}/>)}
-                            />
-                        }
-
-                        {
-                            isRole(this.state.user.role, ["participant", "student", "admin"]) &&
-                            <button onClick={() => this.props.history.replace("password")}>Reset password</button>
-                        }
-
-                        {
-                            isRole(this.state.user.role, ["student"]) &&
-                            <button onClick={registerActionCreators._deleteAccount.bind(this)}>Delete account</button>
-                        }
-
-                    </Content>
+                            {
+                                isRole(this.state.user.role, ["participant", "student", "admin"]) &&
+                                <Route
+                                    path="/password"
+                                    render={props => (
+                                        <ResetPassword {...props} email={this.state.user.email}
+                                                       resetPassword={_resetPassword.bind(this)}/>)}
+                                />
+                            }
+                        </Content>
+                    </Layout>
                 </Layout>
             ) : ""
         );

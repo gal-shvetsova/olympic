@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import {Button, Form, Icon, Input} from "antd";
+import {Button, Form, Icon, Input, message} from "antd";
 
 class ForgotPassword extends Component {
     constructor(props) {
         super(props);
         this.state = {
             email: '',
+            send : false
         }
     }
 
@@ -17,10 +18,16 @@ class ForgotPassword extends Component {
         }
     };
 
+    handleLoad(load){
+        this.setState({send : load});
+    }
+
     handleSend() {
         return (e) => {
+            message.info('Wait a second');
             e.preventDefault();
-            this.props.forgotPassword(this.state.email);
+            this.setState({send : true});
+            this.props.forgotPassword(this.state.email, this.handleLoad.bind(this));
         }
     }
 
@@ -44,7 +51,7 @@ class ForgotPassword extends Component {
                         />,
                     )}
                 </Form.Item>
-                <Button type="primary" disabled={this.state.email === ''} onClick={this.handleSend()}
+                <Button type="primary" disabled={this.state.email === '' || this.state.send} onClick={this.handleSend()}
                         className="login-form-button">
                     Ok
                 </Button>
@@ -54,5 +61,5 @@ class ForgotPassword extends Component {
 
 }
 
-const ForgotPasswordForm = Form.create({ name: 'register' })(ForgotPassword);
+const ForgotPasswordForm = Form.create({name: 'register'})(ForgotPassword);
 export default ForgotPasswordForm;

@@ -22,7 +22,7 @@ class ForgotPasswordController extends Controller
     |
     */
 
-  //  use SendsPasswordResetEmails;
+    //  use SendsPasswordResetEmails;
 
     public function showLinkRequestForm()
     {
@@ -39,17 +39,19 @@ class ForgotPasswordController extends Controller
         $this->middleware('guest');
     }
 
-    public function sendResetLinkEmail(Request $request){
+    public function sendResetLinkEmail(Request $request)
+    {
         $user = User::where('email', $request->email)->get()->first();
+        if (!$user) {
+            $response = ['success' => false, 'data' => 'Can not found user with this email'];
+            return response($response, 200);
+        }
         $password = str_random(30);
         $user->password = \Hash::make($password);
         $user->save();
-        if (!$user){
-            $response = ['success' => false, 'data' => 'Can not found user with this email'];
-        } else {
-            Mail::to($request->email)->send(new ForgotPassword($password));
-            $response = ['success' => true, 'data' => 'Ok'];
-        }
+
+        Mail::to($request->email)->send(new ForgotPassword($password));
+        $response = ['success' => true, 'data' => 'Ok'];
         return response($response, 200);
     }
 }

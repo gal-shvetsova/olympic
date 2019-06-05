@@ -1,6 +1,7 @@
 import axios from "axios";
+import {message} from 'antd';
 
-export function _forgotPassword(email) {
+export function _forgotPassword(email, handleLoad) {
     let formData = new FormData();
     formData.append("email", email);
     let host = window.location.hostname;
@@ -10,10 +11,12 @@ export function _forgotPassword(email) {
         })
         .then(json => {
             if (json.data.success) {
-                alert('Success, please check your mail');
+                message.success('Success, please check your mail');
+                this.props.history.replace('/login');
             }
             else {
-                alert(json.data.data);
+                message.error(json.data.data);
+                handleLoad(false);
             }
         });
 

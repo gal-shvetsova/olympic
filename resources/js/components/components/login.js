@@ -66,7 +66,7 @@ class Login extends Component {
                         valuePropName: 'checked',
                         initialValue: true,
                     })(<Checkbox onChange={this.handleUserInput().bind(this)} name='remember'>Remember me</Checkbox>)}
-                    <Link to="/password/reset">
+                    <Link to="/password/reset" className = 'login-form-forgot'>
                         Forgot password
                     </Link>
 

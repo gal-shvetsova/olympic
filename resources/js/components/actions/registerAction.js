@@ -106,13 +106,13 @@ export function _verifyEmail(token){
         })
         .then(json => {
             if (json.data.response === 'ok') {
-               alert("Verifieid");
+               message.success('Successfully verified! Please log in')
             } else {
-                alert(`Verification Failed!`);
+                message.error('Something went wrong');
             }
         })
         .catch(error => {
-            alert("An Error Occured!" + error);
+            message.error("An Error Occured!" + error);
         });
 }
 

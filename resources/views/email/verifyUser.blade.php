@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Активация регистрации нового ползователя</title>
+    <meta charset="UTF-8" >
+    <title >New user's verification</title>
 </head>
 <body>
-<h1>Спасибо за регистрацию, {{$user->name}}!</h1>
+<h1 class="mail">Thank you for registration, {{$user->name}}!</h1>
 
-<p>
-    Перейдите <a href='{{ url("register/confirm/{$user->token}") }}'>по ссылке </a>чтобы завершить регистрацию!
+<p class="mail">
+    Please click <a href='{{ url("register/confirm/{$user->token}") }}'> on link </a> for verification!
 </p>
 </body>
 </html>

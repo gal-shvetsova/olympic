@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Redirect} from 'react-router'
+import {Button, Form} from "antd";
 
 class Verify  extends Component {
 
@@ -12,16 +13,17 @@ class Verify  extends Component {
     render() {
         return (
             !this.state.ok ?
-            <div id="main">
-                    <h3 style={{padding: 15}}>You were verified. Please login</h3>
-                    <button
-                        onClick={() => this.setState({ok : true})}>
-                        Ok
-                    </button>
-            </div> : <Redirect to="/login"/>
+            <Form className="form">
+                <Button
+                    className='verify-form-button'
+                    onClick={() => this.setState({ok : true})}>
+                    To login
+                </Button>
+            </Form> : <Redirect to="/login"/>
         );
     }
+
 }
 
-
-export default Verify;
+const VerifyForm = Form.create({ name: 'verify' })(Verify);
+export default VerifyForm;

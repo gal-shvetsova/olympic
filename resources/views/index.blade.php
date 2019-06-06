@@ -7,7 +7,7 @@
     <link rel="manifest" href="/manifest.json">
     <link rel="shortcut icon" href="/favicon.ico">
     <link rel="stylesheet" type="text/css" href="{{ URL::asset('css/style.css')  }}">
-    <title>React App</title>
+    <title>Olympic</title>
 </head>
 <body>
 

@@ -21,4 +21,8 @@ class UserController extends Controller
         User::deleteUser($id);
         return response(200);
     }
+
+    public function auth(Request $request){
+            return $request->user();
+    }
 }

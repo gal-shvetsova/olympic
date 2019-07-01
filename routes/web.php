@@ -18,36 +18,20 @@ Route::any('/student', 'StudentController@student');
 
 Route::any('/task/{id}', 'TaskController@task');
 
-Route::any('/join', function () {
-    return view('.index');
-});
+Route::any('/join', 'Controller@index');
 
-Route::any('/password', function () {
-    return view('.index');
-});
+Route::any('/password', 'Controller@index');
 
-Route::any('/solution/{id}', function () {
-    return view('.index');
-});
+Route::any('/solution/{id}', 'Controller@index');
 
-Route::any('/solution', function () {
-    return view('.index');
-});
+Route::any('/solution', 'Controller@index');
 
-Route::any('/login', function () {
-    return view('.index');
-});
+Route::any('/login', 'Controller@index');
 
-Route::any('/queue/{id}', function () {
-    return view('.index');
-});
+Route::any('/queue/{id}', 'Controller@index');
 
-Route::any('/solution/{id}/edit', function () {
-    return view('.index');
-});
+Route::any('/solution/{id}/edit', 'Controller@index');
 
-Route::any('/register/confirm/{token}', function () {
-    return view('.index');
-});
+Route::any('/register/confirm/{token}', 'Controller@index');
 
 Route::auth(['verify' => true]);

@@ -524,7 +524,7 @@
       <workItem from="1557373656487" duration="10296000" />
       <workItem from="1557387006472" duration="4000" />
       <workItem from="1557387039278" duration="31124000" />
-      <workItem from="1557995481765" duration="152106000" />
+      <workItem from="1557995481765" duration="152367000" />
     </task>
     <task id="LOCAL-00001" summary="sending verification link and making verification by it">
       <created>1558349750377</created>
@@ -740,7 +740,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="565809000" />
+    <option name="totallyTimeSpent" value="566070000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">

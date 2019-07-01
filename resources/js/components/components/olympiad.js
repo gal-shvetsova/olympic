@@ -32,16 +32,7 @@ export class OlympiadList extends Component {
             ],
             deadline: "all"
         };
-        this.setWrapperRef = this.setWrapperRef.bind(this);
-        this.handleClickOutside = this.handleClickOutside.bind(this);
-    }
 
-    componentDidMount() {
-        document.addEventListener('mousedown', this.handleClickOutside);
-    }
-
-    componentWillUnmount() {
-        document.removeEventListener('mousedown', this.handleClickOutside);
     }
 
     createOlympiadList() {
@@ -118,21 +109,6 @@ export class OlympiadList extends Component {
         }
     }
 
-    setWrapperRef(node) {
-        this.wrapperRef = node;
-    }
-
-    handleClickOutside(event) {
-        const olympiadEdit = document.getElementsByClassName("olympiadEdit")[0];
-        const join = document.getElementsByClassName("join")[0];
-        if (!event.path.includes(olympiadEdit) && !event.path.includes(join)) {
-            if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-                this.props.selectOlympiad(-1);
-                this.props.getOlympiadEdit({}, false);
-            }
-        }
-    }
-
 
     handleToTask(id) {
         this.props.history.push("task/" + id);
@@ -148,7 +124,7 @@ export class OlympiadList extends Component {
             wrapperCol: {span: 12},
         };
         return (!isRole(this.props.role, ["participant"]) ?
-                <div className="Olympiad" ref={this.setWrapperRef}>
+                <div className="Olympiad">
                     <h4>Olympiad</h4>
                     {this.createOlympiadList()}
                     {

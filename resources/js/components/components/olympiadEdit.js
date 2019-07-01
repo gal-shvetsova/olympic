@@ -3,21 +3,38 @@ import * as actionCreators from '../actions/';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as requestActionCreators from '../actions/requestActions';
-
+import {Button, Checkbox, Icon, Input, InputNumber, Form, DatePicker} from "antd";
+import moment from 'moment';
+import {Link} from "react-router-dom";
+import {message} from 'antd';
+const dateFormat = 'YYYY-MM-DD';
 export class OlympiadEdit extends Component {
 
-    handleChange() {
-        return (e) => {
-            e.preventDefault();
-            const name = e.target.name;
-            const value = e.target.value;
+    constructor(props) {
+        super(props);
+    }
+
+    handleChange(date = false, dateString = false) {
+        console.log(dateString);
+        if (dateString === false) {
+            return (e) => {
+                //e.preventDefault();
+                let name, value;
+                name = e.target.name;
+                value = e.target.value;
+                console.log(parseInt(value), name);
+                if (name === "hardness" && (parseInt(value) > 10 || parseInt(value) < 0))
+                    return;
+                this.props.getOlympiadEdit(Object.assign({}, this.props.table, {[name]: value}), true)
+            }
+        } else {
             let today = new Date();
-            let date = new Date(value.replace(/(\d+)-(\d+)-(\d+)/, '$2/$3/$1'));
-            if (name === "hardness" && (value > 10 || value < 0))
+
+            if (!date.localeCompare("") && (date < today || date > today.setMonth(today.getMonth() + 1))) {
+                message.error("Day has passed");
                 return;
-            if (name === "deadline" && (date < today || date > today.setMonth(today.getMonth() + 1)))
-                return;
-            this.props.getOlympiadEdit(Object.assign({}, this.props.table, {[name]: value}), true)
+            }
+            this.props.getOlympiadEdit(Object.assign({}, this.props.table, {['deadline']: date}), true)
         }
     }
 
@@ -39,36 +56,49 @@ export class OlympiadEdit extends Component {
     }
 
     render() {
+        const {getFieldDecorator} = this.props.form;
         const table = this.props.table;
         return (
-            this.props.show ?
-                <div className="olympiadEdit">
-                    <form className="form">
-                        <div className={`form-group`}>
-                            <label htmlFor="name">Name</label>
-                            <input type="text" required className="form-control" name="name"
-                                   value={table.name || ""}
-                                   onChange={this.handleChange()}/>
-                        </div>
-                        <div className={`form-group`}>
-                            <label htmlFor="hardness">Hardness</label>
-                            <input type="number" className="form-control" name="hardness"
-                                   value={table.hardness || ""}
-                                   onChange={this.handleChange()}/>
-                        </div>
-                        <div className={`form-group`}>
-                            <label htmlFor="deadline">Deadline</label>
-                            <input type="date" className="form-control" name="deadline"
-                                   value={table.deadline || ""}
-                                   onChange={this.handleChange()}/>
-                        </div>
-                        <button type="button" className="btn btn-primary" disabled={!(table.name && table.hardness && table.deadline)}
-                                onClick={this.handleSubmit.bind(this)}>Ok
-                        </button>
-                        <button type="button" className="btn btn-primary" onClick={this.hide.bind(this)}>Cancel</button>
-                    </form>
-                </div>
-                : "");
+            this.props.show ? (
+                <Form className="form">
+                    <Form.Item>
+                        {getFieldDecorator('name', {
+                            rules: [{required: true, message: 'Please input name!'}],
+                        })(
+                            <Input
+                                prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                                placeholder="Name"
+                                value={table.name}
+                                name='name'
+                                onChange={this.handleChange.bind(this)}
+                            />,
+                        )}
+                    </Form.Item>
+                    <Form.Item>
+                        <Input
+                            prefix={<Icon type="number" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                            placeholder="number"
+                            name='hardness'
+                            type='number'
+                            value={table.hardness}
+                            min={0}
+                            max={10}
+                            onChange={this.handleChange.bind(this)}
+                        />
+                    </Form.Item>
+                    <Form.Item>
+                        <DatePicker
+                            className={'date'}
+                            style={{width: '50%'}}
+                            value={moment(table.deadline, dateFormat) }
+                            placeholder={'Pick date'}
+                            format={dateFormat}
+                            name='deadline'
+                            onChange={this.handleChange.bind(this)}
+                        />
+                    </Form.Item>
+                </Form>) : ""
+        );
     }
 
 }
@@ -89,4 +119,5 @@ const mapDispatchToProps = function (dispatch) {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(OlympiadEdit)
+const OlympiadEditForm = Form.create({name: 'olympiadEdit'})(connect(mapStateToProps, mapDispatchToProps)(OlympiadEdit));
+export default OlympiadEditForm;

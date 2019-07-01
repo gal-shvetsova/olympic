@@ -24,7 +24,6 @@ import Solution from "./solution";
 import Verify from "./verifyEmail";
 import {Layout, Menu, message, Modal} from 'antd';
 import {_deleteAccount} from "../actions/registerAction";
-
 const {SubMenu} = Menu;
 const {Header, Content, Sider, Icon} = Layout;
 

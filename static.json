@@ -3,6 +3,6 @@
   "root": "public/",
   "clean_urls": false,
   "routes": {
-    "/**": "index.php"
+    "/**": "resources/views/index.blade.php"
   }
 }

@@ -1,6 +1,6 @@
 
 {
-  "root": "public/",
+  "root": "public/index.php",
   "clean_urls": false,
   "routes": {
     "/**": "index.blade.php"

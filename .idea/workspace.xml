@@ -146,7 +146,9 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/composer.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-408" />
+            <state relative-caret-position="9">
+              <caret line="38" column="17" lean-forward="true" selection-start-line="38" selection-start-column="17" selection-end-line="38" selection-end-column="17" />
+            </state>
           </provider>
         </entry>
       </file>
@@ -227,7 +229,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/Http/Controllers/OlympiadController.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/TaskController.php" />
         <option value="$PROJECT_DIR$/app/Task.php" />
         <option value="$PROJECT_DIR$/resources/js/components/components/task.js" />
@@ -278,6 +279,7 @@
         <option value="$PROJECT_DIR$/routes/api.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Controller.php" />
         <option value="$PROJECT_DIR$/routes/web.php" />
+        <option value="$PROJECT_DIR$/composer.json" />
       </list>
     </option>
   </component>
@@ -522,7 +524,7 @@
       <workItem from="1557373656487" duration="10296000" />
       <workItem from="1557387006472" duration="4000" />
       <workItem from="1557387039278" duration="31124000" />
-      <workItem from="1557995481765" duration="151351000" />
+      <workItem from="1557995481765" duration="152106000" />
     </task>
     <task id="LOCAL-00001" summary="sending verification link and making verification by it">
       <created>1558349750377</created>
@@ -738,7 +740,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="565054000" />
+    <option name="totallyTimeSpent" value="565809000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -768,7 +770,7 @@
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.32937366" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.18594356" side_tool="true" weight="0.28185746" />
       <window_info anchor="bottom" id="Database Console" order="12" weight="0.32937366" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="13" sideWeight="0.81405646" visible="true" weight="0.9676026" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="13" sideWeight="0.81405646" visible="true" weight="0.8866091" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -802,7 +804,6 @@
     <option name="version" value="1" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="filter on olympiad page" />
     <MESSAGE value="filter on olympiad page done" />
     <MESSAGE value="filter on student page done" />
     <MESSAGE value="sort in tasks page" />
@@ -827,7 +828,8 @@
     <MESSAGE value="design in verify page" />
     <MESSAGE value="delete closures" />
     <MESSAGE value="designing olympic page" />
-    <option name="LAST_COMMIT_MESSAGE" value="designing olympic page" />
+    <MESSAGE value="update composer" />
+    <option name="LAST_COMMIT_MESSAGE" value="update composer" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/resources/js/components/components/queue.js">
@@ -1236,7 +1238,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/composer.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-408" />
+        <state relative-caret-position="9">
+          <caret line="38" column="17" lean-forward="true" selection-start-line="38" selection-start-column="17" selection-end-line="38" selection-end-column="17" />
+        </state>
       </provider>
     </entry>
   </component>

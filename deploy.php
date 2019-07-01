@@ -8,11 +8,9 @@ set('application', 'my_project');
 
 // Project repository
 set('repository', 'https://github.com/gal-shvetsova/olympic.git');
+// Configuration
 
-// [Optional] Allocate tty for git clone. Default value is false.
-set('git_tty', true); 
-
-// Shared files/dirs between deploys 
+set('git_tty', true); // [Optional] Allocate tty for git on first deployment
 add('shared_files', [
     '.env'
 ]);
@@ -31,14 +29,14 @@ add('writable_dirs', [
     'storage/logs',
 ]);
 
-// Writable dirs by web server 
-
 // Hosts
 
-host('olympic.test')
-->stage('production')
+host('192.168.10.10')
+    ->stage('production')
     ->user('deployer')
-    ->set('deploy_path', '~/code/olympic');
+    ->set('deploy_path', '/home/vagrant/olympic/public');
+
+// Tasks
 
 desc('Restart PHP-FPM service');
 task('php-fpm:restart', function () {
@@ -68,9 +66,10 @@ task('deploy', [
     'artisan:view:clear',
     'artisan:cache:clear',
     'artisan:config:cache',
-   'artisan:migrate',
+//    'artisan:migrate',
     'deploy:symlink',
     'php-fpm:restart',
     'deploy:unlock',
     'cleanup',
 ]);
+

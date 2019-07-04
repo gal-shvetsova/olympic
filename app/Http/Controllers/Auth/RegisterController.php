@@ -172,9 +172,8 @@ class RegisterController extends Controller
     private function registerParticipant(Request $request)
     {
         $student_id = $request->student_id;
-
         if ($accounts = Student::find($student_id)) {
-            if ($accounts->user()->where('olympiad_id', '=', $request->olympiad_id)->count() > 1) {
+            if ($accounts->user()->where('olympiad_id', '=', $request->olympiad_id)->count() > 0) {
                 $response = ['success' => false, 'data' => 'You already joined this olympiad'];
                 return response()->json($response, 201);
             }
@@ -205,14 +204,14 @@ class RegisterController extends Controller
             foreach (Olympiad::find($request->olympiad_id)->tasks()->get() as $task) {
                 $solution = new Solution();
                 $solution['start'] = date("Y-m-d H:i:s", mktime(0, 0, 0, 0, 0, 0000));
-                $solution['student_id'] = $request->student_id;
+                $solution['student_id'] = $user->id;
                 $solution['olympiad_id'] = $request->olympiad_id;
                 $solution['task_id'] = $task['id'];
                 $solution['status'] = "not started";
                 $solution['score'] = -1;
                 $solution->save();
             }
-            $response = ['success' => true, 'data' => ['name' => $user->name, 'id' => $user->student_id, 'email' => $request->email, 'auth_token' => $token, 'olympiad_id' => $user->olympiad_id, 'role' => 'participant']];
+            $response = ['success' => true, 'data' => ['name' => $user->name, 'id' => $user->id, 'email' => $request->email, 'auth_token' => $token, 'olympiad_id' => $user->olympiad_id, 'role' => 'participant']];
         } else
             $response = ['success' => false, 'data' => 'Couldnt register user'];
         return response()->json($response, 201);

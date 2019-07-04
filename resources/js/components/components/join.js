@@ -1,6 +1,9 @@
 import React from "react";
 import {Link} from "react-router-dom";
+import {Button, Icon, Input, Form} from "antd";
+import {Typography} from 'antd';
 
+const {Paragraph} = Typography;
 const password_lenght = 10;
 const login_lenght = 5;
 const password_set = "abcdefghijklmnopqrstuvwxyz1234567890";
@@ -22,51 +25,45 @@ function login() {
     return login;
 }
 
-const Join = ({history, registerParticipant, olympiad_id, student_id = f => f}) => {
-    let _login, _password;
-    const handleJoin = e => {
-        e.preventDefault();
-        registerParticipant({
-            login: _login.value + '@olympic.test',
-            password: _password.value,
-            olympiad_id: olympiad_id,
-            role: "participant",
-            student_id: student_id
-        });
-        history.push("/olympiad");
-    };
-    return (
-        <div id="main">
-            <form id="login-form" action="" onSubmit={handleJoin} method="post">
-                <h3 style={{padding: 15}}>Join Form</h3>
-                <h4> Your login </h4>
-                <input
-                    ref={input => (_login = input)}
-                    id="email-input"
-                    className="center-block"
-                    value={login()}
-                >
-                </input>
-                <h4> Your password </h4>
-                <input
-                    ref={input => (_password = input)}
-                    id="password-input"
-                    className="center-block"
-                    value={password()}>
-                </input>
-                <p/>
-                <button
-                    type="submit"
-                    className="landing-page-btn center-block text-center"
-                    id="email-login-btn"
-                >
-                    Join
-                </button>
-                <button onClick={() => history.push("/olympiad")}>Back</button>
-            </form>
-        </div>
-    );
-};
+class Join extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            login: login() + '@olympic.test',
+            password: password()
+        }
+    }
+
+    handleJoin() {
+            this.props.registerParticipant({
+                login: this.state.login,
+                password: this.state.password,
+                olympiad_id: this.props.olympiad_id,
+                role: "participant",
+                student_id: this.props.student_id,
+                id : this.props.id
+            });
+            this.props.history.push('/olympiad');
+       // document.location.href = "/olympiad";
+    }
+
+    render() {
+        return (
+            <Form className='Join'>
+                <Form.Item
+                    label='Email'>
+                    <Paragraph copyable>{this.state.login}</Paragraph>
+                </Form.Item>
+                <Form.Item
+                    label='Password'>
+                    <Paragraph copyable>{this.state.password}</Paragraph>
+                </Form.Item>
+                <Button onClick={this.handleJoin.bind(this)}>Join</Button>
+                <Button onClick={() => document.location.href = "/olympiad"}>Back</Button>
+            </Form>
+        );
+    }
+}
 
 
 export default Join;

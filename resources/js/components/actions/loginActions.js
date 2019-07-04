@@ -11,9 +11,10 @@ export function _loginUser(email, password, remember) {
         })
         .then(json => {
             if (json.data.success) {
-                const {id, role, email, olympiad_id} = json.data.data;
+                const {student_id, id, role, email, olympiad_id} = json.data.data;
                 let userData = {
                     id : id,
+                    student_id : student_id,
                     role : role,
                     email : email,
                     olympiad_id : olympiad_id,

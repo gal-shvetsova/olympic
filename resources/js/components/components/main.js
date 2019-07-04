@@ -100,7 +100,7 @@ class App extends React.Component {
                                 <Menu.Item><Link to="/student">Student</Link></Menu.Item>
                             }
                             {
-                                isRole(this.state.user.role, ["admin", "guest"]) &&
+                                isRole(this.state.user.role, ["admin", "guest", "student"]) &&
                                 <Menu.Item><Link to="/olympiad">Olympiad</Link></Menu.Item>
                             }
                             {
@@ -144,7 +144,8 @@ class App extends React.Component {
                                     path="/join"
                                     render={props => (<Join {...props}
                                                             olympiad_id={this.props.olympiad_id}
-                                                            student_id={this.state.user.id}
+                                                            student_id={this.state.user.student_id}
+                                                            id={this.state.user.id}
                                                             registerParticipant={registerActionCreators._registerParticipant.bind(this)}/>)}
                                 />
 

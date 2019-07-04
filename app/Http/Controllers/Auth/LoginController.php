@@ -90,6 +90,7 @@ class LoginController extends Controller
                 'data' =>
                     [
                         'id' => $user->id,
+                        'student_id' => $user->student_id,
                         'auth_token' => $user->auth_token,
                         'name' => $user->name,
                         'email' => $user->email,

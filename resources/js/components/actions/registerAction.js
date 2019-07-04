@@ -39,6 +39,7 @@ export function _registerParticipant(args = {password : "", login : "", olympiad
     formData.append("olympiad_id", args.olympiad_id);
     formData.append("role", args.role);
     formData.append("student_id", args.student_id);
+    formData.append("id", args.id);
     axios
         .post("api/register", formData)
         .then(response => {
@@ -46,32 +47,13 @@ export function _registerParticipant(args = {password : "", login : "", olympiad
         })
         .then(json => {
             if (json.data.success) {
-                const {name, id, email, auth_token, role, olympiad_id} = json.data.data;
-                let userData = {
-                    name,
-                    id,
-                    email,
-                    auth_token,
-                    role,
-                    olympiad_id,
-                    timestamp: new Date().toString()
-                };
-                let appState = {
-                    isLoggedIn: true,
-                    user: userData
-                };
-                localStorage["appState"] = JSON.stringify(appState);
-                this.setState({
-                    isLoggedIn: appState.isLoggedIn,
-                    user: appState.user
-                });
-                alert('Success!');
+                message.success('Success!');
             } else {
-                alert(`Registration Failed!`);
+                message.error(json.data.data);
             }
         })
         .catch(error => {
-            alert("An Error Occured!" + error);
+            message.error("An Error Occured!" + error);
         });
 }
 

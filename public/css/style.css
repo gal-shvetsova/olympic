@@ -47,7 +47,7 @@ h4 {
     display: block;
     position: relative;
 }
-.Task, .Olympiad, .Student{
+.Task, .Olympiad, .Student, .Join{
     padding: 0px 50px;
     width: 50%;
     margin: 0;

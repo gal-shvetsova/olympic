@@ -22,15 +22,15 @@ export class OlympiadList extends Component {
         this.state = {
             sortName: "id",
             sortType: 'asc',
-            hardness: [
+            hardness_filter: [
                 1,
                 10
             ],
-            participants: [
+            participants_filter: [
                 0,
                 100
             ],
-            deadline: "all"
+            deadline_filter: "all"
         };
 
     }
@@ -63,13 +63,14 @@ export class OlympiadList extends Component {
     }
 
     handleSort(name) {
-        console.log("here");
         this.setState({
             sortName: name,
             sortType: this.state.sortType === 'asc' ? 'desc' : 'asc'
         });
         const type = this.state.sortType === 'asc' ? 'desc' : 'asc';
-        this.props.filterTable({name: "olympiad", data: {field : name, type : type, hardness: this.state.hardness, participants: this.state.participants, deadline : this.state.deadline}});
+        this.props.filterTable({name: "olympiad", data: {field : name, type : type,
+                hardness_filter: this.state.hardness_filter, participants_filter: this.state.participants_filter,
+                deadline_filter : this.state.deadline_filter}});
     }
 
     handleDelete(olympiad) {
@@ -79,12 +80,12 @@ export class OlympiadList extends Component {
 
     handleReset(){
         this.setState(  {
-
-            hardness: [1, 10],
-            participants: [0, 100],
-            deadline: "all"
+            hardness_filter: [1, 10],
+            participants_filter: [0, 100],
+            deadline_filter: "all"
         });
-        this.props.filterTable({name: "olympiad", data: {field : this.state.sortName, type : this.state.sortType, hardness: [1,10], participants: [0, 100], deadline : 'all'}});
+        this.props.filterTable({name: "olympiad", data: {field : this.state.sortName, type : this.state.sortType,
+                hardness_filter: [1,10], participants_filter: [0, 100], deadline_filter : 'all'}});
     }
 
     olympiadEdit(props, button) {
@@ -115,7 +116,9 @@ export class OlympiadList extends Component {
     }
 
     handleFilterSort() {
-        this.props.filterTable({name: "olympiad", data: {field : this.state.sortName, type : this.state.sortType, hardness: this.state.hardness, participants: this.state.participants, deadline : this.state.deadline}});
+        this.props.filterTable({name: "olympiad", data: {field : this.state.sortName, type : this.state.sortType,
+                hardness_filter: this.state.hardness_filter, participants_filter: this.state.participants_filter,
+                deadline_filter : this.state.deadline_filter}});
     }
 
     render() {
@@ -178,9 +181,9 @@ export class OlympiadList extends Component {
                                     min={1}
                                     max={10}
                                     style={{width: 150}}
-                                    value={this.state.hardness}
+                                    value={this.state.hardness_filter}
                                     onChange={(value) => this.setState({
-                                        ["hardness"]:  value
+                                        ["hardness_filter"]:  value
                                     })}
                             />
                         </Form.Item>
@@ -190,18 +193,18 @@ export class OlympiadList extends Component {
                                     min={0}
                                     max={100}
                                     style={{width: 150}}
-                                    value={this.state.participants}
+                                    value={this.state.participants_filter}
                                     onChange={(value) => this.setState({
-                                        ["participants"]: value
+                                        ["participants_filter"]: value
 
                                     })}/>
                         </Form.Item>
                         <Form.Item>
                             <Select defaultValue="all"
                                     style={{width: 120}}
-                                    value={this.state.deadline}
+                                    value={this.state.deadline_filter}
                                     onChange={(value) => this.setState({
-                                        ["deadline"]: value
+                                        ["deadline_filter"]: value
                                     })}>
                                 <Option value="week">This week</Option>
                                 <Option value="month">This month</Option>

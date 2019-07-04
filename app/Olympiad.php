@@ -51,11 +51,11 @@ class Olympiad extends Model
     }
 
 
-    public static function sortAndFilter($hardness, $participants, $deadline, $field, $type)
+    public static function sortAndFilter($field, $type, $hardness = array(1, 10), $participants = array(0,100), $deadline = 'all' )
     {
         $olympiads = Olympiad::withCount('users as participants')
-            ->where('hardness', '<=', $hardness[1])
-            ->where('hardness', '>=', $hardness[0]);
+            ->whereBetween('hardness',  [$hardness[0],$hardness[1]]);
+
         $today = new \DateTime("NOW");
         switch ($deadline) {
             case 'week':

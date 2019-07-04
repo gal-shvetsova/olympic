@@ -27,11 +27,9 @@ class OlympiadController extends Controller
      */
     public function store(Request $request)
     {
-        $content = $request->json()->all();
-        Olympiad::addOlympiad($content);
-        $response = Olympiad::sort($content['field'], $content['type']);
-        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
-        return response($answer, 200);
+        $json = $request->json()->all();
+        Olympiad::addOlympiad($json);
+        return $this->sortAndFilter($request);
     }
 
     /**
@@ -45,9 +43,7 @@ class OlympiadController extends Controller
     {
         $json = $request->json()->all();
         Olympiad::editOlympiad($json);
-        $response = Olympiad::sort($json['field'], $json['type']);
-        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
-        return response($answer, 200);
+       return $this->sortAndFilter($request);
     }
 
     /**
@@ -62,8 +58,8 @@ class OlympiadController extends Controller
     public function destroy($id, $type, $field)
     {
         Olympiad::deleteOlympiad($id);
-        $response = Olympiad::sort($field, $type);
-        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
+        $response = Olympiad::sortAndFilter($field, $type);
+        $answer = '{' . '"' . "table" . '"' . ':' . json_encode($response) . '}';
         return response($answer, 200);
     }
 
@@ -75,7 +71,10 @@ class OlympiadController extends Controller
     public function sortAndFilter(Request $request)
     {
         $json = $request->json()->all();
-        $response = Olympiad::sortAndFilter($json['hardness'], $json['participants'], $json['deadline'],  $json['field'], $json['type']);
+        if (in_array('hardness_filter', $json, true))
+            $response = Olympiad::sortAndFilter( $json['field'], $json['type'], $json['hardness_filter'], $json['participant_filter'], $json['deadline_filter']);
+        else
+            $response = Olympiad::sortAndFilter( $json['field'], $json['type']);
         $answer = '{' . '"' . "table" . '"' . ':' . json_encode($response) . '}';
         return response($answer, 200);
     }

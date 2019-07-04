@@ -3,17 +3,24 @@ import * as actionCreators from '../actions/';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as requestActionCreators from "../actions/requestActions";
+import {Button, Select, Icon, Input, Form } from "antd";
+const {Option} = Select;
 
 export class StudentEdit extends Component {
 
-    handleChange() {
+    handleChange(value = null) {
         const {table, action, getStudentEdit} = this.props;
-        return (e) => {
-            e.preventDefault();
-            const name = e.target.name;
-            const value = e.target.value;
-            getStudentEdit(Object.assign({}, table, {[name] : value}), action, true);
-        };
+        if (value === null) {
+            return (e) => {
+                e.preventDefault();
+                const name = e.target.name;
+                const value = e.target.value;
+                console.log(name, value);
+                getStudentEdit(Object.assign({}, table, {[name]: value}), action, true);
+            };
+        }
+        else
+            getStudentEdit(Object.assign({}, table, {['user_role']: value}), action, true);
     }
 
     handleSubmit() {
@@ -41,41 +48,35 @@ export class StudentEdit extends Component {
     render() {
         const table = this.props.table;
         return (
-            this.props.show ?
-                <div className="studentEdit">
-                    <form className="form">
-                        <div className={`form-group`}>
-                            <label htmlFor="last_name">Name</label>
-                            <input type="text" required className="form-control" name="last_name"
-                                   value={table.last_name || ""}
-                                   onChange={this.handleChange()}/>
-                        </div>
-                        <div hidden={this.props.action != "add"}>
-
-                        <div className={`form-group`}>
-                            <label htmlFor="email">Email</label>
-                            <input type="email" required className="form-control" name="email"
-                                   value={table.email || ""}
-                                   onChange={this.handleChange()}/>
-                        </div>
-                        </div>
-                        <div className={`form-group`}>
-                            <label htmlFor="user_role">Role</label>
-                        <select name ="user_role" value={table.user_role || ""} onChange={this.handleChange()}>
-                            <option value="">-</option>
-                            <option value="admin">admin</option>
-                            <option value="student">student</option>
-                        </select>
-                        </div>
-                        <button type="button" className="btn btn-primary" disabled={!(table.last_name && table.user_role && (!table.email || table.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)))}
-                                onClick={this.handleSubmit.bind(this)}>Ok
-                        </button>
-                        <button type="button" className="btn btn-primary" onClick={this.hide.bind(this)}>Cancel</button>
-                    </form>
-                </div>
-                : "");
+            this.props.show ? (
+                <Form className="editForm">
+                    <Form.Item>
+                        <Input
+                            prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                            placeholder="Name"
+                            name='last_name'
+                            value={table.last_name}
+                            onChange={this.handleChange().bind(this)}
+                        />
+                    </Form.Item>
+                    <Select defaultValue="student"
+                            style={{width: 120}}
+                            name='user_role'
+                            value={table.user_role}
+                            onChange={this.handleChange.bind(this)}>
+                        <Option value="admin">admin</Option>
+                        <Option value="student">student</Option>
+                    </Select>
+                    <Form.Item>
+                        <Button type="primary" disabled={table.role === '' || table.name === '' }
+                                onClick={this.handleSubmit.bind(this)} className="login-form-button">
+                            Ok
+                        </Button>
+                        <Button onClick={this.hide.bind(this)}>Cancel</Button>
+                    </Form.Item>
+                </Form>) : ""
+        );
     }
-
 }
 
 

@@ -3,15 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="f2af424c-0c0c-4c44-9846-b3e093d0ce84" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/OlympiadController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/OlympiadController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/TaskController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/TaskController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Task.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Task.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/StudentController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/StudentController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Student.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Student.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/components/olympiad.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/components/olympiad.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/components/olympiadEdit.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/components/olympiadEdit.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/components/task.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/components/task.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/components/taskEdit.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/components/taskEdit.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/js/components/components/student.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/components/student.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/js/components/components/studentEdit.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/components/studentEdit.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -100,10 +96,19 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/js/components/components/taskEdit.js">
+        <entry file="file://$PROJECT_DIR$/resources/js/components/components/olympiadEdit.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-900">
-              <caret line="39" column="16" selection-start-line="39" selection-start-column="16" selection-end-line="39" selection-end-column="122" />
+            <state relative-caret-position="-960">
+              <caret line="5" selection-start-line="5" selection-end-line="5" selection-end-column="82" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/js/components/components/student.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="840">
+              <caret line="155" column="27" selection-start-line="155" selection-start-column="27" selection-end-line="155" selection-end-column="27" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
               </folding>
@@ -112,10 +117,9 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/js/components/components/task.js">
+        <entry file="file://$PROJECT_DIR$/resources/js/components/components/queue.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2325">
-              <caret line="155" column="54" selection-start-line="155" selection-start-column="54" selection-end-line="155" selection-end-column="54" />
+            <state relative-caret-position="-538">
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
               </folding>
@@ -124,19 +128,43 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/css/style.css">
+        <entry file="file://$PROJECT_DIR$/resources/js/components/components/join.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-45">
-              <caret line="54" column="14" selection-start-line="54" selection-start-column="14" selection-end-line="54" selection-end-column="14" />
+            <state relative-caret-position="405">
+              <caret line="42" column="17" selection-start-line="42" selection-start-column="17" selection-end-line="42" selection-end-column="17" />
+              <folding>
+                <element signature="e#0#26#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/resources/js/components/components/studentEdit.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="452">
+              <caret line="67" column="49" selection-start-line="67" selection-start-column="49" selection-end-line="67" selection-end-column="49" />
+              <folding>
+                <element signature="e#0#39#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/TaskController.php">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/StudentController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="759">
-              <caret line="72" column="172" selection-start-line="72" selection-start-column="172" selection-end-line="72" selection-end-column="172" />
+            <state relative-caret-position="662">
+              <caret line="84" column="124" selection-start-line="84" selection-start-column="124" selection-end-line="84" selection-end-column="124" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Student.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="524">
+              <caret line="73" column="39" selection-start-line="73" selection-start-column="39" selection-end-line="73" selection-end-column="39" />
             </state>
           </provider>
         </entry>
@@ -144,30 +172,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/OlympiadController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="339">
-              <caret line="74" column="125" selection-start-line="74" selection-start-column="125" selection-end-line="74" selection-end-column="125" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Task.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="58" column="5" selection-start-line="58" selection-start-column="5" selection-end-line="58" selection-end-column="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/resources/js/components/components/olympiad.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="219">
-              <caret line="149" column="54" selection-start-line="149" selection-start-column="54" selection-end-line="149" selection-end-column="54" />
-              <folding>
-                <element signature="e#0#39#0" expanded="true" />
-                <element signature="n#!!block;n#handleDelete#0;n#OlympiadList#0" />
-              </folding>
+            <state relative-caret-position="660">
+              <caret line="73" selection-start-line="73" selection-end-line="73" selection-end-column="38" />
             </state>
           </provider>
         </entry>
@@ -211,9 +217,9 @@
       <find>set</find>
       <find>sort</find>
       <find>deadline</find>
-      <find>hardness</find>
       <find>redire</find>
       <find>to tas</find>
+      <find>hardness</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -222,8 +228,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/resources/js/components/components/taskForm.js" />
-        <option value="$PROJECT_DIR$/resources/js/components/actions/index.js" />
         <option value="$PROJECT_DIR$/resources/js/components/reducers/index.js" />
         <option value="$PROJECT_DIR$/server.js" />
         <option value="$PROJECT_DIR$/app/Queue.php" />
@@ -247,9 +251,7 @@
         <option value="$PROJECT_DIR$/resources/js/components/components/resetPassword.js" />
         <option value="$PROJECT_DIR$/resources/js/components/components/deleteAccount.js" />
         <option value="$PROJECT_DIR$/app/User.php" />
-        <option value="$PROJECT_DIR$/app/Student.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Auth/DeleteAccountController.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/StudentController.php" />
         <option value="$APPLICATION_CONFIG_DIR$/consoles/.datagrid/cell" />
         <option value="$PROJECT_DIR$/resources/js/components/components/verifyEmail.js" />
         <option value="$PROJECT_DIR$/resources/js/components/actions/registerAction.js" />
@@ -273,6 +275,10 @@
         <option value="$PROJECT_DIR$/resources/js/components/components/olympiadEdit.js" />
         <option value="$PROJECT_DIR$/public/css/style.css" />
         <option value="$PROJECT_DIR$/resources/js/components/components/olympiad.js" />
+        <option value="$PROJECT_DIR$/app/Student.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/StudentController.php" />
+        <option value="$PROJECT_DIR$/resources/js/components/components/studentEdit.js" />
+        <option value="$PROJECT_DIR$/resources/js/components/components/student.js" />
       </list>
     </option>
   </component>
@@ -554,7 +560,7 @@
       <workItem from="1557387039278" duration="31124000" />
       <workItem from="1557995481765" duration="163924000" />
       <workItem from="1562046552999" duration="207000" />
-      <workItem from="1562215493102" duration="18626000" />
+      <workItem from="1562215493102" duration="20612000" />
     </task>
     <task id="LOCAL-00001" summary="sending verification link and making verification by it">
       <created>1558349750377</created>
@@ -773,11 +779,18 @@
       <option name="project" value="LOCAL" />
       <updated>1562220809507</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="design for taskEdit, fixed bug with button 'to tasks'">
+      <created>1562234368323</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1562234368323</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="596460000" />
+    <option name="totallyTimeSpent" value="598446000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -790,14 +803,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.87112564" visible="true" weight="0.27946874" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.87112564" visible="true" weight="0.27946874" />
       <window_info id="Structure" order="1" sideWeight="0.12887439" side_tool="true" weight="0.28002214" />
       <window_info id="Favorites" order="2" sideWeight="0.5010799" side_tool="true" weight="0.2883232" />
       <window_info anchor="bottom" id="Messages" order="0" weight="0.32937366" />
       <window_info anchor="bottom" id="Message" order="1" />
-      <window_info anchor="bottom" id="Find" order="2" weight="0.032397408" />
+      <window_info anchor="bottom" id="Find" order="2" weight="0.5507559" />
       <window_info anchor="bottom" id="Run" order="3" weight="0.32937366" />
       <window_info anchor="bottom" id="Debug" order="4" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
@@ -808,7 +820,7 @@
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.32937366" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.18594356" side_tool="true" weight="0.28185746" />
       <window_info anchor="bottom" id="Database Console" order="12" weight="0.32937366" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="13" sideWeight="0.81405646" visible="true" weight="0.38336933" />
+      <window_info anchor="bottom" id="Terminal" order="13" sideWeight="0.81405646" visible="true" weight="0.22894168" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -842,8 +854,6 @@
     <option name="version" value="1" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="filter on student page done" />
-    <MESSAGE value="sort in tasks page" />
     <MESSAGE value="filter on task page done" />
     <MESSAGE value="made filter and sort working together in olympiad page" />
     <MESSAGE value="made filter and sort working together in tasks page" />
@@ -867,39 +877,11 @@
     <MESSAGE value="designing olympic page" />
     <MESSAGE value="update composer" />
     <MESSAGE value="troubles with same names for filter and data solved&#10;design for olympiadEdit" />
-    <option name="LAST_COMMIT_MESSAGE" value="troubles with same names for filter and data solved&#10;design for olympiadEdit" />
+    <MESSAGE value="design for taskEdit, fixed bug with button 'to tasks'" />
+    <MESSAGE value="design for studentEdit" />
+    <option name="LAST_COMMIT_MESSAGE" value="design for studentEdit" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Auth/ForgotPasswordController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="509">
-          <caret line="46" column="44" selection-start-line="46" selection-start-column="44" selection-end-line="46" selection-end-column="44" />
-          <folding>
-            <element signature="e#45#81#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/components/forgotPassword.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="29" column="84" selection-start-line="29" selection-start-column="84" selection-end-line="29" selection-end-column="84" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/actions/resetPasswordAction.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="40" column="11" lean-forward="true" selection-start-line="40" selection-start-column="11" selection-end-line="40" selection-end-column="11" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/js/components/actions/loginActions.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="431">
@@ -921,13 +903,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/js/components/components/deleteAccount.js" />
-    <entry file="file://$PROJECT_DIR$/app/Student.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
-          <caret line="55" column="24" selection-start-line="55" selection-start-column="12" selection-end-line="55" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/User.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="575">
@@ -953,13 +928,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="16" column="28" lean-forward="true" selection-start-line="16" selection-start-column="28" selection-end-line="16" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/StudentController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1080">
-          <caret line="96" column="1" lean-forward="true" selection-start-line="96" selection-start-column="1" selection-end-line="96" selection-end-column="1" />
         </state>
       </provider>
     </entry>
@@ -1134,15 +1102,6 @@
     <entry file="file://$PROJECT_DIR$/resources/js/components/actions/filterAction.js">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/components/studentEdit.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="das://190986f6-aec8-45ef-89d6-8a49c6bbb5d2/schema/homestead/table/tasks">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
@@ -1154,23 +1113,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="384">
           <caret line="42" column="55" selection-start-line="42" selection-start-column="55" selection-end-line="42" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/components/task.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2325">
-          <caret line="155" column="54" selection-start-line="155" selection-start-column="54" selection-end-line="155" selection-end-column="54" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/OlympiadController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
-          <caret line="74" column="125" selection-start-line="74" selection-start-column="125" selection-end-line="74" selection-end-column="125" />
         </state>
       </provider>
     </entry>
@@ -1195,13 +1137,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/components/olympiadEdit.js">
+    <entry file="file://$PROJECT_DIR$/app/Task.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="70" column="5" selection-start-line="70" selection-start-column="5" selection-end-line="70" selection-end-column="5" />
+        <state relative-caret-position="459">
+          <caret line="58" column="5" selection-start-line="58" selection-start-column="5" selection-end-line="58" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/olympiad.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="157" column="43" selection-start-line="157" selection-start-column="43" selection-end-line="157" selection-end-column="43" />
           <folding>
             <element signature="e#0#39#0" expanded="true" />
+            <element signature="n#!!block;n#handleDelete#0;n#OlympiadList#0" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/css/style.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-45">
+          <caret line="54" column="14" selection-start-line="54" selection-start-column="14" selection-end-line="54" selection-end-column="14" />
         </state>
       </provider>
     </entry>
@@ -1215,27 +1172,79 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Task.php">
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/OlympiadController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="58" column="5" selection-start-line="58" selection-start-column="5" selection-end-line="58" selection-end-column="5" />
+        <state relative-caret-position="660">
+          <caret line="73" selection-start-line="73" selection-end-line="73" selection-end-column="38" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/css/style.css">
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/task.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-45">
-          <caret line="54" column="14" selection-start-line="54" selection-start-column="14" selection-end-line="54" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/js/components/components/olympiad.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="149" column="54" selection-start-line="149" selection-start-column="54" selection-end-line="149" selection-end-column="54" />
+        <state relative-caret-position="424">
+          <caret line="155" column="54" selection-start-line="155" selection-start-column="54" selection-end-line="155" selection-end-column="54" />
           <folding>
             <element signature="e#0#39#0" expanded="true" />
-            <element signature="n#!!block;n#handleDelete#0;n#OlympiadList#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Student.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="524">
+          <caret line="73" column="39" selection-start-line="73" selection-start-column="39" selection-end-line="73" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/StudentController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="662">
+          <caret line="84" column="124" selection-start-line="84" selection-start-column="124" selection-end-line="84" selection-end-column="124" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/olympiadEdit.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-960">
+          <caret line="5" selection-start-line="5" selection-end-line="5" selection-end-column="82" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/queue.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-538">
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/join.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="42" column="17" selection-start-line="42" selection-start-column="17" selection-end-line="42" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/student.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="840">
+          <caret line="155" column="27" selection-start-line="155" selection-start-column="27" selection-end-line="155" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/js/components/components/studentEdit.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="452">
+          <caret line="67" column="49" selection-start-line="67" selection-start-column="49" selection-end-line="67" selection-end-column="49" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
           </folding>
         </state>
       </provider>

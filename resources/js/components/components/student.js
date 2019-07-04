@@ -17,22 +17,12 @@ export class StudentList extends Component {
         this.state = {
             sortName : "id",
             sortType : 'asc',
-            role: 'all',
-            olympiads: [
+            role_filter: 'all',
+            olympiads_filter: [
                 0,
                 10  //todo close registration if already 10
             ],
         };
-        this.setWrapperRef = this.setWrapperRef.bind(this);
-        this.handleClickOutside = this.handleClickOutside.bind(this);
-    }
-
-    componentDidMount() {
-        document.addEventListener('mousedown', this.handleClickOutside);
-    }
-
-    componentWillUnmount() {
-        document.removeEventListener('mousedown', this.handleClickOutside);
     }
 
     createStudentList() {
@@ -66,7 +56,7 @@ export class StudentList extends Component {
             sortType : this.state.sortType === 'asc' ? 'desc' : 'asc'
         });
         const type = this.state.sortType === 'asc' ? 'desc' : 'asc';
-        this.props.filterTable({name: "student", data: {field : name, type : type, role: this.state.role, olympiads: this.state.olympiads}});
+        this.props.filterTable({name: "student", data: {field : name, type : type, role_filter: this.state.role_filter, olympiads_filter: this.state.olympiads_filter}});
     }
 
     handleDelete(student) {
@@ -97,23 +87,8 @@ export class StudentList extends Component {
         }
     }
 
-    setWrapperRef(node) {
-        this.wrapperRef = node;
-    }
-
-    handleClickOutside(event) {
-        const studentEdit = document.getElementsByClassName("studentEdit")[0];
-
-        if (!event.path.includes(studentEdit)) {
-            if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-                this.props.selectStudent(-1);
-                this.props.getStudentEdit({}, "", false);
-            }
-        }
-    }
-
     handleFilter() {
-        this.props.filterTable({name: "student", data: {olympiads: this.state.olympiads, role : this.state.role}});
+        this.props.filterTable({name: "student", data: {olympiads_filter: this.state.olympiads_filter, role_filter : this.state.role_filter}});
     }
 
     handleReset(){
@@ -124,11 +99,11 @@ export class StudentList extends Component {
                 10  //todo close registration if already 10
             ],
         });
-        this.props.filterTable({name: "student", data: {field : this.state.sortName, type : this.state.sortType, role: 'all', olympiads: [0, 10]}});
+        this.props.filterTable({name: "student", data: {field : this.state.sortName, type : this.state.sortType, role_filter: 'all', olympiads_filter: [0, 10]}});
     }
 
     handleFilterSort() {
-        this.props.filterTable({name: "student", data: {field : this.state.sortName, type : this.state.sortType, role: this.state.role, olympiads: this.state.olympiads}});
+        this.props.filterTable({name: "student", data: {field : this.state.sortName, type : this.state.sortType, role_filter: this.state.role_filter, olympiads_filter: this.state.olympiads_filter}});
     }
 
 
@@ -136,56 +111,57 @@ export class StudentList extends Component {
         return (
             isRole(this.props.role, ["admin"]) ?
                 <div className="Student" ref={this.setWrapperRef}>
-                    <h4>Students</h4>
-                    {this.createStudentList()}
-                    <button
-                        className="add"
-                        onClick={() => this.studentEdit(this.props, "add")}>
-                        add
-                    </button>
-                    <button
-                        className="edit"
-                        hidden={this.props.selectedStudent < 0}
-                        onClick={() => this.studentEdit(this.props, "edit")}>
-                        edit
-                    </button>
-                    <button
-                        className="delete"
-                        hidden={this.props.selectedStudent < 0}
-                        onClick={() => this.studentEdit(this.props, "delete")}>
-                        delete
-                    </button>
-                    <div>
-                        <StudentEdit type={this.state.sortType} field={this.state.sortName} getTable={this.props.getTable}/>
-                    </div>
-                    <Form>
+                    <Form className='filter'>
                         <Form.Item
                             label="Olympiads">
                             <Slider range defaultValue={[0, 100]}
                                     min={0}
                                     max={10}
                                     style={{width: 150}}
-                                    value={this.state.olympiads}
+                                    value={this.state.olympiads_filter}
                                     onChange={(value) => this.setState({
-                                        ["olympiads"]: value
+                                        ["olympiads_filter"]: value
 
                                     })}/>
                         </Form.Item>
-                        <Form.Item>
+                        <Form.Item
+                            label='Role'>
                             <Select defaultValue="all"
                                     style={{width: 120}}
-                                    value={this.state.role}
+                                    value={this.state.role_filter}
                                     onChange={(value) => this.setState({
-                                        ["role"]: value
+                                        ["role_filter"]: value
                                     })}>
                                 <Option value="all">All</Option>
-                                <Option value="admin">Admin</Option>
-                                <Option value="Student">Student</Option>
+                                <Option value="admin">admin</Option>
+                                <Option value="Student">student</Option>
                             </Select>
                         </Form.Item>
                         <Button type="primary" onClick={this.handleFilterSort.bind(this)}>Ok</Button>
                         <Button type="primary" onClick={this.handleReset.bind(this)}>Reset</Button>
                     </Form>
+                    <h4>Students</h4>
+                    {this.createStudentList()}
+                    <Button
+                        className="add"
+                        onClick={() => this.studentEdit(this.props, "add")}>
+                        add
+                    </Button>
+                    <Button
+                        className="edit"
+                        hidden={this.props.selectedStudent < 0}
+                        onClick={() => this.studentEdit(this.props, "edit")}>
+                        edit
+                    </Button>
+                    <Button
+                        className="delete"
+                        hidden={this.props.selectedStudent < 0}
+                        onClick={() => this.studentEdit(this.props, "delete")}>
+                        delete
+                    </Button>
+                    <div>
+                        <StudentEdit type={this.state.sortType} field={this.state.sortName} getTable={this.props.getTable}/>
+                    </div>
                 </div>
                 : "You don't have permission to be here"
         );

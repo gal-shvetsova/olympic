@@ -31,9 +31,7 @@ class StudentController extends Controller
     {
         $content = $request->json()->all();
         Student::addStudent($content);
-        $response = Student::sort($content['field'], $content['type']);
-        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
-        return response($answer, 200);
+       return $this->sortAndFilter($request);
     }
 
     /**
@@ -47,9 +45,7 @@ class StudentController extends Controller
     {
         $json = $request->json()->all();
         Student::editStudent($json);
-        $response = Student::sort($json['field'], $json['type']);
-        $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
-        return response($answer, 200);
+       return $this->sortAndFilter($request);
     }
 
     /**
@@ -66,8 +62,8 @@ class StudentController extends Controller
         if (Student::find($id)['user_role'] != "admin")
             Student::deleteStudent($id);
         if ($type) {
-            $response = Student::sort($field, $type);
-            $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
+            $response = Student::sortAndFilter($field, $type);
+            $answer = '{' . '"' . "table" . '"' . ':' . json_encode($response) . '}';
             return response($answer, 200);
         }
         return response( 200);
@@ -76,7 +72,7 @@ class StudentController extends Controller
     public function sort(Request $request)
     {
         $json = $request->json()->all();
-        $response = Student::sort($json['field'], $json['type']);
+        $response = Student::sortAndFilter($json['field'], $json['type']);
         $answer = '{' . '"' . "table" . '"' . ':' . $response . '}';
         return response($answer, 200);
 
@@ -85,7 +81,10 @@ class StudentController extends Controller
     public function sortAndFilter(Request $request)
     {
         $json = $request->json()->all();
-        $response = Student::sortAndFilter($json['olympiads'], $json['role'], $json['field'], $json['type']);
+        if ($request->role_filter)
+            $response = Student::sortAndFilter( $json['field'], $json['type'], $json['olympiads_filter'], $json['role_filter']);
+        else
+            $response = Student::sortAndFilter($json['field'], $json['type']);
         $answer = '{' . '"' . "table" . '"' . ':' . json_encode($response) . '}';
         return response($answer, 200);
     }

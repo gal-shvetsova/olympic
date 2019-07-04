@@ -60,7 +60,7 @@ class Student extends Model
     }
 
 
-    public static function sortAndFilter($olympiads, $role, $field, $type)
+    public static function sortAndFilter($field, $type, $olympiads = [0,10], $role='all' )
     {
         $student = Student::withCount(['user as olympiads' => function ($query) {
             $query->where('role', '=', 'participant');

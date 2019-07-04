@@ -71,8 +71,8 @@ class OlympiadController extends Controller
     public function sortAndFilter(Request $request)
     {
         $json = $request->json()->all();
-        if (in_array('hardness_filter', $json, true))
-            $response = Olympiad::sortAndFilter( $json['field'], $json['type'], $json['hardness_filter'], $json['participant_filter'], $json['deadline_filter']);
+        if ($request->hardness_filter)
+            $response = Olympiad::sortAndFilter( $json['field'], $json['type'], $json['hardness_filter'], $json['participants_filter'], $json['deadline_filter']);
         else
             $response = Olympiad::sortAndFilter( $json['field'], $json['type']);
         $answer = '{' . '"' . "table" . '"' . ':' . json_encode($response) . '}';

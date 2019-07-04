@@ -42,6 +42,22 @@ h4 {
     transform: translate(-50%, -50%);
 }
 
+.editForm {
+    width: 321px;
+    display: block;
+    position: relative;
+}
+.Task, .Olympiad, .Student{
+    padding: 0px 50px;
+    width: 50%;
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    top : 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+
 .verified {
     padding: 0px 50px;
     width: 50%;
@@ -85,7 +101,5 @@ h4 {
 }
 
 .filter {
-    position: absolute;
-    left: 80%;
-    top: 14%;
+    display: -webkit-box;
 }

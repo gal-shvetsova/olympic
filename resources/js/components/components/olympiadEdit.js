@@ -21,7 +21,6 @@ export class OlympiadEdit extends Component {
             const
             name = e.target.name,
             value = e.target.value;
-            console.log(parseInt(value), name);
             if (name === "hardness" && (parseInt(value) > 10 || parseInt(value) < 0))
                 return;
             this.props.getOlympiadEdit(Object.assign({}, this.props.table, {[name]: value}), true);
@@ -75,7 +74,7 @@ export class OlympiadEdit extends Component {
         const table = this.props.table;
         return (
             this.props.show ? (
-                <Form className="form">
+                <Form className="editForm">
                     <Form.Item>
                         <Input
                             prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
@@ -83,7 +82,7 @@ export class OlympiadEdit extends Component {
                             name='name'
                             value={table.name}
                             onChange={this.handleInput().bind(this)}
-                        />,
+                        />
                     </Form.Item>
                     <Form.Item>
                         <Input

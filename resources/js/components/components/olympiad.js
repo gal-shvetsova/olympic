@@ -6,6 +6,7 @@ import * as filterAction from '../actions/filterAction'
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Slider, Form, Select, Button} from 'antd';
+import {Redirect} from 'react-router-dom'
 import OlympiadEdit from "./olympiadEdit";
 import {isRole} from "../actions/roleActions";
 import 'antd/dist/antd.css';
@@ -112,7 +113,7 @@ export class OlympiadList extends Component {
 
 
     handleToTask(id) {
-        this.props.history.push("task/" + id);
+        document.location.href = '/task/' + id;
     }
 
     handleFilterSort() {
@@ -128,59 +129,13 @@ export class OlympiadList extends Component {
         };
         return (!isRole(this.props.role, ["participant"]) ?
                 <div className="Olympiad">
-                    <h4>Olympiad</h4>
-                    {this.createOlympiadList()}
-                    {
-                        isRole(this.props.role, ["admin"]) &&
-                        <button
-                            className="add"
-                            onClick={() => this.olympiadEdit(this.props, "add")}>
-                            add
-                        </button>
-                    }
-                    {
-                        isRole(this.props.role, ["admin"]) &&
-                        <button
-                            className="edit"
-                            hidden={this.props.selectedOlympiad < 0}
-                            onClick={() => this.olympiadEdit(this.props, "edit")}>
-                            edit
-                        </button>
-                    }
-                    {
-                        isRole(this.props.role, ["admin"]) &&
-                        <button
-                            className="delete"
-                            hidden={this.props.selectedOlympiad < 0}
-                            onClick={() => this.olympiadEdit(this.props, "delete")}>
-                            delete
-                        </button>
-                    }
-                    {
-                        isRole(this.props.role, ["admin"]) &&
-                        <button
-                            hidden={this.props.selectedOlympiad < 0}
-                            onClick={() => this.handleToTask(this.props.selectedOlympiad)}>
-                            to tasks
-                        </button>
-                    }
-
-                    {
-                        isRole(this.props.role, ["student"]) &&
-                        <button
-                            className="join"
-                            hidden={this.props.selectedOlympiad < 0}
-                            onClick={() => this.props.history.push("/join")}>
-                            join
-                        </button>
-                    }
-                    <Form>
+                    <Form className='filter'>
                         <Form.Item
                             label="Hardness">
                             <Slider range defaultValue={[1, 10]}
                                     min={1}
                                     max={10}
-                                    style={{width: 150}}
+                                    style={{width: 100}}
                                     value={this.state.hardness_filter}
                                     onChange={(value) => this.setState({
                                         ["hardness_filter"]:  value
@@ -192,14 +147,15 @@ export class OlympiadList extends Component {
                             <Slider range defaultValue={[0, 100]}
                                     min={0}
                                     max={100}
-                                    style={{width: 150}}
+                                    style={{width: 100}}
                                     value={this.state.participants_filter}
                                     onChange={(value) => this.setState({
                                         ["participants_filter"]: value
 
                                     })}/>
                         </Form.Item>
-                        <Form.Item>
+                        <Form.Item
+                            label="Deadline">
                             <Select defaultValue="all"
                                     style={{width: 120}}
                                     value={this.state.deadline_filter}
@@ -215,6 +171,52 @@ export class OlympiadList extends Component {
                         <Button type="primary" onClick={this.handleFilterSort.bind(this)}>Ok</Button>
                         <Button type="primary" onClick={this.handleReset.bind(this)}>Reset</Button>
                     </Form>
+                    <h4>Olympiad</h4>
+                    {this.createOlympiadList()}
+                    {
+                        isRole(this.props.role, ["admin"]) &&
+                        <Button
+                            className="add"
+                            onClick={() => this.olympiadEdit(this.props, "add")}>
+                            add
+                        </Button>
+                    }
+                    {
+                        isRole(this.props.role, ["admin"]) &&
+                        <Button
+                            className="edit"
+                            hidden={this.props.selectedOlympiad < 0}
+                            onClick={() => this.olympiadEdit(this.props, "edit")}>
+                            edit
+                        </Button>
+                    }
+                    {
+                        isRole(this.props.role, ["admin"]) &&
+                        <Button
+                            className="delete"
+                            hidden={this.props.selectedOlympiad < 0}
+                            onClick={() => this.olympiadEdit(this.props, "delete")}>
+                            delete
+                        </Button>
+                    }
+                    {
+                        isRole(this.props.role, ["admin"]) &&
+                        <Button
+                            hidden={this.props.selectedOlympiad < 0}
+                            onClick={() => this.handleToTask(this.props.selectedOlympiad)}>
+                            to tasks
+                        </Button>
+                    }
+
+                    {
+                        isRole(this.props.role, ["student"]) &&
+                        <Button
+                            className="join"
+                            hidden={this.props.selectedOlympiad < 0}
+                            onClick={() => this.props.history.push("/join")}>
+                            join
+                        </Button>
+                    }
                     <OlympiadEdit type={this.state.sortType} field={this.state.sortName}
                                   getTable={this.props.getTable}/>
                 </div> : "You don't have permissions"

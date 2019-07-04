@@ -68,6 +68,7 @@ export class TaskForm extends Component {
 
     render() {
         const {table, selectedTask} = this.props;
+        console.log(table.find(x => x.id === selectedTask).time);
         const time = table ? table.find(x => x.id === selectedTask)['time'] : 0;
         return (
             <div className="taskFrom">

@@ -16,6 +16,11 @@ export class OlympiadEdit extends Component {
         super(props);
     }
 
+    dateFormat(date){
+        let newDate = new Date(date);
+        return newDate.getFullYear() + '-' + newDate.getMonth() + '-' + newDate.getDay();
+    }
+
     handleInput(){
         return (e) => {
             const
@@ -48,7 +53,7 @@ export class OlympiadEdit extends Component {
                 message.error("Date can't be changed more than a month");
                 return;
             }
-            this.props.getOlympiadEdit(Object.assign({}, this.props.table, {['deadline']: date}), true)
+            this.props.getOlympiadEdit(Object.assign({}, this.props.table, {['deadline']: this.dateFormat(date)}), true)
         }
     }
 
@@ -86,7 +91,7 @@ export class OlympiadEdit extends Component {
                     <Form.Item>
                         <Input
                             prefix={<Icon type="number" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                            placeholder="number"
+                            placeholder="Hardness"
                             name='hardness'
                             type='number'
                             value={table.hardness}

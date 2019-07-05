@@ -42,7 +42,7 @@ class App extends React.Component {
             this.state = {isLoggedIn: AppState.isLoggedIn, user: AppState.user};
         }
         else {
-            this.state = {isLoggedIn: false, user: {}};
+            this.state = {isLoggedIn: false, user: {role : 'guest'}};
         }
     };
 

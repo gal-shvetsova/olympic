@@ -56,22 +56,19 @@ class Olympiad extends Model
         $olympiads = Olympiad::withCount('users as participants')
             ->whereBetween('hardness',  [$hardness[0],$hardness[1]]);
 
-        $today = new \DateTime("NOW");
+        $today = date('Y-m-d');
         switch ($deadline) {
             case 'week':
-                $date = new \DateTime("NOW");
-                $date->modify('+1 week');
-                $olympiads->whereBetween('deadline', [$today->format('Y-m-d'), $date->format('Y-m-d')]);
+                $date = date('Y-m-d', strtotime('+1 week'));
+                $olympiads->whereBetween('deadline', [$today, $date]);
                 break;
             case 'month':
-                $date = new \DateTime("NOW");
-                $date->modify('+1 month');
-                $olympiads->whereBetween('deadline', [$today->format('Y-m-d'), $date->format('Y-m-d')]);
+                $date = date('Y-m-d', strtotime('+1 month'));
+                $olympiads->whereBetween('deadline', [$today, $date]);
                 break;
             case 'year':
-                $date = new \DateTime("NOW");
-                $date->modify('+1 year');
-                $olympiads->whereBetween('deadline', [$today->format('Y-m-d'), $date->format('Y-m-d')]);
+                $date = date('Y-m-d', strtotime('+1 year'));
+                $olympiads->whereBetween('deadline', [$today, $date]);
                 break;
             default:
                 break;

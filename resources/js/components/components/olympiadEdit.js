@@ -18,7 +18,8 @@ export class OlympiadEdit extends Component {
 
     dateFormat(date){
         let newDate = new Date(date);
-        return newDate.getFullYear() + '-' + newDate.getMonth() + '-' + newDate.getDay();
+
+        return newDate.getFullYear() + '-' + (newDate.getMonth()+1) + '-' + newDate.getDate();
     }
 
     handleInput(){
@@ -117,7 +118,7 @@ export class OlympiadEdit extends Component {
                                     !table ||
                                     !table.name || table.name === '' ||
                                     !table.hardness || table.hardness === ''  ||
-                                    !table.deadline || moment() >= moment(table.deadline)}
+                                    !table.deadline}
                                 onClick={this.handleSubmit.bind(this)} className="login-form-button">
                             Ok
                         </Button>

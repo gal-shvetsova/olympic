@@ -143,11 +143,6 @@ export class StudentList extends Component {
                     <h4>Students</h4>
                     {this.createStudentList()}
                     <Button
-                        className="add"
-                        onClick={() => this.studentEdit(this.props, "add")}>
-                        add
-                    </Button>
-                    <Button
                         className="edit"
                         hidden={this.props.selectedStudent < 0}
                         onClick={() => this.studentEdit(this.props, "edit")}>

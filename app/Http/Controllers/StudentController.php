@@ -58,7 +58,6 @@ class StudentController extends Controller
      */
     public function destroy($id, $type = null, $field = null)
     {
-        $id = User::find($id)['student_id'];
         if (Student::find($id)['user_role'] != "admin")
             Student::deleteStudent($id);
         if ($type) {

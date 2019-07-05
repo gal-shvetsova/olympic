@@ -15,7 +15,6 @@ export class StudentEdit extends Component {
                 e.preventDefault();
                 const name = e.target.name;
                 const value = e.target.value;
-                console.log(name, value);
                 getStudentEdit(Object.assign({}, table, {[name]: value}), action, true);
             };
         }
@@ -29,9 +28,9 @@ export class StudentEdit extends Component {
         data['type'] = this.props.type;
         data['field'] = this.props.field;
         data = JSON.stringify(data);
-        if (!table.id)
-            postTable({name: "student", data: data, method: "POST"});
-        else
+      //  if (!table.id)
+      //      postTable({name: "student", data: data, method: "POST"});
+       // else
             postTable({
                 name: "student",
                 data: data,

@@ -30,11 +30,11 @@ export class TaskList extends Component {
             <table border="1">
                 <tbody>
                 <tr>
-                    <th onClick={() => this.handleSort("last_name")}>Name</th>
+                    <th onClick={() => this.handleSort("name")}>Name</th>
                     <th onClick={() => this.handleSort("description")}>Description</th>
                     <th onClick={() => this.handleSort("hardness")}>Hardness</th>
                     <th onClick={() => this.handleSort("time")}>Time</th>
-                    <th>Max score</th>
+                    <th onClick={() => this.handleSort("max_score")}>Max score</th>
                 </tr>
                 {
                     table.map((task) => (<tr key={task.id} className={task.id === selectedTask ? "selected" : ""}

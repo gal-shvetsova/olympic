@@ -60,8 +60,9 @@ class TaskController extends Controller
      */
     public function destroy($id, $type, $field)
     {
+        $olympiad_id = Task::find($id)['olympiad_id'];
         Task::deleteTask($id);
-        $response = Task::sortAndFilter($id, $field, $type);
+        $response = Task::sortAndFilter($olympiad_id, $field, $type);
         $answer = '{' . '"' . "table" . '"' . ':' . json_encode($response) . '}';
         return response($answer, 200);
     }

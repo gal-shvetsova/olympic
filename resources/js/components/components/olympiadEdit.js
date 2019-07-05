@@ -112,7 +112,12 @@ export class OlympiadEdit extends Component {
                         />
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" disabled={table.name === '' || table.hardness === '' || table.deadline === null}
+                        <Button type="primary"
+                                disabled={
+                                    !table ||
+                                    !table.name || table.name === '' ||
+                                    !table.hardness || table.hardness === ''  ||
+                                    !table.deadline || moment() >= moment(table.deadline)}
                                 onClick={this.handleSubmit.bind(this)} className="login-form-button">
                             Ok
                         </Button>

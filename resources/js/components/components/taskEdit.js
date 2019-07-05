@@ -12,14 +12,6 @@ export class TaskEdit extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            name: '',
-            description: '',
-            hardness: '',
-            max_score: '',
-            time: '00:00:00',
-            formValid: false
-        }
     }
 
     timeFormat(time) {
@@ -28,7 +20,6 @@ export class TaskEdit extends Component {
     }
 
     handleChange(time = null, timeString = null) {
-        console.log(timeString);
         if (time === null) {
             return (event) => {
                 let name = event.target.name;
@@ -40,7 +31,6 @@ export class TaskEdit extends Component {
                 this.props.getTaskEdit(Object.assign({}, this.props.table, {[name]: value}), this.props.olympiadID, true);
             }
         } else {
-            console.log(time, timeString);
             this.props.getTaskEdit(Object.assign({}, this.props.table, {['time']: this.timeFormat(time)}), this.props.olympiadID, true);
         }
     }
@@ -61,6 +51,10 @@ export class TaskEdit extends Component {
 
     hide() {
         this.props.getTaskEdit({}, -1, false);
+    }
+
+    handleDisable(){
+
     }
 
     render() {
@@ -115,13 +109,19 @@ export class TaskEdit extends Component {
                             name='time'
                             disabledHours={() => [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]}
                             format={format}
-                            value={moment(table.time, format)}
+                            value={moment(table.time ? table.time : '00:00:00', format)}
                             onChange={this.handleChange.bind(this)}/>
                     </Form.Item>
                     <Form.Item>
                         <Button type="primary"
-                                disabled={table.name === '' || table.hardness === '' || table.time === '00:00:00'
-                                || table.max_score === '' || table.description === ''}
+                                disabled={
+                                    !table ||
+                                    (!table.hardness || table.hardness === '') ||
+                                    (!table.name || table.name === '') ||
+                                    (!table.description || table.description === '') ||
+                                    (!table.max_score || table.max_score === '') ||
+                                    (!table.time || table.time === '0:0:00')
+                                }
                                 onClick={this.handleSubmit.bind(this)} className="login-form-button">
                             Ok
                         </Button>

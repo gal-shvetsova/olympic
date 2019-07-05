@@ -38,6 +38,7 @@ class Task extends Model
         $put_task = Task::find($task['id']);
         $put_task['name'] = $task['name'];
         $put_task['description'] = $task['description'];
+        $put_task['hardness'] = $task['hardness'];
         $put_task['time'] = $task['time'];
         $put_task['olympiad_id'] = $task['olympiad_id'];
         $put_task['max_score'] = $task['max_score'];

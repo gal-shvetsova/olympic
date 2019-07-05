@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {message} from 'antd'
 
 export class Timer extends Component {
     constructor(props){
@@ -35,7 +36,7 @@ export class Timer extends Component {
         let now = new Date(Date.now());
         let diff = this.state.end.getTime() - now;
         if (diff <= 0){
-            alert('Time is over');
+            message.info('Time is over');
             clearTimeout(this.state.id);
             this.props.onEnd();
             return;

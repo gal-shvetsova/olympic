@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as requestActionCreators from '../actions/requestActions';
 import {isRole} from "../actions/roleActions";
+import {Button} from "antd";
 
 //TODO: hide solve button when it's already solving
 
@@ -81,9 +82,12 @@ export class Solution extends Component {
     hidden () {
         const {table, selectedTask} = this.props;
         if (selectedTask < 0) return 1;
+
         if (!table) return 1;
+
         const element = table.find(x => x.id === selectedTask);
         if (element['status'] !== 'not started') return 1;
+
         return 0;
     }
 
@@ -101,10 +105,10 @@ export class Solution extends Component {
                         <div>
                             {
                                 !this.hidden() &&
-                                <button className="solve"
+                                <Button className="solve"
                                         onClick={() => this.handleSolve()}
                                 >solve
-                                </button>
+                                </Button>
                             }
                         </div>
                     </div>

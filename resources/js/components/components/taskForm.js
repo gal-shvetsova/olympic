@@ -5,7 +5,7 @@ import * as solvingActions from  '../actions/solvingActions'
 import * as requestActionCreators from "../actions/requestActions";
 import solution from "./solution";
 import Timer from "./timer"
-import { Input } from 'antd';
+import {Button, Input} from 'antd';
 import { Typography, Divider } from 'antd';
 const { TextArea } = Input;
 const { Title, Paragraph, Text } = Typography;
@@ -68,8 +68,7 @@ export class TaskForm extends Component {
 
     render() {
         const {table, selectedTask} = this.props;
-        console.log(table.find(x => x.id === selectedTask).time);
-        const time = table ? table.find(x => x.id === selectedTask)['time'] : 0;
+        const time = (table && table.find(x => x.id === selectedTask)) ? table.find(x => x.id === selectedTask).time : 0;
         return (
             <div className="taskFrom">
                 <Typography>
@@ -78,7 +77,7 @@ export class TaskForm extends Component {
                 </Typography>
                 <TextArea style={{ width: '20%' }} rows ={4} className="solution" value={this.state.task.solution || ""} onChange={this.handleChange()}/>
                 <Timer start = {new Date(Date.now())} time = {time} onEnd={this.handleSubmit.bind(this)}/>
-                <button className="ok" onClick={this.handleSubmit.bind(this)}>ok</button>
+                <Button className="ok" onClick={this.handleSubmit.bind(this)}>ok</Button>
             </div>);
     }
 }

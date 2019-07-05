@@ -3,6 +3,7 @@ import {isRole} from "../actions/roleActions";
 import io from 'socket.io-client';
 import ProgressBar from 'react-bootstrap/ProgressBar'
 import axios from "axios";
+import {Progress} from "antd";
 
 export class Queue extends Component {
 
@@ -58,7 +59,7 @@ export class Queue extends Component {
                     table.map((task) => (<tr key={task.id}>
                         <td className="name"> {task.name} </td>
                         <td className="progress">
-                            <ProgressBar now={task.progress} label={`${task.progress}%`} isChild={true} />
+                            <Progress percent={task.progress} label={`${task.progress}%`} isChild={true} />
                         </td>
                         <td className="score"> {task.score > 0 ? task.score : "Checking"} </td>
                         <td className="max_score"> {task.max_score} </td>

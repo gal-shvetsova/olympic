@@ -25,6 +25,8 @@ Route::delete('olympiad/{id}/{type}/{field}', 'OlympiadController@destroy');
 
 Route::delete('student/{id}/{type}/{field}', 'StudentController@destroy');
 
+Route::delete('task/{id}/{type}/{field}', 'TaskController@destroy');
+
 Route::get('register/confirm/{token}', 'Auth\RegisterController@verifyUser');
 
 Route::middleware('auth:api')->get('/user','UserController@auth');

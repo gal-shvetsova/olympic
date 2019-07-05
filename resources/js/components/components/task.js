@@ -6,7 +6,7 @@ import TaskEdit from './taskEdit';
 import * as requestActionCreators from '../actions/requestActions';
 import {isRole} from "../actions/roleActions";
 import * as sortAction from "../actions/sortAction";
-import {Button, Form, Select, Slider} from "antd";
+import {Button, Form, Slider} from "antd";
 import * as filterAction from "../actions/filterAction";
 
 export class TaskList extends Component {
@@ -15,8 +15,8 @@ export class TaskList extends Component {
         super(props);
         const {getTable, olympiad_id} = this.props;
         this.state = {
-            sortName : "id",
-            sortType : 'asc',
+            sortName: "id",
+            sortType: 'asc',
             hardness_filter: [1, 10],
             time_filter: [0, 7],
             max_score_filter: [0, 100]
@@ -53,36 +53,48 @@ export class TaskList extends Component {
 
     handleSort(name) {
         this.setState({
-            sortName : name,
-            sortType : this.state.sortType === 'asc' ? 'desc' : 'asc'
+            sortName: name,
+            sortType: this.state.sortType === 'asc' ? 'desc' : 'asc'
         });
         const type = this.state.sortType === 'asc' ? 'desc' : 'asc';
-        this.props.filterTable({name: "task", data: {field : name, type : type, hardness_filter: this.state.hardness_filter,
-                time_filter: this.state.time_filter, max_score_filter : this.state.max_score_filter,
-                olympiad_id : this.props.olympiad_id}});
+        this.props.filterTable({
+            name: "task", data: {
+                field: name, type: type, hardness_filter: this.state.hardness_filter,
+                time_filter: this.state.time_filter, max_score_filter: this.state.max_score_filter,
+                olympiad_id: this.props.olympiad_id
+            }
+        });
     }
 
     handleDelete(task) {
-        const {deleteTable } = this.props;
-        deleteTable({name: "task", id: task, type : this.state.sortType, field : this.state.sortName});
+        const {deleteTable} = this.props;
+        deleteTable({name: "task", id: task, type: this.state.sortType, field: this.state.sortName});
     }
 
-    handleReset(){
-        this.setState(  {
+    handleReset() {
+        this.setState({
 
             hardness_filter: [1, 10],
             time_filter: [0, 7],
             max_score_filter: [0, 100]
         });
-        this.props.filterTable({name: "task", data: {field : this.state.sortName, type : this.state.sortType,
-                hardness_filter: [1,10], time_filter: [0, 7], max_score_filter : [0, 100],
-                olympiad_id : this.props.olympiad_id}});
+        this.props.filterTable({
+            name: "task", data: {
+                field: this.state.sortName, type: this.state.sortType,
+                hardness_filter: [1, 10], time_filter: [0, 7], max_score_filter: [0, 100],
+                olympiad_id: this.props.olympiad_id
+            }
+        });
     }
 
     handleFilterSort() {
-        this.props.filterTable({name: "task", data: {field : this.state.sortName, type : this.state.sortType,
-                hardness_filter : this.state.hardness_filter, time_filter: this.state.time_filter,
-                max_score_filter : this.state.max_score_filter, olympiad_id : this.props.olympiad_id}});
+        this.props.filterTable({
+            name: "task", data: {
+                field: this.state.sortName, type: this.state.sortType,
+                hardness_filter: this.state.hardness_filter, time_filter: this.state.time_filter,
+                max_score_filter: this.state.max_score_filter, olympiad_id: this.props.olympiad_id
+            }
+        });
     }
 
 
@@ -98,7 +110,7 @@ export class TaskList extends Component {
         }
         if (button == "delete") {
             const table = props.table.find(v => v.id === props.selectedTask) || {};
-            this.handleDelete(table);
+            this.handleDelete(table.id);
             props.getTaskEdit({olympiad_id: props.olympiadID}, props.olympiad_id, false);
         }
     }
@@ -114,9 +126,13 @@ export class TaskList extends Component {
     }
 
     handleFilter() {
-        this.props.filterTable({name: "task", data: {hardness_filter: this.state.hardness_filter,
-                time_filter : this.state.time_filter, max_score_filter: this.state.max_score_filter,
-                olympiad_id : this.props.olympiad_id, }});
+        this.props.filterTable({
+            name: "task", data: {
+                hardness_filter: this.state.hardness_filter,
+                time_filter: this.state.time_filter, max_score_filter: this.state.max_score_filter,
+                olympiad_id: this.props.olympiad_id,
+            }
+        });
     }
 
 
@@ -174,8 +190,8 @@ export class TaskList extends Component {
                             </Button>
 
                             <Button className="edit"
-                                     onClick={() => this.taskEdit(this.props, "edit")}
-                                     hidden={!isRole(this.props.role, ["admin"]) && this.props.selectedTask < 0}
+                                    onClick={() => this.taskEdit(this.props, "edit")}
+                                    hidden={!isRole(this.props.role, ["admin"]) && this.props.selectedTask < 0}
                             >edit
                             </Button>
 
@@ -204,7 +220,7 @@ const mapStateToProps = function (state) {
     return {
         table: state.taskStore.table,
         selectedTask: state.taskStore.selectedTask,
-        olympiad_id : state.taskStore.olympiadID
+        olympiad_id: state.taskStore.olympiadID
     }
 };
 
@@ -213,8 +229,9 @@ const mapDispatchToProps = function (dispatch) {
         getTaskEdit: actionCreators.getTaskEdit,
         getTable: requestActionCreators.getTable,
         selectTask: actionCreators.selectTask,
-        sortTable : sortAction.sortTable,
+        sortTable: sortAction.sortTable,
         filterTable: filterAction.filterTable,
+        deleteTable: requestActionCreators.deleteTable,
     }, dispatch)
 };
 

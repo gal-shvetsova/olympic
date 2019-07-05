@@ -41,6 +41,9 @@ class App extends React.Component {
             let AppState = JSON.parse(state);
             this.state = {isLoggedIn: AppState.isLoggedIn, user: AppState.user};
         }
+        else {
+            this.state = {isLoggedIn: false, user: {}};
+        }
     };
 
 

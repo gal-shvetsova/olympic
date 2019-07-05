@@ -34,14 +34,13 @@ export class OlympiadEdit extends Component {
                 let name, value;
                 name = e.target.name;
                 value = e.target.value;
-                console.log(parseInt(value), name);
                 if (name === "hardness" && (parseInt(value) > 10 || parseInt(value) < 0))
                     return;
                 this.props.getOlympiadEdit(Object.assign({}, this.props.table, {[name]: value}), true)
             }
         } else {
             let today = new Date();
-            if (date < today) {
+            if (date < today && date) {
                 message.error("Day has passed");
                 return;
             }
@@ -100,7 +99,7 @@ export class OlympiadEdit extends Component {
                         <DatePicker
                             className={'date'}
                             style={{width: '50%'}}
-                            value={moment(table.deadline, dateFormat)}
+                            value={moment(table.deadline ? table.deadline : moment(), dateFormat)}
                             placeholder={'Pick date'}
                             format={dateFormat}
                             name='deadline'

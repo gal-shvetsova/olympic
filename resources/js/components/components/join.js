@@ -1,6 +1,5 @@
 import React from "react";
-import {Link} from "react-router-dom";
-import {Button, Icon, Input, Form} from "antd";
+import {Button, Form} from "antd";
 import {Typography} from 'antd';
 
 const {Paragraph} = Typography;
@@ -44,7 +43,6 @@ class Join extends React.Component {
                 id : this.props.id
             });
             this.props.history.push('/olympiad');
-       // document.location.href = "/olympiad";
     }
 
     render() {

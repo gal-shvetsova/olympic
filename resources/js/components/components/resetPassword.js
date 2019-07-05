@@ -27,15 +27,15 @@ class ResetPassword extends Component {
     };
 
     render() {
-        const { getFieldDecorator } = this.props.form;
+        const {getFieldDecorator} = this.props.form;
         return (
             <Form className="form">
                 <Form.Item>
                     {getFieldDecorator('oldPassword', {
-                        rules: [{ required: true, message: 'Please input your Password!'}]
+                        rules: [{required: true, message: 'Please input your Password!'}]
                     })(
                         <Input
-                            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
                             type="password"
                             placeholder="Old password"
                             name='oldPassword'
@@ -45,11 +45,11 @@ class ResetPassword extends Component {
                 </Form.Item>
                 <Form.Item>
                     {getFieldDecorator('newPassword', {
-                        rules: [{ required: true, message: 'Please input your Password!' },
-                            {min : 8, message : 'Password is too short'}],
+                        rules: [{required: true, message: 'Please input your Password!'},
+                            {min: 8, message: 'Password is too short'}],
                     })(
                         <Input
-                            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
                             type="password"
                             placeholder="New password"
                             name='newPassword'
@@ -57,14 +57,15 @@ class ResetPassword extends Component {
                         />,
                     )}
                 </Form.Item>
-                    <Button type="primary" disabled={this.state.oldPassword === '' || this.state.newPassword === ''} onClick={this.handleReset()} className="login-form-button">
-                       Reset
-                    </Button>
+                <Button type="primary" disabled={this.state.oldPassword === '' || this.state.newPassword === ''}
+                        onClick={this.handleReset()} className="login-form-button">
+                    Reset
+                </Button>
             </Form>
         );
     }
 }
 
 
-const ResetPasswordForm = Form.create({ name: 'login' })(ResetPassword);
+const ResetPasswordForm = Form.create({name: 'login'})(ResetPassword);
 export default ResetPasswordForm;

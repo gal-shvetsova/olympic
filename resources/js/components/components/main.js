@@ -22,10 +22,11 @@ import thunk from "redux-thunk";
 import ResetPassword from "./resetPassword";
 import Solution from "./solution";
 import Verify from "./verifyEmail";
-import {Layout, Menu, message, Modal} from 'antd';
+import {Layout, Menu, message} from 'antd';
 import {_deleteAccount} from "../actions/registerAction";
+
 const {SubMenu} = Menu;
-const {Header, Content, Sider, Icon} = Layout;
+const {Header, Content} = Layout;
 
 message.config({
     top: 100,
@@ -40,9 +41,8 @@ class App extends React.Component {
         if (state) {
             let AppState = JSON.parse(state);
             this.state = {isLoggedIn: AppState.isLoggedIn, user: AppState.user};
-        }
-        else {
-            this.state = {isLoggedIn: false, user: {role : 'guest'}};
+        } else {
+            this.state = {isLoggedIn: false, user: {role: 'guest'}};
         }
     };
 
@@ -90,7 +90,8 @@ class App extends React.Component {
                                 }
                                 {
                                     isRole(this.state.user.role, ["admin", "student", "participant"]) &&
-                                    <Menu.Item key="delete" onClick={_deleteAccount.bind(this)}>Delete account</Menu.Item>
+                                    <Menu.Item key="delete" onClick={_deleteAccount.bind(this)}>Delete
+                                        account</Menu.Item>
                                 }
                                 {
                                     isRole(this.state.user.role, ["admin", "student", "participant"]) &&

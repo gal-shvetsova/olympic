@@ -53,7 +53,7 @@ export class TaskEdit extends Component {
         this.props.getTaskEdit({}, -1, false);
     }
 
-    handleDisable(){
+    handleDisable() {
 
     }
 

@@ -123,10 +123,6 @@ export class OlympiadList extends Component {
     }
 
     render() {
-        const formItemLayout = {
-            labelCol: {span: 7},
-            wrapperCol: {span: 12},
-        };
         return (!isRole(this.props.role, ["participant"]) ?
                 <div className="Olympiad">
                     <Form className='filter'>

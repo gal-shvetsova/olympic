@@ -6,14 +6,12 @@ import * as requestActionCreators from '../actions/requestActions';
 import {isRole} from "../actions/roleActions";
 import {Button} from "antd";
 
-//TODO: hide solve button when it's already solving
-
 export class Solution extends Component {
 
     constructor(props) {
         super(props);
         const {getTable, id} = this.props;
-        this.state = { hide : 1};
+        this.state = {hide: 1};
         getTable({name: "solution", id: id});
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
@@ -79,7 +77,7 @@ export class Solution extends Component {
         };
     }
 
-    hidden () {
+    hidden() {
         const {table, selectedTask} = this.props;
         if (selectedTask < 0) return 1;
 

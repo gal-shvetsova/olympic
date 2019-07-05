@@ -16,17 +16,17 @@ export class OlympiadEdit extends Component {
         super(props);
     }
 
-    dateFormat(date){
+    dateFormat(date) {
         let newDate = new Date(date);
 
-        return newDate.getFullYear() + '-' + (newDate.getMonth()+1) + '-' + newDate.getDate();
+        return newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + newDate.getDate();
     }
 
-    handleInput(){
+    handleInput() {
         return (e) => {
             const
-            name = e.target.name,
-            value = e.target.value;
+                name = e.target.name,
+                value = e.target.value;
             if (name === "hardness" && (parseInt(value) > 10 || parseInt(value) < 0))
                 return;
             this.props.getOlympiadEdit(Object.assign({}, this.props.table, {[name]: value}), true);
@@ -117,7 +117,7 @@ export class OlympiadEdit extends Component {
                                 disabled={
                                     !table ||
                                     !table.name || table.name === '' ||
-                                    !table.hardness || table.hardness === ''  ||
+                                    !table.hardness || table.hardness === '' ||
                                     !table.deadline}
                                 onClick={this.handleSubmit.bind(this)} className="login-form-button">
                             Ok

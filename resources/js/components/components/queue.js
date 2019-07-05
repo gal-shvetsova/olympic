@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {isRole} from "../actions/roleActions";
 import io from 'socket.io-client';
-import ProgressBar from 'react-bootstrap/ProgressBar'
 import axios from "axios";
 import {Progress} from "antd";
 
@@ -29,9 +28,9 @@ export class Queue extends Component {
     }
 
 
-
     componentDidMount() {
-        this.socket = io('http://olympic.test:8000'); //TODO remove hardcode
+        const host = window.location.hostname;
+        this.socket = io('http://' + host + ':8000');
         this.socket.on(
             'timer',
             this.getTable.bind(this)
@@ -59,7 +58,7 @@ export class Queue extends Component {
                     table.map((task) => (<tr key={task.id}>
                         <td className="name"> {task.name} </td>
                         <td className="progress">
-                            <Progress percent={task.progress} label={`${task.progress}%`} isChild={true} />
+                            <Progress percent={task.progress} label={`${task.progress}%`} isChild={true}/>
                         </td>
                         <td className="score"> {task.score > 0 ? task.score : "Checking"} </td>
                         <td className="max_score"> {task.max_score} </td>

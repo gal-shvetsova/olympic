@@ -1,4 +1,5 @@
 import openSocket from 'socket.io-client';
+
 const socket = openSocket('http://olympic.test:8000');
 
 export function subscribeToTimer(cb) {

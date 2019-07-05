@@ -8,15 +8,17 @@ import {isRole} from "../actions/roleActions";
 import * as sortAction from '../actions/sortAction'
 import {Button, Form, Select, Slider} from "antd";
 import * as filterAction from "../actions/filterAction";
+
 const {Option} = Select;
+
 export class StudentList extends Component {
 
     constructor(props) {
         super(props);
         this.props.getTable({name: "student"});
         this.state = {
-            sortName : "id",
-            sortType : 'asc',
+            sortName: "id",
+            sortType: 'asc',
             role_filter: 'all',
             olympiads_filter: [
                 0,
@@ -52,16 +54,24 @@ export class StudentList extends Component {
 
     handleSort(name) {
         this.setState({
-            sortName : name,
-            sortType : this.state.sortType === 'asc' ? 'desc' : 'asc'
+            sortName: name,
+            sortType: this.state.sortType === 'asc' ? 'desc' : 'asc'
         });
         const type = this.state.sortType === 'asc' ? 'desc' : 'asc';
-        this.props.filterTable({name: "student", data: {field : name, type : type, role_filter: this.state.role_filter, olympiads_filter: this.state.olympiads_filter}});
+        this.props.filterTable({
+            name: "student",
+            data: {
+                field: name,
+                type: type,
+                role_filter: this.state.role_filter,
+                olympiads_filter: this.state.olympiads_filter
+            }
+        });
     }
 
     handleDelete(student) {
         const {deleteTable} = this.props;
-        deleteTable({name: "student", id: student, type : this.state.sortType, field : this.state.sortName});
+        deleteTable({name: "student", id: student, type: this.state.sortType, field: this.state.sortName});
     }
 
     studentEdit(props, button) {
@@ -88,22 +98,36 @@ export class StudentList extends Component {
     }
 
     handleFilter() {
-        this.props.filterTable({name: "student", data: {olympiads_filter: this.state.olympiads_filter, role_filter : this.state.role_filter}});
+        this.props.filterTable({
+            name: "student",
+            data: {olympiads_filter: this.state.olympiads_filter, role_filter: this.state.role_filter}
+        });
     }
 
-    handleReset(){
-        this.setState(  {
+    handleReset() {
+        this.setState({
             role: 'all',
             olympiads: [
                 0,
                 10  //todo close registration if already 10
             ],
         });
-        this.props.filterTable({name: "student", data: {field : this.state.sortName, type : this.state.sortType, role_filter: 'all', olympiads_filter: [0, 10]}});
+        this.props.filterTable({
+            name: "student",
+            data: {field: this.state.sortName, type: this.state.sortType, role_filter: 'all', olympiads_filter: [0, 10]}
+        });
     }
 
     handleFilterSort() {
-        this.props.filterTable({name: "student", data: {field : this.state.sortName, type : this.state.sortType, role_filter: this.state.role_filter, olympiads_filter: this.state.olympiads_filter}});
+        this.props.filterTable({
+            name: "student",
+            data: {
+                field: this.state.sortName,
+                type: this.state.sortType,
+                role_filter: this.state.role_filter,
+                olympiads_filter: this.state.olympiads_filter
+            }
+        });
     }
 
 
@@ -155,7 +179,8 @@ export class StudentList extends Component {
                         delete
                     </Button>
                     <div>
-                        <StudentEdit type={this.state.sortType} field={this.state.sortName} getTable={this.props.getTable}/>
+                        <StudentEdit type={this.state.sortType} field={this.state.sortName}
+                                     getTable={this.props.getTable}/>
                     </div>
                 </div>
                 : "You don't have permission to be here"
@@ -177,7 +202,7 @@ const mapDispatchToProps = function (dispatch) {
         getTable: requestActionCreators.getTable,
         selectStudent: actionCreators.selectStudent,
         deleteTable: requestActionCreators.deleteTable,
-        sortTable : sortAction.sortTable,
+        sortTable: sortAction.sortTable,
         filterTable: filterAction.filterTable,
     }, dispatch)
 };

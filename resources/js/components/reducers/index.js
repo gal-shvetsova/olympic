@@ -49,10 +49,10 @@ const taskEditStore = (state = {table: {}, olympiadID: -1, show: false}, action)
     }
 };
 
-const studentEditStore = (state = {table: {}, action : "", show: false}, action) => {
+const studentEditStore = (state = {table: {}, action: "", show: false}, action) => {
     switch (action.type) {
         case 'GET_STUDENT_EDIT':
-            return {...state, table: action.table, action : action.action, show: action.show};
+            return {...state, table: action.table, action: action.action, show: action.show};
         default:
             return state
     }
@@ -61,13 +61,13 @@ const studentEditStore = (state = {table: {}, action : "", show: false}, action)
 const olympiadEditStore = (state = {table: {}, show: false}, action) => {
     switch (action.type) {
         case 'GET_OLYMPIAD_EDIT':
-            return {...state, table : action.table, show: action.show};
+            return {...state, table: action.table, show: action.show};
         default:
             return state
     }
 };
 
-const solutionStore = (state = {table: [], selectedTask : -1}, action) => {
+const solutionStore = (state = {table: [], selectedTask: -1}, action) => {
     switch (action.type) {
         case 'SOLUTION_SUCCESS':
             return {...state, table: action.table};
@@ -95,7 +95,15 @@ const queueStore = (state = {table: []}, action) => {
 
 
 const rootReducer = combineReducers({
-    studentStore, taskStore, studentEditStore, taskEditStore, olympiadEditStore, olympiadStore, routerReducer, solutionStore, queueStore
+    studentStore,
+    taskStore,
+    studentEditStore,
+    taskEditStore,
+    olympiadEditStore,
+    olympiadStore,
+    routerReducer,
+    solutionStore,
+    queueStore
 });
 
 export default rootReducer;

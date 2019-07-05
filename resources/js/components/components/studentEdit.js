@@ -3,7 +3,8 @@ import * as actionCreators from '../actions/';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as requestActionCreators from "../actions/requestActions";
-import {Button, Select, Icon, Input, Form } from "antd";
+import {Button, Select, Icon, Input, Form} from "antd";
+
 const {Option} = Select;
 
 export class StudentEdit extends Component {
@@ -17,8 +18,7 @@ export class StudentEdit extends Component {
                 const value = e.target.value;
                 getStudentEdit(Object.assign({}, table, {[name]: value}), action, true);
             };
-        }
-        else
+        } else
             getStudentEdit(Object.assign({}, table, {['user_role']: value}), action, true);
     }
 
@@ -28,15 +28,15 @@ export class StudentEdit extends Component {
         data['type'] = this.props.type;
         data['field'] = this.props.field;
         data = JSON.stringify(data);
-      //  if (!table.id)
-      //      postTable({name: "student", data: data, method: "POST"});
-       // else
-            postTable({
-                name: "student",
-                data: data,
-                method: "PUT",
-                id: JSON.stringify(table.id)
-            });
+        //  if (!table.id)
+        //      postTable({name: "student", data: data, method: "POST"});
+        // else
+        postTable({
+            name: "student",
+            data: data,
+            method: "PUT",
+            id: JSON.stringify(table.id)
+        });
         this.hide();
     }
 
@@ -67,7 +67,7 @@ export class StudentEdit extends Component {
                         <Option value="student">student</Option>
                     </Select>
                     <Form.Item>
-                        <Button type="primary" disabled={table.role === '' || table.name === '' }
+                        <Button type="primary" disabled={table.role === '' || table.name === ''}
                                 onClick={this.handleSubmit.bind(this)} className="login-form-button">
                             Ok
                         </Button>
